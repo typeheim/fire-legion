@@ -1,0 +1,24 @@
+{
+  "name": "@typeheim/orm-on-fire",
+  "version": "0.0.0",
+  "description": "Firestore ORM",
+  "keywords": [
+    "firestore",
+    "firebase",
+    "orm",
+    "odm"
+  ],
+  "author": {
+    "name": "Dima Kolodko",
+    "email": "dima@kolodko.pro",
+    "url": "https://github.com/prowwid"
+  },
+  "homepage": "https://github.com/typeheim/domain-on-fire#readme",
+  "bugs": {
+    "url": "https://github.com/typeheim/domain-on-fire/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "reflect-metadata": "^0.1.13"
+  }
+}

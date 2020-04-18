@@ -1,0 +1,39 @@
+{
+  "name": "@typeheim/domain-on-fire",
+  "version": "0.0.0",
+  "description": "DDD solution to work with Firebase",
+  "main": "index.js",
+  "scripts": {
+    "bootstrap": "npx lerna bootstrap"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typeheim/domain-on-fire.git"
+  },
+  "keywords": [
+    "firestore",
+    "firebase",
+    "orm",
+    "odm",
+    "ddd",
+    "typescript",
+    "ts"
+  ],
+  "author": {
+    "name": "Dima Kolodko",
+    "email": "dima@kolodko.pro",
+    "url": "https://github.com/prowwid"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/typeheim/domain-on-fire/issues"
+  },
+  "homepage": "https://github.com/typeheim/domain-on-fire#readme",
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "@types/node": "^13.13.0",
+    "jest": "^25.3.0",
+    "lerna": "^3.20.2",
+    "typescript": "^3.8.3"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "declaration": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "removeComments": false,
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "lib": ["esnext"],
+    "typeRoots": ["./node_modules/@types"],
+    "strictFunctionTypes": true,
+    "baseUrl": "./",
+    "paths": {
+      "@typeheim/fire-auth": ["packages/fire-auth"],
+      "@typeheim/orm-on-fire": ["packages/orm-on-fire"]
+
+    }
+  },
+  "exclude": ["./node_modules/**"]
+}

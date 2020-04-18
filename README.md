@@ -1,2 +1,6 @@
-# domain-on-fire
+# Domain On Fire
 DDD solution to work with Firebase
+
+Includes:
+* Fire Auth - library to work with Firebase Authentication
+* ORM On Fire - Firestore ORM
