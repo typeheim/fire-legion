@@ -1,4 +1,4 @@
-# Domain On Fire
+# Domain Flows
 DDD solution to work with Firebase
 
 Includes:
