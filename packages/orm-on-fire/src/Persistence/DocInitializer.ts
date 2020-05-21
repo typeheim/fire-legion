@@ -1,4 +1,3 @@
-import { WriteResult } from '@google-cloud/firestore'
 import { EntityManager } from './EntityManager'
 import { FireReplaySubject } from '@typeheim/fire-rx'
 import { CollectionReference } from './CollectionReference'
@@ -7,15 +6,15 @@ import { CollectionReference } from './CollectionReference'
 export class DocInitializer<Entity> {
     constructor(protected entity: Entity, protected entityManager: EntityManager<Entity>) {}
 
-    addTo(collectionRef: CollectionReference): FireReplaySubject<WriteResult> {
+    addTo(collectionRef: CollectionReference): FireReplaySubject<boolean> {
         let data = this.entityManager.extractDataFromEntity(this.entity)
         let documentReference = this.entity['id'] ? collectionRef.doc(this.entity['id']) : collectionRef.doc()
 
-        let subject = new FireReplaySubject<WriteResult>(1)
-        documentReference.set(data).then((result: WriteResult) => {
+        let subject = new FireReplaySubject<boolean>(1)
+        documentReference.set(data).then(() => {
             this.entity['id'] = documentReference.nativeRef.id
             this.entityManager.attachOrmMetadataToEntity(this.entity, documentReference.nativeRef)
-            subject.next(result)
+            subject.next(true)
             subject.complete()
         })
 

@@ -1,17 +1,17 @@
 import { FirestoreConnection } from './FirestoreConnection'
 import { FireReplaySubject } from '@typeheim/fire-rx'
-import { QuerySnapshot } from '@google-cloud/firestore'
+import { firestore } from 'firebase/app';
 import { DocReference } from './DocReference'
 
 
 export class CollectionReference {
     constructor(protected connection: FirestoreConnection, protected collectionPath: string) {}
 
-    get(): FireReplaySubject<QuerySnapshot> {
-        let subject = new FireReplaySubject<QuerySnapshot>()
+    get(): FireReplaySubject<firestore.QuerySnapshot> {
+        let subject = new FireReplaySubject<firestore.QuerySnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.connection.driver.collection(this.collectionPath).get().then((snapshot: QuerySnapshot) => {
+                this.connection.driver.collection(this.collectionPath).get().then((snapshot: firestore.QuerySnapshot) => {
                     subject.next(snapshot)
                     subject.complete()
                 })
@@ -21,8 +21,8 @@ export class CollectionReference {
         return subject
     }
 
-    snapshot(): FireReplaySubject<QuerySnapshot> {
-        let subject = new FireReplaySubject<QuerySnapshot>()
+    snapshot(): FireReplaySubject<firestore.QuerySnapshot> {
+        let subject = new FireReplaySubject<firestore.QuerySnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.connection.driver.collection(this.collectionPath).onSnapshot(snapshot => {

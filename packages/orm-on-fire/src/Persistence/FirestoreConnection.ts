@@ -1,18 +1,27 @@
-import { Firestore } from '@google-cloud/firestore'
 import { FireReplaySubject } from '@typeheim/fire-rx'
 import { CollectionReference } from './CollectionReference'
 import { DocReference } from './DocReference'
+import { firestore } from 'firebase';
 
 export class FirestoreConnection {
-    protected _driver: Firestore
+    /**
+     * @type {firestore.Firestore}
+     */
+    protected _driver
     protected _isInitializedSubject = new FireReplaySubject<boolean>(1)
 
-    set driver(driver: Firestore) {
+    /**
+     * @param {firestore.Firestore} driver
+     */
+    set driver(driver) {
         this._driver = driver
         this.isInitialized.next(true)
     }
 
-    get driver(): Firestore {
+    /**
+     * @return {firestore.Firestore}
+     */
+    get driver() {
         return this._driver
     }
 
@@ -20,11 +29,11 @@ export class FirestoreConnection {
         return this._isInitializedSubject
     }
 
-    collectionReference(collectionPath: string) {
+    collectionRef(collectionPath: string) {
         return new CollectionReference(this, collectionPath)
     }
 
-    docReference(docPath?: string) {
+    docRef(docPath?: string) {
         return new DocReference(this, docPath)
     }
 }

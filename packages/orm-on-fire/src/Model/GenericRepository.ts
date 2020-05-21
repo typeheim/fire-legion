@@ -1,4 +1,3 @@
-import { WriteResult } from '@google-cloud/firestore'
 import { EntityQuery } from '../Persistence/EntityQuery'
 import { EntityMetadata } from '../Contracts/EntityMetadata'
 import { EntityManager } from '../Persistence/EntityManager'
@@ -35,14 +34,14 @@ export class GenericRepository<Entity extends Model> {
         return new CollectionQuery<Entity>(this.collectionReference, this.entityManager)
     }
 
-    public save(entity: Entity): FireReplaySubject<WriteResult> {
+    public save(entity: Entity): FireReplaySubject<void> {
         if (!entity['__ormOnFire']) {
             this.entityManager.attachMetadataToNewEntity(entity, this.collectionReference)
         }
         return entity.__ormOnFire.save()
     }
 
-    public remove(entity: Entity): FireReplaySubject<WriteResult> {
+    public remove(entity: Entity): FireReplaySubject<void> {
         if (!entity['__ormOnFire']) {
             // @todo add exception to indicate new entity being deleted
         }

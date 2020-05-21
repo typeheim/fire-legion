@@ -40,7 +40,9 @@
     "@types/node": "^13.13.0",
     "@types/reflect-metadata": "^0.1.0",
     "express": "^4.17.1",
+    "firebase": "^7.14.4",
     "firebase-admin": "^8.11.0",
+    "firebase-tools": "^8.3.0",
     "jest": "^25.3.0",
     "lerna": "^3.20.2",
     "ts-node": "^8.10.1",
@@ -52,7 +54,9 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "modulePathIgnorePatterns": ["<rootDir>/specs/$1"],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/specs/$1"
+    ],
     "testRegex": ".spec.ts$",
     "moduleFileExtensions": [
       "ts",
@@ -67,7 +71,6 @@
     "moduleNameMapper": {
       "@typeheim/fire-auth": "<rootDir>/packages/fire-auth",
       "@typeheim/orm-on-fire": "<rootDir>/packages/orm-on-fire"
-
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",

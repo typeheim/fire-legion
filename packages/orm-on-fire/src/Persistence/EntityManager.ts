@@ -1,5 +1,5 @@
 import { EntityMetadata } from '../Contracts/EntityMetadata'
-import { DocumentReference, DocumentSnapshot, WriteResult } from '@google-cloud/firestore'
+import { firestore } from 'firebase/app';
 import { GenericRepository } from '../Model/GenericRepository'
 import { Metadata, OrmOnFire } from '../singletons'
 import { Collection } from '../Model/Collection'
@@ -14,7 +14,7 @@ import { DocReference } from './DocReference'
 export class EntityManager<Entity> {
     constructor(protected metadata: EntityMetadata, protected repository: GenericRepository<Entity>, protected entityConstructor) {}
 
-    fromSnapshot(docSnapshot: DocumentSnapshot): Entity {
+    fromSnapshot(docSnapshot: firestore.DocumentSnapshot): Entity {
         if (!docSnapshot.exists) {
             return null
         }
@@ -58,7 +58,7 @@ export class EntityManager<Entity> {
     }
 
 
-    protected attachSubCollectionsToEntity(entity: Entity, docReference: DocumentReference) {
+    protected attachSubCollectionsToEntity(entity: Entity, docReference: firestore.DocumentReference) {
         let subCollectionsMetadata = this.metadata.collectionRefs
         if (subCollectionsMetadata.length == 0) {
             return
@@ -69,7 +69,7 @@ export class EntityManager<Entity> {
         })
     }
 
-    protected createRepositoryForSubEntity<Entity>(entity: EntityType<Entity>, docReference: DocumentReference) {
+    protected createRepositoryForSubEntity<Entity>(entity: EntityType<Entity>, docReference: firestore.DocumentReference) {
         const metadata = Metadata.entity(entity).get()
         if (metadata.repository) {
             // @ts-ignore
@@ -91,14 +91,14 @@ export class EntityManager<Entity> {
         return dataToSave
     }
 
-    public attachOrmMetadataToEntity(entity: Entity, docReference: DocumentReference) {
+    public attachOrmMetadataToEntity(entity: Entity, docReference: firestore.DocumentReference) {
         let persistenceManager = new DocPersistenceManager(docReference)
         entity['__ormOnFire'] = {
             repository: this.repository,
-            save: (): FireReplaySubject<WriteResult> => {
+            save: (): FireReplaySubject<boolean> => {
                 return persistenceManager.update(this.extractDataFromEntity(entity))
             },
-            remove: (): FireReplaySubject<WriteResult> => {
+            remove: (): FireReplaySubject<boolean> => {
                 return persistenceManager.remove()
             }
 
@@ -109,7 +109,7 @@ export class EntityManager<Entity> {
         let docInitializer = new DocInitializer(entity, this)
         entity['__ormOnFire'] = {
             repository: this.repository,
-            save: (): FireReplaySubject<WriteResult> => {
+            save: (): FireReplaySubject<boolean> => {
                 return docInitializer.addTo(collectionRef)
             },
             remove: () => {

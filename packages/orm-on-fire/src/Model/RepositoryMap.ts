@@ -23,9 +23,9 @@ export class RepositoryMap {
 
         if (metadata.repository) {
             // @ts-ignore
-            this.storage[entityClassName] = new metadata.repository<Entity>(metadata, entity, this.connection.collectionReference(metadata.collection))
+            this.storage[entityClassName] = new metadata.repository<Entity>(metadata, entity, this.connection.collectionRef(metadata.collection))
         } else {
-            this.storage[entityClassName] = new GenericRepository<Entity>(metadata, entity, this.connection.collectionReference(metadata.collection))
+            this.storage[entityClassName] = new GenericRepository<Entity>(metadata, entity, this.connection.collectionRef(metadata.collection))
         }
     }
 }

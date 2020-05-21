@@ -1,5 +1,4 @@
 import { GenericRepository } from '../Model/GenericRepository'
-import { WriteResult } from '@google-cloud/firestore'
 import { FireReplaySubject } from '@typeheim/fire-rx'
 
 export interface Model {
@@ -14,7 +13,7 @@ export interface Model {
 interface OrmMetadata {
     repository?: GenericRepository<any>
 
-    save?(): FireReplaySubject<WriteResult>
+    save?(): FireReplaySubject<void>
 
-    remove?(): FireReplaySubject<WriteResult>
+    remove?(): FireReplaySubject<void>
 }

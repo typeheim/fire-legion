@@ -1,4 +1,4 @@
-import { DocumentChange, DocumentSnapshot, QueryDocumentSnapshot, QuerySnapshot } from '@google-cloud/firestore'
+import { firestore } from 'firebase/app';
 import { EntityManager } from './EntityManager'
 import { FireReplaySubject } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
@@ -10,9 +10,9 @@ export class CollectionQuery<Entity> {
     get(): FireReplaySubject<Entity[]> {
         let subject = new FireReplaySubject<Entity[]>(1)
 
-        this.collectionReference.get().then((querySnapshot: QuerySnapshot) => {
+        this.collectionReference.get().then((querySnapshot: firestore.QuerySnapshot) => {
             let entities = []
-            querySnapshot.forEach((docSnapshot: DocumentSnapshot) => {
+            querySnapshot.forEach((docSnapshot: firestore.DocumentSnapshot) => {
                 entities.push(this.entityBuilder.fromSnapshot(docSnapshot))
             })
             subject.next(entities)
@@ -25,9 +25,9 @@ export class CollectionQuery<Entity> {
     changesStream(): FireReplaySubject<ChangedEntities<Entity>> {
         let subject = new FireReplaySubject<ChangedEntities<Entity>>(1)
 
-        this.collectionReference.snapshot().subscribe((querySnapshot: QuerySnapshot) => {
+        this.collectionReference.snapshot().subscribe((querySnapshot: firestore.QuerySnapshot) => {
             let entityChanges = []
-            querySnapshot.docChanges().forEach((docSnapshot: DocumentChange) => {
+            querySnapshot.docChanges().forEach((docSnapshot: firestore.DocumentChange) => {
                 let entity = this.entityBuilder.fromSnapshot(docSnapshot.doc)
                 if (entity) {
                     entityChanges.push({
@@ -45,9 +45,9 @@ export class CollectionQuery<Entity> {
     dataStream(): FireReplaySubject<Entity[]> {
         let subject = new FireReplaySubject<Entity[]>(1)
 
-        this.collectionReference.snapshot().subscribe((querySnapshot: QuerySnapshot) => {
+        this.collectionReference.snapshot().subscribe((querySnapshot: firestore.QuerySnapshot) => {
             let entities = []
-            querySnapshot.forEach((docSnapshot: QueryDocumentSnapshot) => {
+            querySnapshot.forEach((docSnapshot: firestore.QueryDocumentSnapshot) => {
                 let entity = this.entityBuilder.fromSnapshot(docSnapshot)
                 if (entity) {
                     entities.push(entity)
