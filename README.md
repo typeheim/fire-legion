@@ -1,6 +1,7 @@
-# Domain On Fire
-DDD solution to work with Firebase
+# Fire Legion
+DDD framework to work with Firebase
 
 Includes:
-* Fire Auth - library to work with Firebase Authentication
 * ORM On Fire - Firestore ORM
+* FireRx - RxJS extension that provides async capabilities
+

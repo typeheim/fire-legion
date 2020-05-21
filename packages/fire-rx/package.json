@@ -1,0 +1,23 @@
+{
+  "name": "@typeheim/fire-rx",
+  "version": "0.0.0",
+  "description": "Firebase authentication library",
+  "keywords": [
+    "rxjs",
+    "promise",
+    "fire-rx"
+  ],
+  "author": {
+    "name": "Dima Kolodko",
+    "email": "dima@kolodko.pro",
+    "url": "https://github.com/prowwid"
+  },
+  "homepage": "https://github.com/typeheim/fire-legion#readme",
+  "bugs": {
+    "url": "https://github.com/typeheim/fire-legion/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "rxjs": "^6.5.5"
+  }
+}

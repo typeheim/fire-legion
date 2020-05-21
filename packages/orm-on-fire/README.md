@@ -3,26 +3,40 @@ Firestore ORM
 
 Sample:
 ```typescript
-@Doc('users')
-export class UserEntity {
+import { Entity, Collection, CollectionRef, ID, Field, Repo } from '@typeheim/orm-on-fire'
+
+
+@Entity()
+export class User {
+    @ID()
+    id : string
+
     @Field()    
     firstName: string
 
     @Field()
     lastName: string
 
-    @Doc()
-    files: Docs<UserEntity>
+    @Collection()
+    files: Collection<UserFile>
 }
-@Doc('user-files')
-export class UserFilesEntity {
+@Entity({collection: 'user-files'})
+export class UserFile {
+    @ID()
+    id : string
+
     @Field()
     name: string
 }
 
-Collection.of<UserEntity>.getOne('fahsdfijyyufre').subscribe((user:UserEntity ) => {
-    user.files.forEach(UserEntity => {
-    
+// with promise-like interface
+let markus = await Repo.of(User).one('markus').get()
+
+// with Rx interface
+Repo.of(User).one('tom').get().subscribe((tom: User) => {
+    tom.files.forEach((file: UserFile) => {
+        // some cool stuff
     })
 }) 
+
 ```

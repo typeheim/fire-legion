@@ -6,19 +6,28 @@
     "firestore",
     "firebase",
     "orm",
-    "odm"
+    "odm",
+    "ddd",
+    "repository",
+    "entity",
+    "model",
+    "collections",
+    "typescript",
+    "ts"
   ],
   "author": {
     "name": "Dima Kolodko",
     "email": "dima@kolodko.pro",
     "url": "https://github.com/prowwid"
   },
-  "homepage": "https://github.com/typeheim/domain-on-fire#readme",
+  "homepage": "https://github.com/typeheim/fire-legion/packages/orm-on-fire#readme",
   "bugs": {
-    "url": "https://github.com/typeheim/domain-on-fire/issues"
+    "url": "https://github.com/typeheim/fire-legion/issues"
   },
   "license": "MIT",
   "dependencies": {
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.5.5",
+    "@typeheim/fire-rx": "^0.0.0"
   }
 }

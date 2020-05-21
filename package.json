@@ -1,14 +1,16 @@
 {
-  "name": "@typeheim/domain-on-fire",
+  "name": "@typeheim/monorepo",
   "version": "0.0.0",
-  "description": "DDD solution to work with Firebase",
+  "description": "DDD framework to work with Firebase",
   "main": "index.js",
   "scripts": {
-    "bootstrap": "npx lerna bootstrap"
+    "bootstrap": "npx lerna bootstrap",
+    "spec": "jest",
+    "serve:orm": "npx ts-node packages\\orm-on-fire\\dev-server.ts"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/typeheim/domain-on-fire.git"
+    "url": "git+https://github.com/typeheim/fire-legion.git"
   },
   "keywords": [
     "firestore",
@@ -16,6 +18,10 @@
     "orm",
     "odm",
     "ddd",
+    "repository",
+    "entity",
+    "model",
+    "collections",
     "typescript",
     "ts"
   ],
@@ -26,14 +32,53 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/typeheim/domain-on-fire/issues"
+    "url": "https://github.com/typeheim/fire-legion/issues"
   },
-  "homepage": "https://github.com/typeheim/domain-on-fire#readme",
+  "homepage": "https://github.com/typeheim/fire-legion#readme",
   "devDependencies": {
     "@types/jest": "^25.2.1",
     "@types/node": "^13.13.0",
+    "@types/reflect-metadata": "^0.1.0",
+    "express": "^4.17.1",
+    "firebase-admin": "^8.11.0",
     "jest": "^25.3.0",
     "lerna": "^3.20.2",
+    "ts-node": "^8.10.1",
     "typescript": "^3.8.3"
+  },
+  "jest": {
+    "clearMocks": true,
+    "automock": false,
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "modulePathIgnorePatterns": ["<rootDir>/specs/$1"],
+    "testRegex": ".spec.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "collectCoverage": true,
+    "rootDir": "./",
+    "moduleNameMapper": {
+      "@typeheim/fire-auth": "<rootDir>/packages/fire-auth",
+      "@typeheim/orm-on-fire": "<rootDir>/packages/orm-on-fire"
+
+    },
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "./tsconfig.json"
+      }
+    }
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.13",
+    "ts-jest": "^25.4.0"
   }
 }

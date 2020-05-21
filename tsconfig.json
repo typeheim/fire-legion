@@ -16,10 +16,12 @@
     "typeRoots": ["./node_modules/@types"],
     "strictFunctionTypes": true,
     "baseUrl": "./",
+    "strictNullChecks": false,
+    "noImplicitAny": false,
     "paths": {
       "@typeheim/fire-auth": ["packages/fire-auth"],
+      "@typeheim/fire-rx": ["packages/fire-rx"],
       "@typeheim/orm-on-fire": ["packages/orm-on-fire"]
-
     }
   },
   "exclude": ["./node_modules/**"]
