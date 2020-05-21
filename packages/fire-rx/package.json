@@ -25,7 +25,8 @@
     "url": "https://github.com/typeheim/fire-legion/issues"
   },
   "license": "MIT",
-  "main": "index.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "dependencies": {
     "rxjs": "^6.5.5"
   }

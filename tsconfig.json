@@ -24,5 +24,11 @@
       "@typeheim/orm-on-fire": ["packages/orm-on-fire"]
     }
   },
-  "exclude": ["./node_modules/**"]
+  "exclude": [
+    "./node_modules/**",
+    "node_modules",
+    "specs",
+    "**/*spec.ts",
+    "**/*/dev-server.ts"
+  ]
 }

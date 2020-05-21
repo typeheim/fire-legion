@@ -14,8 +14,9 @@ dev-server.js
 
 firestore.key.json
 
-.js
-.d.ts
+*.js
+*.js.map
+*.d.ts
 
 # Runtime data
 pids
