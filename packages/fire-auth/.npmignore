@@ -1,0 +1,5 @@
+node_modules
+specs
+docs
+*.d.ts
+*.js

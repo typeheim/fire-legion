@@ -1,11 +1,19 @@
 {
   "name": "@typeheim/fire-rx",
-  "version": "0.0.0",
+  "version": "0.0.0-beta.1",
   "description": "Firebase authentication library",
   "keywords": [
+    "fire-legion",
+    "fire-rx",
     "rxjs",
     "promise",
-    "fire-rx"
+    "fire-rx",
+    "web",
+    "front-end",
+    "framework",
+    "angular",
+    "nest",
+    "back-end"
   ],
   "author": {
     "name": "Dima Kolodko",
