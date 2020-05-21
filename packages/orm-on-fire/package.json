@@ -1,6 +1,6 @@
 {
   "name": "@typeheim/orm-on-fire",
-  "version": "0.0.0-beta.1",
+  "version": "0.0.0-beta.2",
   "description": "Firestore ORM",
   "keywords": [
     "fire-legion",
@@ -34,7 +34,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@typeheim/fire-rx": "^0.0.0-beta.1",
+    "@typeheim/fire-rx": "^0.0.0-beta.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.5"
   }
