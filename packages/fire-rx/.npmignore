@@ -3,3 +3,4 @@ specs
 docs
 *.d.ts
 *.js
+dev-server.ts
