@@ -2,6 +2,7 @@ node_modules
 specs
 docs
 dev-server.ts
+*.ts
 dev-server.d.ts
 dev-server.js
 dev-server.js.map
