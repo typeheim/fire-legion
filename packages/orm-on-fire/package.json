@@ -33,6 +33,7 @@
     "url": "https://github.com/typeheim/fire-legion/issues"
   },
   "license": "MIT",
+  "main": "index.ts",
   "dependencies": {
     "@typeheim/fire-rx": "^0.0.0-beta.2",
     "reflect-metadata": "^0.1.13",

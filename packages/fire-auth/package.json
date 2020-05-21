@@ -18,6 +18,7 @@
     "url": "https://github.com/typeheim/domain-on-fire/issues"
   },
   "license": "MIT",
+  "main": "index.ts",
   "dependencies": {
     "reflect-metadata": "^0.1.13"
   }
