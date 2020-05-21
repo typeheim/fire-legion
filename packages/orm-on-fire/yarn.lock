@@ -293,10 +293,10 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
-"@typeheim/fire-rx@^0.0.0-beta-4":
-  version "0.0.0-beta-4"
-  resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.0-beta-4.tgz#4f6131511d69fb2326c3c8864f03b399acc4e858"
-  integrity sha512-OidZ/qV6T2v2wSrb1sxXKDJnO+3pKHd1pMskXS4AyyfJc7/zkJEeEj5jyXd1HWT+Inl4vLPeOQX6RZpm8JeSeA==
+"@typeheim/fire-rx@^0.0.0-beta.6":
+  version "0.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.0-beta.6.tgz#f9c713a716a9d36dfde84db625702a6c3d5c33de"
+  integrity sha512-1a7tcrG/pcvyz2LNVQAIpLcpv+PoGy/gZDZCSOcBAq69dV+bu41/RRcNEzoEUtCA8kFibjCJygCJQWIxKLzR8w==
   dependencies:
     rxjs "^6.5.5"
 
