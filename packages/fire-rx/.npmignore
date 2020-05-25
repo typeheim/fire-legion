@@ -6,3 +6,4 @@ dev-server.d.ts
 dev-server.js
 dev-server.js.map
 *.ts
+!*.d.ts

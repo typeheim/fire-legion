@@ -13,6 +13,7 @@ dev-server.ts
 dev-server.js
 
 firestore.key.json
+*.firestore.key.json
 
 *.js
 *.js.map
