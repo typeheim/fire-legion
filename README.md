@@ -10,9 +10,9 @@ Includes:
 Delightful Firestore ORM
 
 ```typescript
-import { Agregate, Entity, Collection, CollectionRef, ID, Field } from '@typeheim/orm-on-fire'
+import { Aggregate, Entity, Collection, CollectionRef, ID, Field } from '@typeheim/orm-on-fire'
 
-@Agregate()
+@Aggregate()
 export class User {
     @ID() id: string
 
