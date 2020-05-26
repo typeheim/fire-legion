@@ -7,6 +7,7 @@ async function SetUpFirebase() {
         credential: FirebaseAdmin.credential.cert(process.cwd() + '/firestore.key.json'),
         databaseURL: "https://fire-legion.firebaseio.com",
     })
+    // @ts-ignore - there is no error but TS can't compile
     OrmOnFire.driver = FirebaseAdmin.firestore()
 }
 

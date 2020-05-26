@@ -18,7 +18,7 @@ describe('Repo', () => {
     })
 
     it('can filter by ">" operator', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.graterThen(15)).get()
+        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.greaterThen(15)).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(3)
@@ -31,7 +31,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "<" operator', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.loverThen(20)).get()
+        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.lessThen(20)).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(1)
@@ -42,7 +42,7 @@ describe('Repo', () => {
     })
 
     it('can filter by ">=" operator', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.graterThenOrEqual(25)).get()
+        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.greaterThenOrEqual(25)).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(3)
@@ -55,7 +55,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "<=" operator', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.loverThenOrEqual(25)).get()
+        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.lessThenOrEqual(25)).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(2)
@@ -102,7 +102,7 @@ describe('Repo', () => {
     })
 
     it('can limit with filter', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.graterThen(15)).limit(2).get()
+        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.greaterThen(15)).limit(2).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(2)

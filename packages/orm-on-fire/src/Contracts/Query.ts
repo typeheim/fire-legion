@@ -4,13 +4,13 @@ import WhereFilterOp = firebase.firestore.WhereFilterOp
 export interface FireFilter<Entity> {
     equal(value: any): FireFilter<Entity>
 
-    graterThen(value: any): FireFilter<Entity>
+    greaterThen(value: any): FireFilter<Entity>
 
-    loverThen(value: any): FireFilter<Entity>
+    lessThen(value: any): FireFilter<Entity>
 
-    graterThenOrEqual(value: any): FireFilter<Entity>
+    greaterThenOrEqual(value: any): FireFilter<Entity>
 
-    loverThenOrEqual(value: any): FireFilter<Entity>
+    lessThenOrEqual(value: any): FireFilter<Entity>
 
     in(list: any): FireFilter<Entity>
 

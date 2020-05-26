@@ -9,25 +9,25 @@ export class FieldFilter<Entity> implements FireFilter<Entity> {
         return this
     }
 
-    graterThen(value: any): FieldFilter<Entity> {
+    greaterThen(value: any): FieldFilter<Entity> {
         this.addCondition('>', value)
 
         return this
     }
 
-    loverThen(value: any): FieldFilter<Entity> {
+    lessThen(value: any): FieldFilter<Entity> {
         this.addCondition('<', value)
 
         return this
     }
 
-    graterThenOrEqual(value: any): FieldFilter<Entity> {
+    greaterThenOrEqual(value: any): FieldFilter<Entity> {
         this.addCondition('>=', value)
 
         return this
     }
 
-    loverThenOrEqual(value: any): FieldFilter<Entity> {
+    lessThenOrEqual(value: any): FieldFilter<Entity> {
         this.addCondition('<=', value)
 
         return this
