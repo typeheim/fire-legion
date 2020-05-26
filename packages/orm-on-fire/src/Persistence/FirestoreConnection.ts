@@ -5,17 +5,19 @@ import { DocReference } from './DocReference'
 import * as FirestoreTypes from '@firebase/firestore-types'
 import Firestore = FirestoreTypes.FirebaseFirestore
 
-
 export class FirestoreConnection {
+    /**
+     * @type {Firestore}
+     */
     protected _driver: Firestore
     protected _isInitializedSubject = new FireReplaySubject<boolean>(1)
 
-    set driver(driver: Firestore) {
+    set driver(driver) {
         this._driver = driver
         this.isInitialized.next(true)
     }
 
-    get driver(): Firestore {
+    get driver() {
         return this._driver
     }
 
