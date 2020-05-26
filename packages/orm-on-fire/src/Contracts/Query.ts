@@ -1,5 +1,6 @@
-import * as firebase from 'firebase'
-import WhereFilterOp = firebase.firestore.WhereFilterOp
+// Firestore types
+import * as types from '@firebase/firestore-types'
+import WhereFilterOp = types.WhereFilterOp
 
 export interface FireFilter<Entity> {
     equal(value: any): FireFilter<Entity>
@@ -28,4 +29,5 @@ export interface FieldCondition {
 export interface QueryState {
     conditions?: FieldCondition[]
     limit?: number
+    exclude?: string[]
 }

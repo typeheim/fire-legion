@@ -1,4 +1,3 @@
-import { firestore } from 'firebase/app'
 import { EntityManager } from './EntityManager'
 import { FireReplaySubject } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
@@ -7,15 +6,33 @@ import { EntityFilter, EntityMetadata, FilterFunction } from '../../index'
 
 import { FieldFilter } from './FieldFilter'
 import { QueryState } from '../Contracts/Query'
+// Firestore types
+import * as types from '@firebase/firestore-types'
+import QuerySnapshot = types.QuerySnapshot
+import DocumentChange = types.DocumentChange
+import DocumentSnapshot = types.DocumentSnapshot
+import QueryDocumentSnapshot = types.QueryDocumentSnapshot
 
 export class CollectionQuery<Entity> {
     protected queryState: QueryState = {
         conditions: [],
-        limit: -1
+        limit: -1,
+        exclude: []
     }
 
     constructor(protected collectionReference: CollectionReference, protected entityManager: EntityManager<Entity>, protected metadata: EntityMetadata) {}
 
+    exclude(id: string)
+    exclude(ids: string[])
+    exclude(ids: string[] | string) {
+        if (typeof ids == 'string') {
+            this.queryState.exclude.push(ids)
+        } else {
+            this.queryState.exclude = ids
+        }
+
+        return this
+    }
 
     filter(filterFunction: FilterFunction<Entity>) {
         let filter: EntityFilter<Entity> = {}
@@ -38,9 +55,15 @@ export class CollectionQuery<Entity> {
     get(): FireReplaySubject<Entity[]> {
         let subject = new FireReplaySubject<Entity[]>(1)
 
-        this.collectionReference.get(this.queryState).then((querySnapshot: firestore.QuerySnapshot) => {
+        this.collectionReference.get(this.queryState).then((querySnapshot: QuerySnapshot) => {
             let entities = []
-            querySnapshot.forEach((docSnapshot: firestore.DocumentSnapshot) => {
+            let docs
+            if (this.queryState.exclude) {
+                docs = querySnapshot.docs.filter(doc => !this.queryState.exclude.includes(doc.id))
+            } else {
+                docs = querySnapshot
+            }
+            docs.forEach((docSnapshot: DocumentSnapshot) => {
                 entities.push(this.entityManager.fromSnapshot(docSnapshot))
             })
             subject.next(entities)
@@ -53,9 +76,9 @@ export class CollectionQuery<Entity> {
     changesStream(): FireReplaySubject<ChangedEntities<Entity>> {
         let subject = new FireReplaySubject<ChangedEntities<Entity>>(1)
 
-        this.collectionReference.snapshot(this.queryState).subscribe((querySnapshot: firestore.QuerySnapshot) => {
+        this.collectionReference.snapshot(this.queryState).subscribe((querySnapshot: QuerySnapshot) => {
             let entityChanges = []
-            querySnapshot.docChanges().forEach((docSnapshot: firestore.DocumentChange) => {
+            querySnapshot.docChanges().forEach((docSnapshot: DocumentChange) => {
                 let entity = this.entityManager.fromSnapshot(docSnapshot.doc)
                 if (entity) {
                     entityChanges.push({
@@ -73,9 +96,10 @@ export class CollectionQuery<Entity> {
     dataStream(): FireReplaySubject<Entity[]> {
         let subject = new FireReplaySubject<Entity[]>(1)
 
-        this.collectionReference.snapshot(this.queryState).subscribe((querySnapshot: firestore.QuerySnapshot) => {
+        this.collectionReference.snapshot(this.queryState).subscribe((querySnapshot: QuerySnapshot) => {
             let entities = []
-            querySnapshot.forEach((docSnapshot: firestore.QueryDocumentSnapshot) => {
+
+            querySnapshot.forEach((docSnapshot: QueryDocumentSnapshot) => {
                 let entity = this.entityManager.fromSnapshot(docSnapshot)
                 if (entity) {
                     entities.push(entity)

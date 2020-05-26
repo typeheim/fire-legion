@@ -1,8 +1,9 @@
 import { FirestoreConnection } from './FirestoreConnection'
 import { FireReplaySubject } from '@typeheim/fire-rx'
-import * as types from '@firebase/firestore-types'
 import { DocReference } from './DocReference'
 import { QueryState } from '../Contracts/Query'
+// Firestore types
+import * as types from '@firebase/firestore-types'
 import QuerySnapshot = types.QuerySnapshot
 import Query = types.Query
 

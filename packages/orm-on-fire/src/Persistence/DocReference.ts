@@ -1,25 +1,28 @@
 import { FirestoreConnection } from './FirestoreConnection'
 import { FireReplaySubject } from '@typeheim/fire-rx'
-import { firestore } from 'firebase/app';
 import { OrmOnFire } from '../singletons'
+// Firestore types
+import * as types from '@firebase/firestore-types'
+import DocumentReference = types.DocumentReference
+import DocumentSnapshot = types.DocumentSnapshot
 
 export class DocReference {
-    protected _nativeRef: firestore.DocumentReference
+    protected _nativeRef: DocumentReference
 
     constructor(protected connection: FirestoreConnection, protected docPath?: string, protected collectionPath?: string) {}
 
-    static fromNativeRef(docRef: firestore.DocumentReference) {
+    static fromNativeRef(docRef: DocumentReference) {
         let doc = new DocReference(OrmOnFire)
         doc._nativeRef = docRef
 
         return doc
     }
 
-    get(): FireReplaySubject<firestore.DocumentSnapshot> {
-        let subject = new FireReplaySubject<firestore.DocumentSnapshot>()
+    get(): FireReplaySubject<DocumentSnapshot> {
+        let subject = new FireReplaySubject<DocumentSnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.nativeRef.get().then((snapshot: firestore.DocumentSnapshot) => {
+                this.nativeRef.get().then((snapshot: DocumentSnapshot) => {
                     subject.next(snapshot)
                     subject.complete()
                 })
@@ -72,11 +75,11 @@ export class DocReference {
         return subject
     }
 
-    snapshot(): FireReplaySubject<firestore.DocumentSnapshot> {
-        let subject = new FireReplaySubject<firestore.DocumentSnapshot>()
+    snapshot(): FireReplaySubject<DocumentSnapshot> {
+        let subject = new FireReplaySubject<DocumentSnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.nativeRef.onSnapshot((snapshot: firestore.DocumentSnapshot) => {
+                this.nativeRef.onSnapshot((snapshot: DocumentSnapshot) => {
                     subject.next(snapshot)
                 })
             }

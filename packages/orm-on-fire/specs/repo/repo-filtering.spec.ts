@@ -101,14 +101,27 @@ describe('Repo', () => {
         done()
     })
 
-    it('can limit with filter', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.greaterThen(15)).limit(2).get()
+    it('can exclude ids', async (done) => {
+        let toys = await Repo.of(Toy).all().exclude(['redCar', 'copter']).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(2)
 
-        expect(toys[0].id).toEqual('redCar')
-        expect(toys[1].id).toEqual('bear')
+        expect(toys[0].id).toEqual('bear')
+        expect(toys[1].id).toEqual('blueCar')
+
+        done()
+    })
+
+    it('can exclude single id', async (done) => {
+        let toys = await Repo.of(Toy).all().exclude('redCar').get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(3)
+
+        expect(toys[0].id).toEqual('bear')
+        expect(toys[1].id).toEqual('blueCar')
+        expect(toys[2].id).toEqual('copter')
 
         done()
     })

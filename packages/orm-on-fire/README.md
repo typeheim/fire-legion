@@ -1,42 +1,51 @@
 # ORM On Fire
 Firestore ORM
 
-Sample:
+Easy entity declaration
 ```typescript
-import { Entity, Collection, CollectionRef, ID, Field, Repo } from '@typeheim/orm-on-fire'
+import { Agregate, Entity, Collection, CollectionRef, ID, Field } from '@typeheim/orm-on-fire'
 
-
-@Entity()
+@Agregate()
 export class User {
-    @ID()
-    id : string
+    @ID() id: string
 
-    @Field()    
-    firstName: string
+    @Field() firstName: string
 
-    @Field()
-    lastName: string
+    @Field() lastName: string
 
-    @Collection()
-    files: Collection<UserFile>
+    @Field() status: string
+
+    @CollectionRef(UserFile) files: Collection<UserFile>
 }
-@Entity({collection: 'user-files'})
+
+@Entity({ collection: 'user-files' })
 export class UserFile {
-    @ID()
-    id : string
+    @ID() id: string
 
     @Field()
     name: string
 }
+```
+
+Simple data fetching 
+```typescript
+import { Collection } from '@typeheim/orm-on-fire'
 
 // with promise-like interface
-let markus = await Repo.of(User).one('markus').get()
+let markus = await Collection.of(User).one('markus').get()
 
 // with Rx interface
-Repo.of(User).one('tom').get().subscribe((tom: User) => {
+Collection.of(User).one('tom').get().subscribe((tom: User) => {
     tom.files.forEach((file: UserFile) => {
         // some cool stuff
     })
 }) 
+```
 
+Powerful filtering
+```typescript
+import { Repo } from '@typeheim/orm-on-fire'
+const Users = Collection.of(User)
+
+let activeUsers = await Users.all().filter(user => user.status.equal('active')).get()
 ```

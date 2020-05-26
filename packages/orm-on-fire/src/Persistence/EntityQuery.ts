@@ -1,4 +1,7 @@
-import { firestore } from 'firebase/app';
+// Firestore types
+import * as types from '@firebase/firestore-types'
+import DocumentSnapshot = types.DocumentSnapshot
+
 import { FireReplaySubject } from '@typeheim/fire-rx'
 import { EntityManager } from './EntityManager'
 import { DocReference } from './DocReference'
@@ -9,7 +12,7 @@ export class EntityQuery<Entity> {
     get(): FireReplaySubject<Entity> {
         let subject = new FireReplaySubject<Entity>(1)
 
-        this.docReference.get().subscribe((docSnapshot: firestore.DocumentSnapshot) => {
+        this.docReference.get().subscribe((docSnapshot: DocumentSnapshot) => {
             subject.next(this.entityBuilder.fromSnapshot(docSnapshot))
             subject.complete()
         })
@@ -20,7 +23,7 @@ export class EntityQuery<Entity> {
     stream(): FireReplaySubject<Entity> {
         let subject = new FireReplaySubject<Entity>(1)
 
-        this.docReference.snapshot().subscribe((docSnapshot: firestore.DocumentSnapshot) => {
+        this.docReference.snapshot().subscribe((docSnapshot: DocumentSnapshot) => {
             subject.next(this.entityBuilder.fromSnapshot(docSnapshot))
         })
 
