@@ -1,27 +1,21 @@
 import { FireReplaySubject } from '@typeheim/fire-rx'
 import { CollectionReference } from './CollectionReference'
 import { DocReference } from './DocReference'
-import { firestore } from 'firebase';
+
+import * as FirestoreTypes from '@firebase/firestore-types'
+import Firestore = FirestoreTypes.FirebaseFirestore
+
 
 export class FirestoreConnection {
-    /**
-     * @type {firestore.Firestore}
-     */
-    protected _driver
+    protected _driver: Firestore
     protected _isInitializedSubject = new FireReplaySubject<boolean>(1)
 
-    /**
-     * @param {firestore.Firestore} driver
-     */
-    set driver(driver) {
+    set driver(driver: Firestore) {
         this._driver = driver
         this.isInitialized.next(true)
     }
 
-    /**
-     * @return {firestore.Firestore}
-     */
-    get driver() {
+    get driver(): Firestore {
         return this._driver
     }
 

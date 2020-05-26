@@ -1,17 +1,20 @@
 import { FirestoreConnection } from './FirestoreConnection'
 import { FireReplaySubject } from '@typeheim/fire-rx'
-import { firestore } from 'firebase/app';
+import * as types from '@firebase/firestore-types'
 import { DocReference } from './DocReference'
-
+import { QueryState } from '../Contracts/Query'
+import QuerySnapshot = types.QuerySnapshot
+import Query = types.Query
 
 export class CollectionReference {
     constructor(protected connection: FirestoreConnection, protected collectionPath: string) {}
 
-    get(): FireReplaySubject<firestore.QuerySnapshot> {
-        let subject = new FireReplaySubject<firestore.QuerySnapshot>()
+    get(queryState?: QueryState): FireReplaySubject<QuerySnapshot> {
+        let subject = new FireReplaySubject<QuerySnapshot>()
+
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.connection.driver.collection(this.collectionPath).get().then((snapshot: firestore.QuerySnapshot) => {
+                this.buildQuery(queryState).get().then((snapshot: QuerySnapshot) => {
                     subject.next(snapshot)
                     subject.complete()
                 })
@@ -21,17 +24,36 @@ export class CollectionReference {
         return subject
     }
 
-    snapshot(): FireReplaySubject<firestore.QuerySnapshot> {
-        let subject = new FireReplaySubject<firestore.QuerySnapshot>()
+    snapshot(queryState?: QueryState): FireReplaySubject<QuerySnapshot> {
+        let subject = new FireReplaySubject<QuerySnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.connection.driver.collection(this.collectionPath).onSnapshot(snapshot => {
+                this.buildQuery(queryState).onSnapshot(snapshot => {
                     subject.next(snapshot)
                 })
             }
         })
 
         return subject
+    }
+
+    protected buildQuery(queryState?: QueryState): Query {
+        let collection = this.connection.driver.collection(this.collectionPath)
+        let query: any = collection
+        if (queryState) {
+            if (queryState.conditions?.length > 0) {
+                queryState.conditions.forEach(condition => {
+                    query = query.where(condition.fieldName, condition.operator, condition.compareValue)
+                })
+            }
+
+            if (queryState.limit > 0) {
+                query = query.limit(queryState.limit)
+            }
+
+        }
+
+        return query
     }
 
     doc(docPath?: string) {

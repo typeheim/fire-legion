@@ -1,6 +1,6 @@
 import * as FirebaseAdmin from 'firebase-admin'
 import { Repo } from '../../src/singletons'
-import { SpecKit, Dog, Toy  } from '../spek-kit'
+import { Dog, SpecKit, Toy } from '../spek-kit'
 
 
 describe('Repo', () => {
@@ -80,6 +80,17 @@ describe('Repo', () => {
 
         expect(toysCount).toEqual(2)
 
+        done()
+    })
+
+    it('can filter sub-collections', async (done) => {
+        let boomer = await Repo.of(Dog).one('boomer').get()
+
+        let filteredToys = await boomer.toys.filter(toy => toy.type.equal('bone')).get()
+        expect(filteredToys).not.toBeNull()
+
+        expect(filteredToys.length).toEqual(1)
+        expect(filteredToys[0].type).toEqual('bone')
 
         done()
     })
@@ -122,8 +133,8 @@ describe('Repo', () => {
         scope.fixtures['lex'] = lex
 
         let toysCollection = Firestore.collection('dog').doc('boomer').collection('toys')
-        await toysCollection.doc('bone').set({type: 'bone'})
-        await toysCollection.doc('ball').set({type: 'ball'})
+        await toysCollection.doc('bone').set({ type: 'bone' })
+        await toysCollection.doc('ball').set({ type: 'ball' })
     }))
 
 

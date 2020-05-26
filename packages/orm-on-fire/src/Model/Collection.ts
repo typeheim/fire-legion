@@ -1,12 +1,23 @@
 import { GenericRepository } from './GenericRepository'
 import { FireReplaySubject } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
+import { EntityQuery } from '../Persistence/EntityQuery'
+import { FilterFunction } from '../Contracts'
+import { CollectionQuery } from '../Persistence/CollectionQuery'
 
 export class Collection<Entity> {
     constructor(protected repository: GenericRepository<Entity>) {}
 
+    one(id: string): EntityQuery<Entity> {
+        return this.repository.one(id)
+    }
+
     get(): FireReplaySubject<Entity[]> {
         return this.repository.all().get()
+    }
+
+    filter(filterFunction: FilterFunction<Entity>): CollectionQuery<Entity> {
+        return this.repository.all().filter(filterFunction)
     }
 
     changesStream(): FireReplaySubject<ChangedEntities<Entity>> {
@@ -27,7 +38,7 @@ export class Collection<Entity> {
         return subject
     }
 
-    delete() {
+    clean() {
         let subject = new FireReplaySubject(1)
 
         this.get().subscribe((entities: Entity[]) => {

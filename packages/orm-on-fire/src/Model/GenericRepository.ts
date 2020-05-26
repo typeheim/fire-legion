@@ -31,7 +31,7 @@ export class GenericRepository<Entity extends Model> {
     }
 
     public all(): CollectionQuery<Entity> {
-        return new CollectionQuery<Entity>(this.collectionReference, this.entityManager)
+        return new CollectionQuery<Entity>(this.collectionReference, this.entityManager, this.metadata)
     }
 
     public save(entity: Entity): FireReplaySubject<void> {
