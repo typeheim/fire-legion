@@ -28,6 +28,7 @@
     "./node_modules/**",
     "node_modules",
     "specs",
+    "**/specs/**",
     "**/*spec.ts",
     "**/*/dev-server.ts"
   ]
