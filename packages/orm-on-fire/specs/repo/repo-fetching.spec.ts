@@ -1,6 +1,7 @@
 import * as FirebaseAdmin from 'firebase-admin'
 import { Repo } from '../../src/singletons'
-import { Dog, SpecKit, Toy } from '../spek-kit'
+import { Dog, Owner, SpecKit, Toy } from '../spek-kit'
+import { Reference } from '../../src/Model'
 
 
 describe('Repo', () => {
@@ -24,7 +25,8 @@ describe('Repo', () => {
             expect(boomer).not.toBeNull()
             expect(boomer.name).toEqual(boomerFixture.name)
             expect(boomer.age).toEqual(boomerFixture.age)
-            expect(boomer.owner).toBeUndefined()
+            expect(boomer.owner).not.toBeNull()
+            expect(boomer.owner).toBeInstanceOf(Reference)
 
             done()
         })
@@ -48,6 +50,22 @@ describe('Repo', () => {
 
         done()
     })
+
+    it('can link entities', async (done) => {
+        let boomer = await Repo.of(Dog).one('boomer').get()
+        let ben = await Repo.of(Owner).one('ben').get()
+
+        await boomer.owner.link(ben)
+
+        let boomerWithOwner = await Repo.of(Dog).one('boomer').get()
+        let owner = await boomerWithOwner.owner.get()
+
+        expect(owner).not.toBeNull()
+        expect(owner.name).toEqual(scope.fixtures.ben.name)
+
+        done()
+    })
+
 
     it('can get all async', async (done) => {
         let dogs = await Repo.of(Dog).all().get()

@@ -1,12 +1,24 @@
 {
-  "name": "@typeheim/fire-rx",
-  "version": "0.0.0-beta.8",
-  "description": "Firebase authentication library",
+  "name": "@typeheim/fire-legion",
+  "version": "0.0.0-beta.11",
+  "description": "Fire Legion",
   "keywords": [
     "fire-legion",
+    "orm-on-fire",
+    "firestore",
+    "firebase",
+    "orm",
+    "odm",
+    "ddd",
+    "repository",
+    "entity",
+    "model",
     "fire-rx",
     "rxjs",
     "promise",
+    "collections",
+    "typescript",
+    "ts",
     "web",
     "front-end",
     "framework",
@@ -19,7 +31,7 @@
     "email": "dima@kolodko.pro",
     "url": "https://github.com/prowwid"
   },
-  "homepage": "https://github.com/typeheim/fire-legion#readme",
+  "homepage": "https://github.com/typeheim/fire-legion",
   "bugs": {
     "url": "https://github.com/typeheim/fire-legion/issues"
   },
@@ -27,6 +39,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "dependencies": {
-    "rxjs": "^6.5.5"
+    "@typeheim/fire-rx": "^0.0.0-beta.8",
+    "@typeheim/orm-on-fire": "^0.0.0-beta.11"
   }
 }

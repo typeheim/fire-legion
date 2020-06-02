@@ -28,16 +28,17 @@ export class EntityManager<Entity> {
         const fields = this.metadata.fields
         entity['id'] = docSnapshot.id
 
+        this.attachOrmMetadataToEntity(entity, docSnapshot.ref)
+        this.attachSubCollectionsToEntity(entity, docSnapshot.ref)
+        this.attachRefsToEntity(entity)
+
         for (let field in data) {
             if (this.metadata.docRefs[field]) {
-                entity[field] = new Reference(this.metadata.docRefs[field].entity, DocReference.fromNativeRef(data[field]))
+                entity[field].___attachDockRef(DocReference.fromNativeRef(data[field]))
             } else {
                 entity[field] = data[field]
             }
         }
-
-        this.attachOrmMetadataToEntity(entity, docSnapshot.ref)
-        this.attachSubCollectionsToEntity(entity, docSnapshot.ref)
 
         if (!entity['toJSON']) {
             //@todo need to add support for passing additional properties
@@ -50,6 +51,11 @@ export class EntityManager<Entity> {
                 })
                 return JSON.stringify(jsonData)
             }
+        }
+
+        if(typeof entity.init === 'function') {
+            // @todo handle promises
+            entity.init()
         }
 
         return entity
@@ -74,6 +80,14 @@ export class EntityManager<Entity> {
         })
     }
 
+    protected attachRefsToEntity(entity: Entity) {
+        let docRefs = this.metadata.docRefs
+
+        for (let fieldName in docRefs) {
+            entity[fieldName] = new Reference(docRefs[fieldName].entity, entity)
+        }
+    }
+
     protected createRepositoryForSubEntity<Entity>(entity: EntityType<Entity>, docReference: DocumentReference) {
         const metadata = Metadata.entity(entity).get()
         if (metadata.repository) {
@@ -93,6 +107,15 @@ export class EntityManager<Entity> {
                 dataToSave[field.name] = entity[field.name]
             }
         })
+        const docRefs = this.metadata.docRefs
+
+        for (let fieldName in docRefs) {
+            let docRef = entity[fieldName].___docReference
+            if (docRef) {
+                dataToSave[fieldName] = docRef.nativeRef
+            }
+        }
+
         return dataToSave
     }
 
@@ -100,6 +123,7 @@ export class EntityManager<Entity> {
         let persistenceManager = new DocPersistenceManager(docReference)
         entity['__ormOnFire'] = {
             repository: this.repository,
+            docRef: DocReference.fromNativeRef(docReference),
             save: (): FireReplaySubject<boolean> => {
                 return persistenceManager.update(this.extractDataFromEntity(entity))
             },
@@ -114,6 +138,7 @@ export class EntityManager<Entity> {
         let docInitializer = new DocInitializer(entity, this)
         entity['__ormOnFire'] = {
             repository: this.repository,
+            docRef: null,
             save: (): FireReplaySubject<boolean> => {
                 return docInitializer.addTo(collectionRef)
             },

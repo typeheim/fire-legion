@@ -1,6 +1,7 @@
 import * as FirebaseAdmin from 'firebase-admin'
 import { Repo } from '../../src/singletons'
 import { Car, Engine, SpecKit } from '../spek-kit'
+import { remove, save } from '../..'
 
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()
@@ -34,6 +35,18 @@ describe('Repo', () => {
         done()
     })
 
+    it('can remove docs by operator', async (done) => {
+        let tesla = await Repo.of(Car).new()
+
+        let result = remove(tesla)
+        expect(result).not.toBeNull()
+
+        let snapshot = await FirebaseAdmin.firestore().collection('car').doc('tesla').get()
+        expect(snapshot.exists).toBeFalsy()
+
+        done()
+    })
+
     it('can create new doc', async (done) => {
         const repo = Repo.of(Car)
         let car = await repo.new()
@@ -57,6 +70,16 @@ describe('Repo', () => {
         const repo = Repo.of(Car)
         let car = new Car()
         await repo.save(car)
+
+        let snapshotOfNew = await FirebaseAdmin.firestore().collection('car').doc(car.id).get()
+        expect(snapshotOfNew.exists).toBeTruthy()
+
+        done()
+    })
+
+    it('can save plain entity with operator', async (done) => {
+        let car = new Car()
+        await save(car)
 
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('car').doc(car.id).get()
         expect(snapshotOfNew.exists).toBeTruthy()

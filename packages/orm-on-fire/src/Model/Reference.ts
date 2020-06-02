@@ -3,11 +3,20 @@ import { Metadata, Repo } from '../singletons'
 import { EntityQuery } from '../Persistence/EntityQuery'
 import { FireReplaySubject } from '@typeheim/fire-rx'
 import { DocReference } from '../Persistence/DocReference'
+import { Model } from '../Contracts'
+import { save } from '../operators'
 
 export class Reference<Entity> {
     protected _entityBuilder: EntityManager<Entity>
+    protected docRef: DocReference
 
-    constructor(protected entityConstructor, protected docRef: DocReference) {}
+    constructor(protected entityConstructor, protected owner) {}
+
+    link(reference: Entity | Model): FireReplaySubject<void> {
+        // @ts-ignore
+        this.docRef = reference?.__ormOnFire?.docRef
+        return save(this.owner)
+    }
 
     get(): FireReplaySubject<Entity> {
         return new EntityQuery<Entity>(this.docRef, this.entityBuilder).get()
@@ -24,4 +33,11 @@ export class Reference<Entity> {
         return this._entityBuilder
     }
 
+    ___attachDockRef(docRef: DocReference) {
+        this.docRef = docRef
+    }
+
+    get ___docReference() {
+        return this.docRef
+    }
 }
