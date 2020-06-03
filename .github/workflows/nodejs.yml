@@ -26,7 +26,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
       env: # Or as an environment variable
         FIRE_ACCESS: ${{ secrets.FIRE_ACCESS }}
-    - run: 'echo "FIRE_ACCESS" > firestore.key.json'
+    - run: echo "$FIRE_ACCESS" > firestore.key.json
     - run: npm install -g yarn
     - run: yarn install
     - run: npx lerna bootstrap
