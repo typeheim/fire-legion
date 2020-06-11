@@ -3,7 +3,7 @@ import { EntityMetadata } from '../Contracts/EntityMetadata'
 import { EntityManager } from '../Persistence/EntityManager'
 import { Model } from '../Contracts/Model'
 import { CollectionQuery } from '../Persistence/CollectionQuery'
-import { FireReplaySubject } from '@typeheim/fire-rx'
+import { StatefulSubject } from '@typeheim/fire-rx'
 import { CollectionReference } from '../Persistence/CollectionReference'
 
 export class GenericRepository<Entity extends Model> {
@@ -11,12 +11,12 @@ export class GenericRepository<Entity extends Model> {
 
     constructor(protected metadata: EntityMetadata, protected entityConstructor, protected collectionReference: CollectionReference) {}
 
-    public new(id?: string): FireReplaySubject<Entity> {
+    public new(id?: string): StatefulSubject<Entity> {
         let entity = this.entityManager.createEntity(this.collectionReference)
         if (entity) {
             entity.id = id
         }
-        let subject = new FireReplaySubject<Entity>(1)
+        let subject = new StatefulSubject<Entity>(1)
 
         this.save(entity).subscribe(result => {
             subject.next(entity)
@@ -34,14 +34,14 @@ export class GenericRepository<Entity extends Model> {
         return new CollectionQuery<Entity>(this.collectionReference, this.entityManager, this.metadata)
     }
 
-    public save(entity: Entity): FireReplaySubject<void> {
+    public save(entity: Entity): StatefulSubject<void> {
         if (!entity['__ormOnFire']) {
             this.entityManager.attachMetadataToNewEntity(entity, this.collectionReference)
         }
         return entity.__ormOnFire.save()
     }
 
-    public remove(entity: Entity): FireReplaySubject<void> {
+    public remove(entity: Entity): StatefulSubject<void> {
         if (!entity['__ormOnFire']) {
             // @todo add exception to indicate new entity being deleted
         }

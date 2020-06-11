@@ -1,4 +1,4 @@
-import { FireReplaySubject } from '@typeheim/fire-rx'
+import { StatefulSubject } from '@typeheim/fire-rx'
 import { CollectionReference } from './CollectionReference'
 import { DocReference } from './DocReference'
 
@@ -10,7 +10,7 @@ export class FirestoreConnection {
      * @type {Firestore}
      */
     protected _driver: Firestore
-    protected _isInitializedSubject = new FireReplaySubject<boolean>(1)
+    protected _isInitializedSubject = new StatefulSubject<boolean>(1)
 
     set driver(driver) {
         this._driver = driver

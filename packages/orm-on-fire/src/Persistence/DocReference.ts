@@ -1,5 +1,5 @@
 import { FirestoreConnection } from './FirestoreConnection'
-import { FireReplaySubject } from '@typeheim/fire-rx'
+import { StatefulSubject } from '@typeheim/fire-rx'
 import { OrmOnFire } from '../singletons'
 // Firestore types
 import * as types from '@firebase/firestore-types'
@@ -18,8 +18,8 @@ export class DocReference {
         return doc
     }
 
-    get(): FireReplaySubject<DocumentSnapshot> {
-        let subject = new FireReplaySubject<DocumentSnapshot>()
+    get(): StatefulSubject<DocumentSnapshot> {
+        let subject = new StatefulSubject<DocumentSnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.nativeRef.get().then((snapshot: DocumentSnapshot) => {
@@ -33,8 +33,8 @@ export class DocReference {
         return subject
     }
 
-    set(data): FireReplaySubject<boolean> {
-        let subject = new FireReplaySubject<boolean>()
+    set(data): StatefulSubject<boolean> {
+        let subject = new StatefulSubject<boolean>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.nativeRef.set(data).then(() => {
@@ -47,8 +47,8 @@ export class DocReference {
         return subject
     }
 
-    update(data): FireReplaySubject<boolean> {
-        let subject = new FireReplaySubject<boolean>()
+    update(data): StatefulSubject<boolean> {
+        let subject = new StatefulSubject<boolean>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.nativeRef.update(data).then(() => {
@@ -61,8 +61,8 @@ export class DocReference {
         return subject
     }
 
-    delete(): FireReplaySubject<boolean> {
-        let subject = new FireReplaySubject<boolean>()
+    delete(): StatefulSubject<boolean> {
+        let subject = new StatefulSubject<boolean>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.nativeRef.delete().then(() => {
@@ -75,8 +75,8 @@ export class DocReference {
         return subject
     }
 
-    snapshot(): FireReplaySubject<DocumentSnapshot> {
-        let subject = new FireReplaySubject<DocumentSnapshot>()
+    snapshot(): StatefulSubject<DocumentSnapshot> {
+        let subject = new StatefulSubject<DocumentSnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.nativeRef.onSnapshot((snapshot: DocumentSnapshot) => {

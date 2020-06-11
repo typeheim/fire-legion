@@ -1,5 +1,5 @@
 import { GenericRepository } from './GenericRepository'
-import { FireReplaySubject } from '@typeheim/fire-rx'
+import { StatefulSubject } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
 import { EntityQuery } from '../Persistence/EntityQuery'
 import { EntityType, FilterFunction } from '../Contracts'
@@ -21,47 +21,50 @@ export class Collection<Entity> {
         return this.repository.one(id)
     }
 
-    new(id?: string): FireReplaySubject<Entity> {
+    new(id?: string): StatefulSubject<Entity> {
         return this.repository.new(id)
     }
 
-    save(entity: Entity): FireReplaySubject<void> {
+    save(entity: Entity): StatefulSubject<void> {
         return this.repository.save(entity)
     }
 
-    get changes(): FireReplaySubject<ChangedEntities<Entity>> {
-        return this.repository.all().changesStream()
+    remove(entity: Entity): StatefulSubject<void> {
+        return this.repository.remove(entity)
     }
 
-    /**
-     * @deprecated
-     */
-    get(): FireReplaySubject<Entity[]> {
-        return this.repository.all().get()
-    }
-
-    /**
-     * @deprecated
-     */
     filter(filterFunction: FilterFunction<Entity>): CollectionQuery<Entity> {
         return this.repository.all().filter(filterFunction)
     }
 
-    /**
-     * @deprecated
-     */
-    changesStream(): FireReplaySubject<ChangedEntities<Entity>> {
-        return this.repository.all().changesStream()
+    get changes(): StatefulSubject<ChangedEntities<Entity>> {
+        return this.repository.all().changes()
     }
 
     /**
      * @deprecated
      */
-    dataStream(): FireReplaySubject<Entity[]> {
-        return this.repository.all().dataStream()
+    get(): StatefulSubject<Entity[]> {
+        return this.repository.all().get()
     }
 
-    forEach(callback: ((value: Entity) => void)): FireReplaySubject<Entity[]> {
+
+
+    /**
+     * @deprecated in favor of {changes}
+     */
+    changesStream(): StatefulSubject<ChangedEntities<Entity>> {
+        return this.repository.all().changes()
+    }
+
+    /**
+     * @deprecated
+     */
+    dataStream(): StatefulSubject<Entity[]> {
+        return this.repository.all().stream()
+    }
+
+    forEach(callback: ((value: Entity) => void)): StatefulSubject<Entity[]> {
         let subject = this.all().get()
         subject.subscribe(entities => {
             entities.forEach(entity => {
@@ -72,7 +75,7 @@ export class Collection<Entity> {
     }
 
     clean() {
-        let subject = new FireReplaySubject(1)
+        let subject = new StatefulSubject(1)
 
         this.all().get().subscribe((entities: Entity[]) => {
             entities.forEach(entity => {

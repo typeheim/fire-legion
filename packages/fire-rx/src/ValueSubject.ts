@@ -1,8 +1,21 @@
-import { ReplaySubject } from 'rxjs'
+import {
+    BehaviorSubject,
+    Subscribable,
+} from 'rxjs'
 
-export class FireReplaySubject<T> extends ReplaySubject<T> implements PromiseLike<T> {
+export class ValueSubject<T> extends BehaviorSubject<T> {
     protected _internalPromise: Promise<T>
     protected promiseSubscription
+    protected _emitsCount = 0
+
+    get emitsCount() {
+        return this._emitsCount
+    }
+
+    next(value: T): void {
+        this._emitsCount++
+        super.next(value)
+    }
 
     get internalPromise(): Promise<T> {
         if (!this._internalPromise) {
@@ -32,6 +45,21 @@ export class FireReplaySubject<T> extends ReplaySubject<T> implements PromiseLik
         }
 
         return this._internalPromise
+    }
+
+    /**
+     * Subscribe to a destruction event to complete and unsubscribe as it
+     * emits
+     */
+    until(destroyEvent: Subscribable<T>) {
+        destroyEvent.subscribe(() => {
+            this._internalPromise = null
+            this.promiseSubscription?.unsubscribe()
+            this.promiseSubscription = null
+            this.complete()
+            this.unsubscribe()
+        })
+        return this
     }
 
     /**

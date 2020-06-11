@@ -2,10 +2,12 @@ import * as FirebaseAdmin from 'firebase-admin'
 import { Repo } from '../../src/singletons'
 import { Dog, Owner, SpecKit, Toy } from '../spek-kit'
 import { Reference } from '../../src/Model'
+import { DestroyEvent } from '@typeheim/fire-rx'
 
 
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()
+    const destroyEvent = new DestroyEvent()
 
     it('can get one document async', async (done) => {
         let boomer = await Repo.of(Dog).one('boomer').get()
@@ -26,7 +28,7 @@ describe('Repo', () => {
             expect(boomer.name).toEqual(boomerFixture.name)
             expect(boomer.age).toEqual(boomerFixture.age)
             expect(boomer.owner).not.toBeNull()
-            expect(boomer.owner).toBeInstanceOf(Reference)
+            expect(boomer.owner.constructor.name).toEqual('Reference')
 
             done()
         })

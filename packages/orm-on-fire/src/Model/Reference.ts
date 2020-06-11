@@ -1,7 +1,7 @@
 import { EntityManager } from '../Persistence/EntityManager'
 import { Metadata, Repo } from '../singletons'
 import { EntityQuery } from '../Persistence/EntityQuery'
-import { FireReplaySubject } from '@typeheim/fire-rx'
+import { StatefulSubject } from '@typeheim/fire-rx'
 import { DocReference } from '../Persistence/DocReference'
 import { Model } from '../Contracts'
 import { save } from '../operators'
@@ -12,17 +12,17 @@ export class Reference<Entity> {
 
     constructor(protected entityConstructor, protected owner) {}
 
-    link(reference: Entity | Model): FireReplaySubject<void> {
+    link(reference: Entity | Model): StatefulSubject<void> {
         // @ts-ignore
         this.docRef = reference?.__ormOnFire?.docRef
         return save(this.owner)
     }
 
-    get(): FireReplaySubject<Entity> {
+    get(): StatefulSubject<Entity> {
         return new EntityQuery<Entity>(this.docRef, this.entityBuilder).get()
     }
 
-    stream(): FireReplaySubject<Entity> {
+    stream(): StatefulSubject<Entity> {
         return new EntityQuery<Entity>(this.docRef, this.entityBuilder).stream()
     }
 

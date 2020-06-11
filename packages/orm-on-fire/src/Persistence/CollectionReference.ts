@@ -1,5 +1,5 @@
 import { FirestoreConnection } from './FirestoreConnection'
-import { FireReplaySubject } from '@typeheim/fire-rx'
+import { StatefulSubject } from '@typeheim/fire-rx'
 import { DocReference } from './DocReference'
 import { QueryState } from '../Contracts/Query'
 // Firestore types
@@ -10,8 +10,8 @@ import Query = types.Query
 export class CollectionReference {
     constructor(protected connection: FirestoreConnection, protected collectionPath: string) {}
 
-    get(queryState?: QueryState): FireReplaySubject<QuerySnapshot> {
-        let subject = new FireReplaySubject<QuerySnapshot>()
+    get(queryState?: QueryState): StatefulSubject<QuerySnapshot> {
+        let subject = new StatefulSubject<QuerySnapshot>()
 
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
@@ -25,8 +25,8 @@ export class CollectionReference {
         return subject
     }
 
-    snapshot(queryState?: QueryState): FireReplaySubject<QuerySnapshot> {
-        let subject = new FireReplaySubject<QuerySnapshot>()
+    snapshot(queryState?: QueryState): StatefulSubject<QuerySnapshot> {
+        let subject = new StatefulSubject<QuerySnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.buildQuery(queryState).onSnapshot(snapshot => {

@@ -1,10 +1,10 @@
 import { Model } from './Contracts/Model'
-import { Repo } from './singletons'
+import { Collection } from './Model'
 
 export function save(model: Model | any) {
-    return Repo.of(model.constructor).save(model)
+    return Collection.of(model.constructor).save(model)
 }
 
 export function remove(model: Model | any) {
-    return Repo.of(model.constructor).remove(model)
+    return Collection.of(model.constructor).remove(model)
 }

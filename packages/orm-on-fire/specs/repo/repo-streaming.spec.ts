@@ -1,13 +1,15 @@
 import * as FirebaseAdmin from 'firebase-admin'
 import { Repo } from '../../src/singletons'
 import { SpecKit, User } from '../spek-kit'
+import { DestroyEvent } from '@typeheim/fire-rx'
 
 
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()
+    const destroyEvent = new DestroyEvent()
 
     it('can stream data', async (done) => {
-        await Repo.of(User).all().dataStream().subscribe(users => {
+        await Repo.of(User).all().stream().until(destroyEvent).subscribe(users => {
             expect(users.length).toEqual(2)
 
             done()
@@ -15,7 +17,7 @@ describe('Repo', () => {
     })
 
     it('can stream changes', async (done) => {
-        await Repo.of(User).all().changesStream().subscribe(users => {
+        await Repo.of(User).all().changes().until(destroyEvent).subscribe(users => {
             expect(users.length).toEqual(2)
 
             done()
@@ -38,6 +40,7 @@ describe('Repo', () => {
         scope.fixtures['alex'] = alex
     }))
 
+    afterAll(() => { destroyEvent.emit() })
 })
 
 

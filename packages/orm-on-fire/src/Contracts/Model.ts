@@ -1,5 +1,5 @@
 import { GenericRepository } from '../Model/GenericRepository'
-import { FireReplaySubject } from '@typeheim/fire-rx'
+import { StatefulSubject } from '@typeheim/fire-rx'
 import { DocReference } from '../Persistence/DocReference'
 
 export interface Model {
@@ -16,7 +16,7 @@ interface OrmMetadata {
 
     docRef?: DocReference
 
-    save?(): FireReplaySubject<void>
+    save?(): StatefulSubject<void>
 
-    remove?(): FireReplaySubject<void>
+    remove?(): StatefulSubject<void>
 }

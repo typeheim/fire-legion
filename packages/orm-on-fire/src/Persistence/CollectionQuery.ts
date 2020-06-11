@@ -1,5 +1,5 @@
 import { EntityManager } from './EntityManager'
-import { FireReplaySubject } from '@typeheim/fire-rx'
+import { StatefulSubject } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
 import { CollectionReference } from './CollectionReference'
 import { EntityFilter, EntityMetadata, FilterFunction } from '../../index'
@@ -52,8 +52,8 @@ export class CollectionQuery<Entity> {
         return this
     }
 
-    get(): FireReplaySubject<Entity[]> {
-        let subject = new FireReplaySubject<Entity[]>(1)
+    get(): StatefulSubject<Entity[]> {
+        let subject = new StatefulSubject<Entity[]>(1)
 
         this.collectionReference.get(this.queryState).then((querySnapshot: QuerySnapshot) => {
             let entities = []
@@ -73,8 +73,15 @@ export class CollectionQuery<Entity> {
         return subject
     }
 
-    changesStream(): FireReplaySubject<ChangedEntities<Entity>> {
-        let subject = new FireReplaySubject<ChangedEntities<Entity>>(1)
+    /**
+     * @deprecated in favour of {changes}
+     */
+    changesStream(): StatefulSubject<ChangedEntities<Entity>> {
+        return this.changes()
+    }
+
+    changes(): StatefulSubject<ChangedEntities<Entity>> {
+        let subject = new StatefulSubject<ChangedEntities<Entity>>(1)
 
         this.collectionReference.snapshot(this.queryState).subscribe((querySnapshot: QuerySnapshot) => {
             let entityChanges = []
@@ -93,8 +100,15 @@ export class CollectionQuery<Entity> {
         return subject
     }
 
-    dataStream(): FireReplaySubject<Entity[]> {
-        let subject = new FireReplaySubject<Entity[]>(1)
+    /**
+     * @deprecated in favour of {stream}
+     */
+    dataStream(): StatefulSubject<Entity[]> {
+        return this.stream()
+    }
+
+    stream(): StatefulSubject<Entity[]> {
+        let subject = new StatefulSubject<Entity[]>(1)
 
         this.collectionReference.snapshot(this.queryState).subscribe((querySnapshot: QuerySnapshot) => {
             let entities = []

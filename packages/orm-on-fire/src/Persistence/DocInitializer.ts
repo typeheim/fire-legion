@@ -1,16 +1,16 @@
 import { EntityManager } from './EntityManager'
-import { FireReplaySubject } from '@typeheim/fire-rx'
+import { StatefulSubject } from '@typeheim/fire-rx'
 import { CollectionReference } from './CollectionReference'
 
 // @todo try decoupling from direct use of entity manager
 export class DocInitializer<Entity> {
     constructor(protected entity: Entity, protected entityManager: EntityManager<Entity>) {}
 
-    addTo(collectionRef: CollectionReference): FireReplaySubject<boolean> {
+    addTo(collectionRef: CollectionReference): StatefulSubject<boolean> {
         let data = this.entityManager.extractDataFromEntity(this.entity)
         let documentReference = this.entity['id'] ? collectionRef.doc(this.entity['id']) : collectionRef.doc()
 
-        let subject = new FireReplaySubject<boolean>(1)
+        let subject = new StatefulSubject<boolean>(1)
         documentReference.set(data).then(() => {
             this.entity['id'] = documentReference.nativeRef.id
             this.entityManager.attachOrmMetadataToEntity(this.entity, documentReference.nativeRef)

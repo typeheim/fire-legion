@@ -1,20 +1,23 @@
 // Firestore types
 import * as types from '@firebase/firestore-types'
-import DocumentSnapshot = types.DocumentSnapshot
-import DocumentReference = types.DocumentReference
 
 import { EntityMetadata } from '../Contracts/EntityMetadata'
 
 import { GenericRepository } from '../Model/GenericRepository'
-import { Metadata, OrmOnFire } from '../singletons'
+import {
+    Metadata,
+    OrmOnFire,
+} from '../singletons'
 import { Collection } from '../Model/Collection'
 import { EntityType } from '../Contracts/EntityType'
 import { Reference } from '../Model/Reference'
 import { DocInitializer } from './DocInitializer'
 import { DocPersistenceManager } from './DocPersistenceManager'
-import { FireReplaySubject } from '@typeheim/fire-rx'
+import { StatefulSubject } from '@typeheim/fire-rx'
 import { CollectionReference } from './CollectionReference'
 import { DocReference } from './DocReference'
+import DocumentSnapshot = types.DocumentSnapshot
+import DocumentReference = types.DocumentReference
 
 export class EntityManager<Entity> {
     constructor(protected metadata: EntityMetadata, protected repository: GenericRepository<Entity>, protected entityConstructor) {}
@@ -53,7 +56,7 @@ export class EntityManager<Entity> {
             }
         }
 
-        if(typeof entity.init === 'function') {
+        if (typeof entity.init === 'function') {
             // @todo handle promises
             entity.init()
         }
@@ -124,13 +127,12 @@ export class EntityManager<Entity> {
         entity['__ormOnFire'] = {
             repository: this.repository,
             docRef: DocReference.fromNativeRef(docReference),
-            save: (): FireReplaySubject<boolean> => {
+            save: (): StatefulSubject<boolean> => {
                 return persistenceManager.update(this.extractDataFromEntity(entity))
             },
-            remove: (): FireReplaySubject<boolean> => {
+            remove: (): StatefulSubject<boolean> => {
                 return persistenceManager.remove()
-            }
-
+            },
         }
     }
 
@@ -139,13 +141,13 @@ export class EntityManager<Entity> {
         entity['__ormOnFire'] = {
             repository: this.repository,
             docRef: null,
-            save: (): FireReplaySubject<boolean> => {
+            save: (): StatefulSubject<boolean> => {
                 return docInitializer.addTo(collectionRef)
             },
             remove: () => {
                 // @todo throw exceptions
                 return false
-            }
+            },
         }
     }
 }
