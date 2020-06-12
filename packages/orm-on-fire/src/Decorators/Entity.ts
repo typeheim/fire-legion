@@ -1,6 +1,7 @@
 import 'reflect-metadata'
 import { Metadata } from '../singletons'
 import { EntityMetadata, PropertyMetadata } from '../Contracts/EntityMetadata'
+import { Reference } from '../Model/Reference'
 
 export function Aggregate(metadata?: EntityMetadata): ClassDecorator {
     return Entity(metadata)
@@ -39,12 +40,18 @@ export function ID(): PropertyDecorator {
     }
 }
 
-
 export function DocRef(entity: any): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         Metadata.entity(target).addDocRef({
             fieldName: propertyKey.toString(),
             entity: entity
+        })
+
+        Object.defineProperty(target, propertyKey, {
+            value: new Reference(entity, target),
+            writable: true,
+            enumerable: true,
+            configurable: true
         })
     }
 }

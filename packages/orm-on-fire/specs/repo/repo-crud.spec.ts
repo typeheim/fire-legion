@@ -1,6 +1,10 @@
 import * as FirebaseAdmin from 'firebase-admin'
 import { Repo } from '../../src/singletons'
-import { Car, Engine, SpecKit } from '../spek-kit'
+import {
+    Car,
+    Engine,
+    SpecKit,
+} from '../spek-kit'
 import { remove, save } from '../..'
 
 describe('Repo', () => {
@@ -69,6 +73,8 @@ describe('Repo', () => {
     it('can save plain entity', async (done) => {
         const repo = Repo.of(Car)
         let car = new Car()
+        expect(car.engine).not.toBeNull()
+
         await repo.save(car)
 
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('car').doc(car.id).get()
@@ -76,6 +82,7 @@ describe('Repo', () => {
 
         done()
     })
+
 
     it('can save plain entity with operator', async (done) => {
         let car = new Car()

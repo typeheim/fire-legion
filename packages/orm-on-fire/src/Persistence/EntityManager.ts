@@ -113,7 +113,7 @@ export class EntityManager<Entity> {
         const docRefs = this.metadata.docRefs
 
         for (let fieldName in docRefs) {
-            let docRef = entity[fieldName].___docReference
+            let docRef = entity[fieldName]?.___docReference
             if (docRef) {
                 dataToSave[fieldName] = docRef.nativeRef
             }

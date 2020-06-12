@@ -66,6 +66,16 @@ export class User {
 //
 
 @Entity()
+export class Engine {
+    @ID()
+    id: string
+
+    @Field()
+    fuelType: string = 'gas'
+}
+
+
+@Entity()
 export class Car {
     @ID()
     id: string
@@ -75,13 +85,8 @@ export class Car {
 
     @Field()
     mileage: number
+
+    @DocRef(Engine)
+    engine: number
 }
 
-@Entity()
-export class Engine {
-    @ID()
-    id: string
-
-    @Field()
-    fuelType: string = 'gas'
-}
