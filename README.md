@@ -1,63 +1,181 @@
 # Fire Legion
-DDD framework to work with Firebase
+DDD framework for Firebase and RxJS based applications.
 
-Includes:
-* ORM On Fire - Firestore ORM
-* FireRx - RxJS extension that provides async capabilities
-
-## ORM On Fire
-
-Delightful Firestore ORM
-
+# Getting Started
+Install package
+```shell
+yarn add @typeheim/fire-legion
+//or
+npm -i @typeheim/fire-legion
+```
+Setup ORMOnFire driver:
 ```typescript
-import { Aggregate, Entity, Collection, CollectionRef, ID, Field } from '@typeheim/orm-on-fire'
+// sample for Node.JS
+FirebaseAdmin.initializeApp({
+    credential: FirebaseAdmin.credential.cert('my.key.json'),
+    databaseURL: "https://my-db.firebaseio.com",
+})
+OrmOnFire.driver = FirebaseAdmin.firestore()
+```
 
-@Aggregate()
+# ORMOnFire
+ORMOnFire is a powerful Firestore ORM. 
+
+##Easy entity declaration
+```typescript
+import { Agregate, Entity, Collection, CollectionRef, ID, Field, TextField } from '@typeheim/orm-on-fire'
+
+@Agregate()
 export class User {
     @ID() id: string
 
-    @Field() firstName: string
+    @TextField() firstName: string
 
-    @Field() lastName: string
+    @TextField() lastName: string
 
     @Field() status: string
 
     @CollectionRef(UserFile) files: Collection<UserFile>
 }
 
-@Entity({collection: 'user-files'})
+@Entity({ collection: 'user-files' })
 export class UserFile {
     @ID() id: string
 
-    @Field()
-    name: string
+    @Field() name: string
 }
+```
 
-const Users = Collection.of(User)
+##Simple data fetching 
+```typescript
+import { Collection } from '@typeheim/orm-on-fire'
 
 // with promise-like interface
-let markus = await Users.one('markus').get()
+let markus = await Collection.of(User).one('markus').get()
 
 // with Rx interface
-Users.one('tom').get().subscribe((tom: User) => {
+Collection.of(User).one('tom').get().subscribe((tom: User) => {
     tom.files.forEach((file: UserFile) => {
         // some cool stuff
     })
 }) 
 ```
 
-## FireRx
-
-Want Rx.JS to work as promises? Here you go: 
-
+##Powerful filtering
 ```typescript
-import { FireReplaySubject } from '@typeheim/fire-rx'
+import { Collection } from '@typeheim/orm-on-fire'
+const Users = Collection.of(User)
 
-let subject = new FireReplaySubject<number>(1)
+// regular Firesotre operators
+let activeUsers = await Users.all().filter(user => user.status.equal('active')).get()
+
+// text index queries 
+let usersStartsWithAlex = await Users.all().filter(user => user.firstName.startsWith('Alex')).get() // case-sensitive search
+let usersEndsWithLex = await Users.all().filter(user => user.firstName.endsWith('lex')).get() // case-sensitive search
+
+// text matching(behaves like startsWith but case-insensitive)
+let usersMatchResult = await Users.all().filter(user => user.firstName.match('aLex')).get() // case-insensitive search
+```
+
+#FireRx 
+
+RxJS on steroids. Makes subjects behave like promises to support async/await and adds new useful classes. 
+
+##StatefulSubject
+StatefulSubject extends ReplaySubject from RxJS and adds Promise interface so that you can use async/await operators on it.
+```typescript
+import { StatefulSubject } from '@typeheim/fire-rx'
+
+let subject = new StatefulSubject<number>(1)
 
 subject.next(5)
-let value = await subject // 5
+await subject // returns 5
 
 subject.next(6)
-let nextValue = await subject // 6
+await subject // returns 6
+```
+
+##ValueSubject
+ValueSubject extends BehaviorSubject from RxJS and adds Promise interface so that you can use async/await operators on it.
+```typescript
+import { ValueSubject } from '@typeheim/fire-rx'
+
+let subject = new ValueSubject<number>(0)
+
+subject.next(5)
+await subject // returns 5
+
+subject.next(6)
+await subject // returns 6
+```
+
+##ReactivePromise
+ReactivePromise acts as a regular Promise but additionally let you use `subscribe` and `pipe` methods. ReactivePromise, like 
+StatefulSubject, buffers resolved value and can distribute it to multiple subscribers. 
+ReactivePromise is memory-safe and unsubscribe subscriptions once it's resolved. 
+
+```typescript
+import { ReactivePromise } from '@typeheim/fire-rx'
+
+let promise = new ReactivePromise<number>()
+
+promise.resolve(5)
+await promise // returns 5
+promise.subscribe(value => console.log(value)) // returns 5 
+
+//..............
+
+let promise = new ReactivePromise<number>((resolve, reject) => {
+    resolve(5)
+})
+
+promise.subscribe(value => console.log(value)) // returns 5 
+```
+
+##SubscriptionsHub
+SubscriptionsHub represents a hub of subscriptions that let you massively unsubscribe them at once. It might be useful to trigger
+at object destruction to free resources
+```typescript
+import { SubscriptionsHub, StatefulSubject } from '@typeheim/fire-rx'
+
+class Sample {
+    protected hub: SubscriptionsHub = new SubscriptionsHub()
+    
+    doSomething() {
+        let subject = new StatefulSubject<number>()
+        
+        this.hub.add(subject.subscribe(data => console.log(data)))
+    }
+    
+    onDestroy() {
+        this.hub.unsubscribe()
+    }
+}
+```
+
+##DestroyEvent
+DestroyEvent is a special reactive class that servers as a destruction notifier and can be used in pair with Fire subjects or
+with SubscriptionsHub
+
+```typescript
+import { DestroyEvent, SubscriptionsHub, StatefulSubject } from '@typeheim/fire-rx'
+
+class Sample {
+    protected destroyEvent: DestroyEvent = new DestroyEvent()
+    protected hub: SubscriptionsHub = new SubscriptionsHub(this.destroyEvent)
+
+    doSomething() {
+        let subject = new StatefulSubject<number>()
+
+        this.hub.add(subject.subscribe(data => console.log(data)))
+
+        let anotherSubject = new StatefulSubject<number>()
+        
+        subject.until(this.destroyEvent).subscribe(data => console.log(data))
+    }
+
+    onDestroy() {
+        this.destroyEvent.emit()
+    }
+}
 ```
