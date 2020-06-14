@@ -1,7 +1,19 @@
-import { FieldCondition, FireFilter, QueryState } from '../Contracts/Query'
+import {
+    FieldCondition,
+    FireFilter,
+    QueryState,
+} from '../Contracts/Query'
 
 export class FieldFilter<Entity> implements FireFilter<Entity> {
-    constructor(protected queryState: QueryState, protected readonly fieldName) {}
+    protected textIndexName: string
+    protected textMatchIndexName: string
+    protected textReverseIndexName: string
+
+    constructor(protected queryState: QueryState, protected readonly fieldName) {
+        this.textIndexName = `__idx__text__${fieldName}`
+        this.textMatchIndexName = `__idx__text-match__${fieldName}`
+        this.textReverseIndexName = `__idx__text__reverse__${fieldName}`
+    }
 
     equal(value: any): FieldFilter<Entity> {
         this.addCondition('==', value)
@@ -51,11 +63,33 @@ export class FieldFilter<Entity> implements FireFilter<Entity> {
         return this
     }
 
-    protected addCondition(operator: string, value: any) {
+    match(clue: string): FieldFilter<Entity> {
+        this.addCondition('array-contains', clue.toLowerCase(), this.textMatchIndexName)
+
+        return this
+    }
+
+    startsWith(clue: string): FieldFilter<Entity> {
+        this.addCondition('array-contains', clue, this.textIndexName)
+
+        return this
+    }
+
+    endsWith(clue: string): FieldFilter<Entity> {
+        this.addCondition('array-contains', this.reverseSearchTerm(clue), this.textReverseIndexName)
+
+        return this
+    }
+
+    protected reverseSearchTerm(text: string) {
+        return text.split('').reverse().join('')
+    }
+
+    protected addCondition(operator: string, value: any, indexName?: string) {
         this.queryState.conditions.push({
-            fieldName: this.fieldName,
+            fieldName: indexName ?? this.fieldName,
             operator: operator,
-            compareValue: value
+            compareValue: value,
         } as FieldCondition)
     }
 }

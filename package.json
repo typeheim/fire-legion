@@ -1,13 +1,17 @@
 {
   "name": "@typeheim/monorepo",
-  "version": "0.0.0-beta.14",
+  "version": "0.0.0-beta.15",
   "description": "DDD framework to work with Firebase",
   "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "run:build": "node prepare-build.js && tsc",
     "run:bootstrap": "npx lerna bootstrap",
     "run:spec": "jest",
-    "run:publish": "yarn run:spec && yarn run:build && npx lerna publish",
+    "run:publish": "yarn run:spec && yarn run:build && npx lerna publish && yarn clean:build",
     "serve:orm": "npx ts-node packages\\orm-on-fire\\dev-server.ts",
     "clean:build": "node prepare-build.js"
   },

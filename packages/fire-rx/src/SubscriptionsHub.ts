@@ -1,8 +1,8 @@
-import { SubscriptionLike } from 'rxjs'
 import { DestroyEvent } from '@typeheim/fire-rx'
+import { Unsubscribable } from 'rxjs/src/internal/types'
 
 export class SubscriptionsHub {
-    protected subscriptions: SubscriptionLike[] = []
+    protected subscriptions: Unsubscribable[] = []
 
     constructor(destroyEvent?: DestroyEvent) {
         if (destroyEvent) {
@@ -10,11 +10,15 @@ export class SubscriptionsHub {
         }
     }
 
+    get count() {
+        return this.subscriptions.length
+    }
+
     collectUntil(destroyEvent: DestroyEvent) {
         destroyEvent.subscribe(() => { this.unsubscribe() })
     }
 
-    add(subscription: SubscriptionLike) {
+    add(subscription: Unsubscribable) {
         this.subscriptions.push(subscription)
     }
 
@@ -22,5 +26,6 @@ export class SubscriptionsHub {
         this.subscriptions.forEach(subscription => {
             subscription.unsubscribe()
         })
+        this.subscriptions = []
     }
 }

@@ -10,6 +10,7 @@ export interface EntityMetadata {
 
 export interface PropertyMetadata {
     name: string
+    isText?: boolean
 }
 
 export interface CollectionRefMetadata {

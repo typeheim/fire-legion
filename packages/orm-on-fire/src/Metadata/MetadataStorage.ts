@@ -1,4 +1,9 @@
-import { CollectionRefMetadata, DocRefMetadata, EntityMetadata, PropertyMetadata } from '../Contracts/EntityMetadata'
+import {
+    CollectionRefMetadata,
+    DocRefMetadata,
+    EntityMetadata,
+    PropertyMetadata,
+} from '../Contracts/EntityMetadata'
 
 export class MetadataStorage {
     protected metadataMap: MetadataMap = {}
@@ -27,7 +32,7 @@ export class MetadataStorage {
 
             get: () => {
                 return this.get(target.prototype.constructor.name)
-            }
+            },
         }
     }
 
@@ -72,7 +77,7 @@ export class MetadataStorage {
                 repository: null,
                 fields: [],
                 collectionRefs: [],
-                docRefs: {}
+                docRefs: {},
             }
         }
     }

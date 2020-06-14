@@ -33,15 +33,13 @@ export class EntityManager<Entity> {
 
         this.attachOrmMetadataToEntity(entity, docSnapshot.ref)
         this.attachSubCollectionsToEntity(entity, docSnapshot.ref)
-        this.attachRefsToEntity(entity)
+        this.attachRefsToEntity(entity, data)
 
-        for (let field in data) {
-            if (this.metadata.docRefs[field]) {
-                entity[field].___attachDockRef(DocReference.fromNativeRef(data[field]))
-            } else {
-                entity[field] = data[field]
+        this.metadata.fields.forEach(field => {
+            if (data[field.name] !== undefined) {
+                entity[field.name] = data[field.name]
             }
-        }
+        })
 
         if (!entity['toJSON']) {
             //@todo need to add support for passing additional properties
@@ -64,6 +62,26 @@ export class EntityManager<Entity> {
         return entity
     }
 
+    protected createTextIndex(text: string): string[] {
+        const arrName = []
+        let curName = ''
+        text.split('').forEach(letter => {
+            curName += letter
+            arrName.push(curName)
+        })
+        return arrName
+    }
+
+    protected createReverseTextIndex(text: string): string[] {
+        const arrName = []
+        let curName = ''
+        text.split('').reverse().forEach(letter => {
+            curName += letter
+            arrName.push(curName)
+        })
+        return arrName
+    }
+
     createEntity(collectionRef: CollectionReference) {
         let entity = new this.entityConstructor()
         this.attachMetadataToNewEntity(entity, collectionRef)
@@ -83,11 +101,14 @@ export class EntityManager<Entity> {
         })
     }
 
-    protected attachRefsToEntity(entity: Entity) {
+    protected attachRefsToEntity(entity: Entity, data) {
         let docRefs = this.metadata.docRefs
 
         for (let fieldName in docRefs) {
             entity[fieldName] = new Reference(docRefs[fieldName].entity, entity)
+            if (data[fieldName] !== undefined) {
+                entity[fieldName].___attachDockRef(DocReference.fromNativeRef(data[fieldName]))
+            }
         }
     }
 
@@ -108,6 +129,11 @@ export class EntityManager<Entity> {
         fields.forEach(field => {
             if (entity[field.name] !== undefined) {
                 dataToSave[field.name] = entity[field.name]
+                if (field.isText) {
+                    dataToSave[`__idx__text__${field.name}`] = this.createTextIndex(entity[field.name])
+                    dataToSave[`__idx__text__reverse__${field.name}`] = this.createReverseTextIndex(entity[field.name])
+                    dataToSave[`__idx__text-match__${field.name}`] = this.createTextIndex(entity[field.name]).map(word => word.toLowerCase())
+                }
             }
         })
         const docRefs = this.metadata.docRefs

@@ -15,7 +15,7 @@ export class EntityQuery<Entity> {
         this.docReference.get().subscribe((docSnapshot: DocumentSnapshot) => {
             subject.next(this.entityBuilder.fromSnapshot(docSnapshot))
             subject.complete()
-        })
+        }, error => subject.error(error))
 
         return subject
     }
@@ -25,7 +25,7 @@ export class EntityQuery<Entity> {
 
         this.docReference.snapshot().subscribe((docSnapshot: DocumentSnapshot) => {
             subject.next(this.entityBuilder.fromSnapshot(docSnapshot))
-        })
+        }, error => subject.error(error))
 
         return subject
     }

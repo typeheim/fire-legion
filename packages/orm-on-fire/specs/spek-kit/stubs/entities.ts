@@ -1,4 +1,12 @@
-import { Aggregate, CollectionRef, DocRef, Entity, Field, ID } from '../../../src/Decorators/Entity'
+import {
+    Aggregate,
+    CollectionRef,
+    DocRef,
+    Entity,
+    Field,
+    ID,
+    TextField,
+} from '../../../src/Decorators/Entity'
 import { Reference } from '../../../src/Model/Reference'
 import { Collection } from '../../../src/Model/Collection'
 
@@ -8,7 +16,7 @@ import { Collection } from '../../../src/Model/Collection'
 //
 
 @Entity({
-    collection: 'toys'
+    collection: 'toys',
 })
 export class Toy {
     @ID()
@@ -19,7 +27,7 @@ export class Toy {
 }
 
 @Entity({
-    collection: 'owners'
+    collection: 'owners',
 })
 export class Owner {
     @ID()
@@ -88,5 +96,18 @@ export class Car {
 
     @DocRef(Engine)
     engine: number
+}
+
+//
+// Books collections
+//
+
+@Entity()
+export class Book {
+    @ID()
+    id: string
+
+    @TextField()
+    name: string
 }
 

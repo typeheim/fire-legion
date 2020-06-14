@@ -1,5 +1,8 @@
 import { FirestoreConnection } from './FirestoreConnection'
-import { StatefulSubject } from '@typeheim/fire-rx'
+import {
+    ReactivePromise,
+    StatefulSubject,
+} from '@typeheim/fire-rx'
 import { DocReference } from './DocReference'
 import { QueryState } from '../Contracts/Query'
 // Firestore types
@@ -10,19 +13,18 @@ import Query = types.Query
 export class CollectionReference {
     constructor(protected connection: FirestoreConnection, protected collectionPath: string) {}
 
-    get(queryState?: QueryState): StatefulSubject<QuerySnapshot> {
-        let subject = new StatefulSubject<QuerySnapshot>()
+    get(queryState?: QueryState): ReactivePromise<QuerySnapshot> {
+        let promise = new ReactivePromise<QuerySnapshot>()
 
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.buildQuery(queryState).get().then((snapshot: QuerySnapshot) => {
-                    subject.next(snapshot)
-                    subject.complete()
+                    promise.resolve(snapshot)
                 })
             }
         })
 
-        return subject
+        return promise
     }
 
     snapshot(queryState?: QueryState): StatefulSubject<QuerySnapshot> {

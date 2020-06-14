@@ -16,6 +16,8 @@ export class DocInitializer<Entity> {
             this.entityManager.attachOrmMetadataToEntity(this.entity, documentReference.nativeRef)
             subject.next(true)
             subject.complete()
+        }).catch(error => {
+            subject.error(error)
         })
 
         return subject

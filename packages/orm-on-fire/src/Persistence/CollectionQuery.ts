@@ -55,7 +55,7 @@ export class CollectionQuery<Entity> {
     get(): StatefulSubject<Entity[]> {
         let subject = new StatefulSubject<Entity[]>(1)
 
-        this.collectionReference.get(this.queryState).then((querySnapshot: QuerySnapshot) => {
+        this.collectionReference.get(this.queryState).subscribe((querySnapshot: QuerySnapshot) => {
             let entities = []
             let docs
             if (this.queryState.exclude) {
@@ -68,7 +68,7 @@ export class CollectionQuery<Entity> {
             })
             subject.next(entities)
             subject.complete()
-        })
+        }, error => subject.error(error))
 
         return subject
     }
@@ -95,7 +95,7 @@ export class CollectionQuery<Entity> {
                 }
             })
             subject.next(new ChangedEntities<Entity>(entityChanges))
-        })
+        }, error => subject.error(error))
 
         return subject
     }
@@ -120,7 +120,7 @@ export class CollectionQuery<Entity> {
                 }
             })
             subject.next(entities)
-        })
+        }, error => subject.error(error))
 
         return subject
     }

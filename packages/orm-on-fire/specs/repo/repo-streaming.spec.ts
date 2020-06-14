@@ -1,8 +1,10 @@
 import * as FirebaseAdmin from 'firebase-admin'
 import { Repo } from '../../src/singletons'
-import { SpecKit, User } from '../spek-kit'
+import {
+    SpecKit,
+    User,
+} from '../spek-kit'
 import { DestroyEvent } from '@typeheim/fire-rx'
-
 
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()
@@ -28,13 +30,13 @@ describe('Repo', () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let ben = {
-            name: 'Ben'
+            name: 'Ben',
         }
         await Firestore.collection('user').doc('ben').set(ben)
         scope.fixtures['ben'] = ben
 
         let alex = {
-            name: 'Alex'
+            name: 'Alex',
         }
         await Firestore.collection('user').doc('alex').set(alex)
         scope.fixtures['alex'] = alex

@@ -1,5 +1,8 @@
 import { FirestoreConnection } from './FirestoreConnection'
-import { StatefulSubject } from '@typeheim/fire-rx'
+import {
+    ReactivePromise,
+    StatefulSubject,
+} from '@typeheim/fire-rx'
 import { OrmOnFire } from '../singletons'
 // Firestore types
 import * as types from '@firebase/firestore-types'
@@ -27,52 +30,48 @@ export class DocReference {
                     subject.complete()
                 })
             }
-
-        })
+        }).catch(error => subject.error(error))
 
         return subject
     }
 
-    set(data): StatefulSubject<boolean> {
-        let subject = new StatefulSubject<boolean>()
+    set(data): ReactivePromise<boolean> {
+        let promise = new ReactivePromise<boolean>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.nativeRef.set(data).then(() => {
-                    subject.next()
-                    subject.complete()
+                    promise.resolve()
                 })
             }
-        })
+        }).catch(error => promise.reject(error))
 
-        return subject
+        return promise
     }
 
-    update(data): StatefulSubject<boolean> {
-        let subject = new StatefulSubject<boolean>()
+    update(data): ReactivePromise<boolean> {
+        let promise = new ReactivePromise<boolean>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.nativeRef.update(data).then(() => {
-                    subject.next(true)
-                    subject.complete()
+                    promise.resolve(true)
                 })
             }
-        })
+        }).catch(error => promise.reject(error))
 
-        return subject
+        return promise
     }
 
-    delete(): StatefulSubject<boolean> {
-        let subject = new StatefulSubject<boolean>()
+    delete(): ReactivePromise<boolean> {
+        let promise = new ReactivePromise<boolean>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.nativeRef.delete().then(() => {
-                    subject.next(true)
-                    subject.complete()
+                    promise.resolve(true)
                 })
             }
-        })
+        }).catch(error => promise.reject(error))
 
-        return subject
+        return promise
     }
 
     snapshot(): StatefulSubject<DocumentSnapshot> {
@@ -83,7 +82,7 @@ export class DocReference {
                     subject.next(snapshot)
                 })
             }
-        })
+        }).catch(error => subject.error(error))
 
         return subject
     }

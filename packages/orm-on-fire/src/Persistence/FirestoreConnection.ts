@@ -1,4 +1,4 @@
-import { StatefulSubject } from '@typeheim/fire-rx'
+import { ReactivePromise } from '@typeheim/fire-rx'
 import { CollectionReference } from './CollectionReference'
 import { DocReference } from './DocReference'
 
@@ -10,11 +10,11 @@ export class FirestoreConnection {
      * @type {Firestore}
      */
     protected _driver: Firestore
-    protected _isInitializedSubject = new StatefulSubject<boolean>(1)
+    protected _isInitializedSubject = new ReactivePromise<boolean>()
 
     set driver(driver) {
         this._driver = driver
-        this.isInitialized.next(true)
+        this.isInitialized.resolve(true)
     }
 
     get driver() {
