@@ -1,7 +1,5 @@
-import {
-    ReplaySubject,
-    Subscribable,
-} from 'rxjs'
+import { ReplaySubject } from 'rxjs'
+import { Subscribable } from './contracts'
 
 export class StatefulSubject<T> extends ReplaySubject<T> implements PromiseLike<T> {
     protected _internalPromise: Promise<T>

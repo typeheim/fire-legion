@@ -1,5 +1,5 @@
 import { DestroyEvent } from '@typeheim/fire-rx'
-import { Unsubscribable } from 'rxjs/src/internal/types'
+import { Unsubscribable } from './contracts'
 
 export class SubscriptionsHub {
     protected subscriptions: Unsubscribable[] = []

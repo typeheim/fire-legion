@@ -1,9 +1,6 @@
-import {
-    StatefulSubject,
-    SubscriptionsHub,
-} from '@typeheim/fire-rx'
-import { PartialObserver } from 'rxjs/src/internal/types'
-import { Subscription } from 'rxjs/src/internal/Subscription'
+import { StatefulSubject } from './StatefulSubject'
+import { SubscriptionsHub } from './SubscriptionsHub'
+import { PartialObserver, SubscriptionLike } from './contracts'
 
 export class ReactiveStream<T> extends StatefulSubject<T> {
     protected subHub = new SubscriptionsHub()
@@ -11,7 +8,7 @@ export class ReactiveStream<T> extends StatefulSubject<T> {
     // @ts-ignore
     subscribe(observerOrNext?: PartialObserver<T> | ((value: T) => void),
               error?: (error: any) => void,
-              complete?: () => void): Subscription {
+              complete?: () => void): SubscriptionLike {
         // @ts-ignore
         let sub = super.subscribe(observerOrNext, error, complete)
 

@@ -8,10 +8,10 @@
     "packages/*"
   ],
   "scripts": {
-    "run:build": "node prepare-build.js && tsc",
+    "run:build": "npx tsc",
     "run:bootstrap": "npx lerna bootstrap",
     "run:spec": "jest",
-    "run:publish": "yarn run:spec && yarn run:build && npx lerna publish && yarn clean:build",
+    "run:publish": "yarn clean:build && yarn install && yarn run:spec && yarn run:build && npx lerna publish && yarn clean:build && yarn install",
     "serve:orm": "npx ts-node packages\\orm-on-fire\\dev-server.ts",
     "clean:build": "node prepare-build.js"
   },

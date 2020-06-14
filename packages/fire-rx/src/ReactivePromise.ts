@@ -2,11 +2,8 @@ import {
     ReplaySubject,
     Subscribable,
 } from 'rxjs'
-import {
-    PartialObserver,
-    Unsubscribable,
-} from 'rxjs/src/internal/types'
-import { Subscription } from 'rxjs/src/internal/Subscription'
+
+import { SubscriptionLike, Unsubscribable, PartialObserver } from './contracts'
 import { SubscriptionsHub } from './SubscriptionsHub'
 
 export class ReactivePromise<T> implements Subscribable<T> {
@@ -90,7 +87,7 @@ export class ReactivePromise<T> implements Subscribable<T> {
     subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Unsubscribable
     subscribe(observerOrNext?: PartialObserver<T> | ((value: T) => void),
               error?: (error: any) => void,
-              complete?: () => void): Subscription {
+              complete?: () => void): SubscriptionLike {
         // @ts-ignore
         let sub = this.internalSubject.subscribe(observerOrNext, error, complete)
 
