@@ -21,7 +21,7 @@ OrmOnFire.driver = FirebaseAdmin.firestore()
 # ORMOnFire
 ORMOnFire is a powerful Firestore ORM. 
 
-##Easy entity declaration
+## Easy entity declaration
 ```typescript
 import { Agregate, Entity, Collection, CollectionRef, ID, Field, TextField } from '@typeheim/orm-on-fire'
 
@@ -46,7 +46,7 @@ export class UserFile {
 }
 ```
 
-##Simple data fetching 
+## Simple data fetching 
 ```typescript
 import { Collection } from '@typeheim/orm-on-fire'
 
@@ -61,7 +61,7 @@ Collection.of(User).one('tom').get().subscribe((tom: User) => {
 }) 
 ```
 
-##Powerful filtering
+## Powerful filtering
 ```typescript
 import { Collection } from '@typeheim/orm-on-fire'
 const Users = Collection.of(User)
@@ -77,11 +77,11 @@ let usersEndsWithLex = await Users.all().filter(user => user.firstName.endsWith(
 let usersMatchResult = await Users.all().filter(user => user.firstName.match('aLex')).get() // case-insensitive search
 ```
 
-#FireRx 
+# FireRx 
 
 RxJS on steroids. Makes subjects behave like promises to support async/await and adds new useful classes. 
 
-##StatefulSubject
+## StatefulSubject
 StatefulSubject extends ReplaySubject from RxJS and adds Promise interface so that you can use async/await operators on it.
 ```typescript
 import { StatefulSubject } from '@typeheim/fire-rx'
@@ -95,7 +95,7 @@ subject.next(6)
 await subject // returns 6
 ```
 
-##ValueSubject
+## ValueSubject
 ValueSubject extends BehaviorSubject from RxJS and adds Promise interface so that you can use async/await operators on it.
 ```typescript
 import { ValueSubject } from '@typeheim/fire-rx'
@@ -109,7 +109,7 @@ subject.next(6)
 await subject // returns 6
 ```
 
-##ReactivePromise
+## ReactivePromise
 ReactivePromise acts as a regular Promise but additionally let you use `subscribe` and `pipe` methods. ReactivePromise, like 
 StatefulSubject, buffers resolved value and can distribute it to multiple subscribers. 
 ReactivePromise is memory-safe and unsubscribe subscriptions once it's resolved. 
@@ -132,7 +132,7 @@ let promise = new ReactivePromise<number>((resolve, reject) => {
 promise.subscribe(value => console.log(value)) // returns 5 
 ```
 
-##SubscriptionsHub
+## SubscriptionsHub
 SubscriptionsHub represents a hub of subscriptions that let you massively unsubscribe them at once. It might be useful to trigger
 at object destruction to free resources
 ```typescript
@@ -153,7 +153,7 @@ class Sample {
 }
 ```
 
-##DestroyEvent
+## DestroyEvent
 DestroyEvent is a special reactive class that servers as a destruction notifier and can be used in pair with Fire subjects or
 with SubscriptionsHub
 

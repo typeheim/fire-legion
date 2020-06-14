@@ -1,7 +1,7 @@
 # ORMOnFire
 ORMOnFire is a powerful Firestore ORM. 
 
-##Easy entity declaration
+## Easy entity declaration
 ```typescript
 import { Agregate, Entity, Collection, CollectionRef, ID, Field, TextField } from '@typeheim/orm-on-fire'
 
@@ -26,7 +26,7 @@ export class UserFile {
 }
 ```
 
-##Simple data fetching 
+## Simple data fetching 
 ```typescript
 import { Collection } from '@typeheim/orm-on-fire'
 
@@ -41,7 +41,7 @@ Collection.of(User).one('tom').get().subscribe((tom: User) => {
 }) 
 ```
 
-##Powerful filtering
+## Powerful filtering
 ```typescript
 import { Collection } from '@typeheim/orm-on-fire'
 const Users = Collection.of(User)
