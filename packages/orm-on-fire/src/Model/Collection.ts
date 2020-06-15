@@ -1,8 +1,14 @@
 import { GenericRepository } from './GenericRepository'
-import { StatefulSubject } from '@typeheim/fire-rx'
+import {
+    ReactivePromise,
+    StatefulSubject,
+} from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
 import { EntityQuery } from '../Persistence/EntityQuery'
-import { EntityType, FilterFunction } from '../Contracts'
+import {
+    EntityType,
+    FilterFunction,
+} from '../Contracts'
 import { CollectionQuery } from '../Persistence/CollectionQuery'
 import { Repo } from '../singletons'
 
@@ -21,15 +27,15 @@ export class Collection<Entity> {
         return this.repository.one(id)
     }
 
-    new(id?: string): StatefulSubject<Entity> {
+    new(id?: string): ReactivePromise<Entity> {
         return this.repository.new(id)
     }
 
-    save(entity: Entity): StatefulSubject<void> {
+    save(entity: Entity): ReactivePromise<void> {
         return this.repository.save(entity)
     }
 
-    remove(entity: Entity): StatefulSubject<void> {
+    remove(entity: Entity): ReactivePromise<void> {
         return this.repository.remove(entity)
     }
 
@@ -39,29 +45,6 @@ export class Collection<Entity> {
 
     get changes(): StatefulSubject<ChangedEntities<Entity>> {
         return this.repository.all().changes()
-    }
-
-    /**
-     * @deprecated
-     */
-    get(): StatefulSubject<Entity[]> {
-        return this.repository.all().get()
-    }
-
-
-
-    /**
-     * @deprecated in favor of {changes}
-     */
-    changesStream(): StatefulSubject<ChangedEntities<Entity>> {
-        return this.repository.all().changes()
-    }
-
-    /**
-     * @deprecated
-     */
-    dataStream(): StatefulSubject<Entity[]> {
-        return this.repository.all().stream()
     }
 
     forEach(callback: ((value: Entity) => void)): StatefulSubject<Entity[]> {

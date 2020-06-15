@@ -22,7 +22,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "startsWith" using multiple terms', async (done) => {
-        let books = await Repo.of(Book).all().filter(toy => toy.name.startsWith('Game of')).get()
+        let books = await Repo.of(Book).all().filter(toy => toy.name.startsWith('gAme of')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(1)
@@ -43,24 +43,12 @@ describe('Repo', () => {
     })
 
     it('can filter by "endsWith" using multiple term', async (done) => {
-        let books = await Repo.of(Book).all().filter(toy => toy.name.endsWith('of Thrones')).get()
+        let books = await Repo.of(Book).all().filter(toy => toy.name.endsWith('of thrones')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(1)
 
         expect(books.filter(book => bookMatchFixture(book, scope.fixtures['got']))).not.toBeNull()
-
-        done()
-    })
-
-    it('can filter by "match" using mixed case', async (done) => {
-        let books = await Repo.of(Book).all().filter(toy => toy.name.match('gAmE')).get()
-
-        expect(books).not.toBeNull()
-        expect(books.length).toEqual(2)
-
-        expect(books.filter(book => bookMatchFixture(book, scope.fixtures['got']))).not.toBeNull()
-        expect(books.filter(book => bookMatchFixture(book, scope.fixtures['gc']))).not.toBeNull()
 
         done()
     })

@@ -1,5 +1,5 @@
 import { GenericRepository } from '../Model/GenericRepository'
-import { StatefulSubject } from '@typeheim/fire-rx'
+import { ReactivePromise } from '@typeheim/fire-rx'
 import { DocReference } from '../Persistence/DocReference'
 
 export interface Model {
@@ -16,7 +16,7 @@ interface OrmMetadata {
 
     docRef?: DocReference
 
-    save?(): StatefulSubject<void>
+    save?(): ReactivePromise<void>
 
-    remove?(): StatefulSubject<void>
+    remove?(): ReactivePromise<void>
 }

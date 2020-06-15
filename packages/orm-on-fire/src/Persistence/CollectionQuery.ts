@@ -2,7 +2,11 @@ import { EntityManager } from './EntityManager'
 import { StatefulSubject } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
 import { CollectionReference } from './CollectionReference'
-import { EntityFilter, EntityMetadata, FilterFunction } from '../../index'
+import {
+    EntityFilter,
+    EntityMetadata,
+    FilterFunction,
+} from '../../index'
 
 import { FieldFilter } from './FieldFilter'
 import { QueryState } from '../Contracts/Query'
@@ -17,7 +21,7 @@ export class CollectionQuery<Entity> {
     protected queryState: QueryState = {
         conditions: [],
         limit: -1,
-        exclude: []
+        exclude: [],
     }
 
     constructor(protected collectionReference: CollectionReference, protected entityManager: EntityManager<Entity>, protected metadata: EntityMetadata) {}
@@ -73,13 +77,6 @@ export class CollectionQuery<Entity> {
         return subject
     }
 
-    /**
-     * @deprecated in favour of {changes}
-     */
-    changesStream(): StatefulSubject<ChangedEntities<Entity>> {
-        return this.changes()
-    }
-
     changes(): StatefulSubject<ChangedEntities<Entity>> {
         let subject = new StatefulSubject<ChangedEntities<Entity>>(1)
 
@@ -90,7 +87,7 @@ export class CollectionQuery<Entity> {
                 if (entity) {
                     entityChanges.push({
                         type: docSnapshot.type,
-                        entity
+                        entity,
                     })
                 }
             })
@@ -98,13 +95,6 @@ export class CollectionQuery<Entity> {
         }, error => subject.error(error))
 
         return subject
-    }
-
-    /**
-     * @deprecated in favour of {stream}
-     */
-    dataStream(): StatefulSubject<Entity[]> {
-        return this.stream()
     }
 
     stream(): StatefulSubject<Entity[]> {

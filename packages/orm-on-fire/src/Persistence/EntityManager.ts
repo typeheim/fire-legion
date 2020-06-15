@@ -13,7 +13,7 @@ import { EntityType } from '../Contracts/EntityType'
 import { Reference } from '../Model/Reference'
 import { DocInitializer } from './DocInitializer'
 import { DocPersistenceManager } from './DocPersistenceManager'
-import { StatefulSubject } from '@typeheim/fire-rx'
+import { ReactivePromise } from '@typeheim/fire-rx'
 import { CollectionReference } from './CollectionReference'
 import { DocReference } from './DocReference'
 import DocumentSnapshot = types.DocumentSnapshot
@@ -66,7 +66,7 @@ export class EntityManager<Entity> {
         const arrName = []
         let curName = ''
         text.split('').forEach(letter => {
-            curName += letter
+            curName += letter.toLowerCase()
             arrName.push(curName)
         })
         return arrName
@@ -76,7 +76,7 @@ export class EntityManager<Entity> {
         const arrName = []
         let curName = ''
         text.split('').reverse().forEach(letter => {
-            curName += letter
+            curName += letter.toLowerCase()
             arrName.push(curName)
         })
         return arrName
@@ -132,7 +132,6 @@ export class EntityManager<Entity> {
                 if (field.isText) {
                     dataToSave[`__idx__text__${field.name}`] = this.createTextIndex(entity[field.name])
                     dataToSave[`__idx__text__reverse__${field.name}`] = this.createReverseTextIndex(entity[field.name])
-                    dataToSave[`__idx__text-match__${field.name}`] = this.createTextIndex(entity[field.name]).map(word => word.toLowerCase())
                 }
             }
         })
@@ -153,10 +152,10 @@ export class EntityManager<Entity> {
         entity['__ormOnFire'] = {
             repository: this.repository,
             docRef: DocReference.fromNativeRef(docReference),
-            save: (): StatefulSubject<boolean> => {
+            save: (): ReactivePromise<boolean> => {
                 return persistenceManager.update(this.extractDataFromEntity(entity))
             },
-            remove: (): StatefulSubject<boolean> => {
+            remove: (): ReactivePromise<boolean> => {
                 return persistenceManager.remove()
             },
         }
@@ -167,7 +166,7 @@ export class EntityManager<Entity> {
         entity['__ormOnFire'] = {
             repository: this.repository,
             docRef: null,
-            save: (): StatefulSubject<boolean> => {
+            save: (): ReactivePromise<boolean> => {
                 return docInitializer.addTo(collectionRef)
             },
             remove: () => {

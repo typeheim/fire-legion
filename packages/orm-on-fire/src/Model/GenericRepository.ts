@@ -3,7 +3,7 @@ import { EntityMetadata } from '../Contracts/EntityMetadata'
 import { EntityManager } from '../Persistence/EntityManager'
 import { Model } from '../Contracts/Model'
 import { CollectionQuery } from '../Persistence/CollectionQuery'
-import { StatefulSubject } from '@typeheim/fire-rx'
+import { ReactivePromise } from '@typeheim/fire-rx'
 import { CollectionReference } from '../Persistence/CollectionReference'
 
 export class GenericRepository<Entity extends Model> {
@@ -11,19 +11,18 @@ export class GenericRepository<Entity extends Model> {
 
     constructor(protected metadata: EntityMetadata, protected entityConstructor, protected collectionReference: CollectionReference) {}
 
-    public new(id?: string): StatefulSubject<Entity> {
+    public new(id?: string): ReactivePromise<Entity> {
         let entity = this.entityManager.createEntity(this.collectionReference)
         if (entity) {
             entity.id = id
         }
-        let subject = new StatefulSubject<Entity>(1)
+        let promise = new ReactivePromise<Entity>()
 
         this.save(entity).subscribe(result => {
-            subject.next(entity)
-            subject.complete()
+            promise.resolve(entity)
         })
 
-        return subject
+        return promise
     }
 
     public one(id: string): EntityQuery<Entity> {
@@ -34,14 +33,14 @@ export class GenericRepository<Entity extends Model> {
         return new CollectionQuery<Entity>(this.collectionReference, this.entityManager, this.metadata)
     }
 
-    public save(entity: Entity): StatefulSubject<void> {
+    public save(entity: Entity): ReactivePromise<void> {
         if (!entity['__ormOnFire']) {
             this.entityManager.attachMetadataToNewEntity(entity, this.collectionReference)
         }
         return entity.__ormOnFire.save()
     }
 
-    public remove(entity: Entity): StatefulSubject<void> {
+    public remove(entity: Entity): ReactivePromise<void> {
         if (!entity['__ormOnFire']) {
             // @todo add exception to indicate new entity being deleted
         }

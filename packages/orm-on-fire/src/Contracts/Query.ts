@@ -19,8 +19,6 @@ export interface FireFilter<Entity> {
 
     containAnyOf(list: any): FireFilter<Entity>
 
-    match(clue: string): FireFilter<Entity>
-
     startsWith(glue: string): FireFilter<Entity>
 
     endsWith(glue: string): FireFilter<Entity>

@@ -6,12 +6,10 @@ import {
 
 export class FieldFilter<Entity> implements FireFilter<Entity> {
     protected textIndexName: string
-    protected textMatchIndexName: string
     protected textReverseIndexName: string
 
     constructor(protected queryState: QueryState, protected readonly fieldName) {
         this.textIndexName = `__idx__text__${fieldName}`
-        this.textMatchIndexName = `__idx__text-match__${fieldName}`
         this.textReverseIndexName = `__idx__text__reverse__${fieldName}`
     }
 
@@ -63,20 +61,14 @@ export class FieldFilter<Entity> implements FireFilter<Entity> {
         return this
     }
 
-    match(clue: string): FieldFilter<Entity> {
-        this.addCondition('array-contains', clue.toLowerCase(), this.textMatchIndexName)
-
-        return this
-    }
-
     startsWith(clue: string): FieldFilter<Entity> {
-        this.addCondition('array-contains', clue, this.textIndexName)
+        this.addCondition('array-contains', clue.toLowerCase(), this.textIndexName)
 
         return this
     }
 
     endsWith(clue: string): FieldFilter<Entity> {
-        this.addCondition('array-contains', this.reverseSearchTerm(clue), this.textReverseIndexName)
+        this.addCondition('array-contains', this.reverseSearchTerm(clue.toLowerCase()), this.textReverseIndexName)
 
         return this
     }

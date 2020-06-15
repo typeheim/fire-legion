@@ -5,7 +5,7 @@ import {
     Entity,
     Field,
     ID,
-    TextField,
+    SearchField,
 } from '../../../src/Decorators/Entity'
 import { Reference } from '../../../src/Model/Reference'
 import { Collection } from '../../../src/Model/Collection'
@@ -107,7 +107,7 @@ export class Book {
     @ID()
     id: string
 
-    @TextField()
+    @SearchField()
     name: string
 }
 

@@ -30,7 +30,7 @@ export function Field(metadata?: PropertyMetadata): PropertyDecorator {
     }
 }
 
-export function TextField(metadata?: PropertyMetadata): PropertyDecorator {
+export function SearchField(metadata?: PropertyMetadata): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         if (metadata) {
             metadata.isText = true
