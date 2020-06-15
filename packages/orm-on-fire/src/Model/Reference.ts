@@ -1,7 +1,10 @@
 import { EntityManager } from '../Persistence/EntityManager'
 import { Metadata, Repo } from '../singletons'
 import { EntityQuery } from '../Persistence/EntityQuery'
-import { StatefulSubject } from '@typeheim/fire-rx'
+import {
+    ReactivePromise,
+    StatefulSubject,
+} from '@typeheim/fire-rx'
 import { DocReference } from '../Persistence/DocReference'
 import { Model } from '../Contracts'
 import { save } from '../operators'
@@ -12,7 +15,7 @@ export class Reference<Entity> {
 
     constructor(protected entityConstructor, protected owner) {}
 
-    link(reference: Entity | Model): StatefulSubject<void> {
+    link(reference: Entity | Model): ReactivePromise<void> {
         // @ts-ignore
         this.docRef = reference?.__ormOnFire?.docRef
         return save(this.owner)
