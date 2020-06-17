@@ -2,44 +2,46 @@ import {
     BehaviorSubject,
     Subscribable,
 } from 'rxjs'
+import { SubscriptionsHub } from './SubscriptionsHub'
 
 export class ValueSubject<T> extends BehaviorSubject<T> {
     protected _internalPromise: Promise<T>
-    protected promiseSubscription
     protected _emitsCount = 0
+    protected hub = new SubscriptionsHub()
 
     get emitsCount() {
         return this._emitsCount
     }
 
-    next(value: T): void {
+    next(value?: T): void {
         this._emitsCount++
         super.next(value)
     }
 
-    get internalPromise(): Promise<T> {
+    protected get internalPromise(): Promise<T> {
         if (!this._internalPromise) {
             // in order for promise to properly return values from subject, it's required to "resolve" each "next" value
             // and to keep behavior consistent, there's a storage variable "lastValue" that will be resolved on subject completion
             let lastValue = null
             this._internalPromise = new Promise<T>((resolve, reject) => {
-                this.promiseSubscription = this.subscribe((data) => {
-                    lastValue = data
+                this.subscribe({
+                    next: (data) => {
+                        lastValue = data
 
-                    // promise should return only one value and then being destroyed
-                    this._internalPromise = null
-                    this.promiseSubscription?.unsubscribe()
-                    resolve(data)
-                }, error => {
-                    // promise should return only one value and then being destroyed
-                    this._internalPromise = null
-                    this.promiseSubscription?.unsubscribe()
-                    reject(error)
-                }, () => {
-                    // promise should return only one value and then being destroyed
-                    this._internalPromise = null
-                    this.promiseSubscription?.unsubscribe()
-                    resolve(lastValue)
+                        // promise should return only one value and then being destroyed
+                        this._internalPromise = null
+                        resolve(data)
+                    },
+                    error: (error) => {
+                        // promise should return only one value and then being destroyed
+                        this._internalPromise = null
+                        reject(error)
+                    },
+                    complete: () => {
+                        // promise should return only one value and then being destroyed
+                        this._internalPromise = null
+                        resolve(lastValue)
+                    },
                 })
             })
         }
@@ -48,18 +50,34 @@ export class ValueSubject<T> extends BehaviorSubject<T> {
     }
 
     /**
+     * @deprecated internal method
+     */
+    _subscribe(subscriber) {
+        let sub = super._subscribe(subscriber)
+        this.hub.add(sub)
+
+        return sub
+    }
+
+    /**
      * Subscribe to a destruction event to complete and unsubscribe as it
      * emits
      */
-    until(destroyEvent: Subscribable<T>) {
+    until(destroyEvent: Subscribable<any>) {
         destroyEvent.subscribe(() => {
-            this._internalPromise = null
-            this.promiseSubscription?.unsubscribe()
-            this.promiseSubscription = null
-            this.complete()
-            this.unsubscribe()
+            this.close()
         })
+
         return this
+    }
+
+    /**
+     * Completes subject and clean up resources
+     */
+    close() {
+        this._internalPromise = null
+        this.complete()
+        this.hub.unsubscribe()
     }
 
     /**

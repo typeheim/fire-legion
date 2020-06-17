@@ -24,7 +24,12 @@ export class SubscriptionsHub {
 
     unsubscribe() {
         this.subscriptions.forEach(subscription => {
-            subscription.unsubscribe()
+            if (subscription['closed'] !== undefined && !subscription['closed']) {
+                subscription.unsubscribe()
+            } else {
+                // @todo - figure out a better way to prevent duplication
+                subscription.unsubscribe()
+            }
         })
         this.subscriptions = []
     }

@@ -3,8 +3,14 @@ import {
     Subscribable,
 } from 'rxjs'
 
-import { SubscriptionLike, Unsubscribable, PartialObserver } from './contracts'
+import {
+    PartialObserver,
+    SubscriptionLike,
+} from './contracts'
 import { SubscriptionsHub } from './SubscriptionsHub'
+
+/** Symbol.observable or a string "@@observable". Used for interop */
+export const observable = (() => typeof Symbol === 'function' && Symbol.observable || '@@observable')()
 
 export class ReactivePromise<T> implements Subscribable<T> {
     protected internalPromise: Promise<T>
@@ -77,14 +83,6 @@ export class ReactivePromise<T> implements Subscribable<T> {
     //
     //
 
-    subscribe(observer?: PartialObserver<T>): Unsubscribable;
-    /** @deprecated Use an observer instead of a complete callback */
-    subscribe(next: null | undefined, error: null | undefined, complete: () => void): Unsubscribable;
-    /** @deprecated Use an observer instead of an error callback */
-    subscribe(next: null | undefined, error: (error: any) => void, complete?: () => void): Unsubscribable;
-    /** @deprecated Use an observer instead of a complete callback */
-    subscribe(next: (value: T) => void, error: null | undefined, complete: () => void): Unsubscribable;
-    subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Unsubscribable
     subscribe(observerOrNext?: PartialObserver<T> | ((value: T) => void),
               error?: (error: any) => void,
               complete?: () => void): SubscriptionLike {
@@ -103,6 +101,12 @@ export class ReactivePromise<T> implements Subscribable<T> {
         return this.internalSubject.pipe(...operators)
     }
 
+    /**
+     * An interop point defined by the es7-observable spec https://github.com/zenparsing/es-observable
+     */
+    [observable]() {
+        return this
+    }
 
     //
     //
