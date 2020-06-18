@@ -66,7 +66,7 @@ export class ReactivePromise<T> implements Subscribable<T> {
      * Subscribe to a destruction event to complete and unsubscribe as it
      * emits
      */
-    until(destroyEvent: Subscribable<any>) {
+    emitUntil(destroyEvent: Subscribable<any>) {
         destroyEvent.subscribe(() => {
             if (!this.resolved) {
                 this.internalSubject.complete()
@@ -75,6 +75,13 @@ export class ReactivePromise<T> implements Subscribable<T> {
         })
 
         return this
+    }
+
+    /**
+     * @depreacted
+     */
+    until(destroyEvent: Subscribable<any>) {
+        return this.emitUntil(destroyEvent)
     }
 
     //

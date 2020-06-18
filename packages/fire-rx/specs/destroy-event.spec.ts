@@ -49,7 +49,7 @@ describe('DestroyEvent', () => {
         let destroyEvent = new DestroyEvent()
 
         let subject = new StatefulSubject(1)
-        subject.until(destroyEvent)
+        subject.emitUntil(destroyEvent)
 
         let sub1 = subject.subscribe((data => data))
         let sub2 = subject.subscribe((data => data))

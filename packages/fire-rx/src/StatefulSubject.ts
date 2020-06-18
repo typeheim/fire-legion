@@ -61,12 +61,19 @@ export class StatefulSubject<T> extends ReplaySubject<T> implements PromiseLike<
      * Subscribe to a destruction event to complete and unsubscribe as it
      * emits
      */
-    until(destroyEvent: Subscribable<any>) {
+    emitUntil(destroyEvent: Subscribable<any>) {
         destroyEvent.subscribe(() => {
             this.close()
         })
 
         return this
+    }
+
+    /**
+     * @deprecated
+     */
+    until(destroyEvent: Subscribable<any>) {
+        return this.emitUntil(destroyEvent)
     }
 
     /**
