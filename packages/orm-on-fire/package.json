@@ -1,6 +1,6 @@
 {
   "name": "@typeheim/orm-on-fire",
-  "version": "0.0.0-beta.16",
+  "version": "0.0.0-beta.17",
   "description": "Firestore ORM",
   "keywords": [
     "fire-legion",
@@ -36,7 +36,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "dependencies": {
-    "@typeheim/fire-rx": "^0.0.0-beta.16",
+    "@typeheim/fire-rx": "^0.0.0-beta.17",
     "firebase": "^7.14.4",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.5"
