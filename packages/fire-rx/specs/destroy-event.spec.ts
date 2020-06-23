@@ -1,6 +1,5 @@
 import {
     DestroyEvent,
-    ReactivePromise,
     StatefulSubject,
     SubscriptionsHub,
 } from '..'
@@ -17,7 +16,8 @@ describe('DestroyEvent', () => {
         destroyEvent.emit()
         // DestroyEvent through takeUntil should close subscription
         expect(sub.closed).toEqual(true)
-        // DestroyEvent through takeUntil does not close source
+        // DestroyEvent through takeUntil does not close or stop source
+        expect(subject.closed).toEqual(false)
         expect(subject.isStopped).toEqual(false)
 
         subject.complete()
