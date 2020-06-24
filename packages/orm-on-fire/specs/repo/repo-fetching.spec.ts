@@ -1,16 +1,20 @@
 import * as FirebaseAdmin from 'firebase-admin'
-import { Repo } from '../../src/singletons'
-import { Dog, Owner, SpecKit, Toy } from '../spek-kit'
+import { Collection } from '../../src/singletons'
+import {
+    Dog,
+    Owner,
+    SpecKit,
+    Toy,
+} from '../spek-kit'
 import { Reference } from '../../src/Model'
 import { DestroyEvent } from '@typeheim/fire-rx'
-
 
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()
     const destroyEvent = new DestroyEvent()
 
     it('can get one document async', async (done) => {
-        let boomer = await Repo.of(Dog).one('boomer').get()
+        let boomer = await Collection.of(Dog).one('boomer').get()
         const boomerFixture = scope.fixtures.boomer
 
         expect(boomer).not.toBeNull()
@@ -21,7 +25,7 @@ describe('Repo', () => {
     })
 
     it('can provide subscription of one document', async (done) => {
-        Repo.of(Dog).one('boomer').get().subscribe(boomer => {
+        Collection.of(Dog).one('boomer').get().subscribe(boomer => {
             const boomerFixture = scope.fixtures.boomer
 
             expect(boomer).not.toBeNull()
@@ -35,7 +39,7 @@ describe('Repo', () => {
     })
 
     it('can get one doc with ref', async (done) => {
-        let sparky = await Repo.of(Dog).one('sparky').get()
+        let sparky = await Collection.of(Dog).one('sparky').get()
         const sparkyFixture = scope.fixtures.sparky
 
         expect(sparky).not.toBeNull()
@@ -54,12 +58,12 @@ describe('Repo', () => {
     })
 
     it('can link entities', async (done) => {
-        let boomer = await Repo.of(Dog).one('boomer').get()
-        let ben = await Repo.of(Owner).one('ben').get()
+        let boomer = await Collection.of(Dog).one('boomer').get()
+        let ben = await Collection.of(Owner).one('ben').get()
 
         await boomer.owner.link(ben)
 
-        let boomerWithOwner = await Repo.of(Dog).one('boomer').get()
+        let boomerWithOwner = await Collection.of(Dog).one('boomer').get()
         let owner = await boomerWithOwner.owner.get()
 
         expect(owner).not.toBeNull()
@@ -70,7 +74,7 @@ describe('Repo', () => {
 
 
     it('can get all async', async (done) => {
-        let dogs = await Repo.of(Dog).all().get()
+        let dogs = await Collection.of(Dog).all().get()
 
         expect(dogs).not.toBeNull()
         expect(dogs.length).toEqual(3)
@@ -86,7 +90,7 @@ describe('Repo', () => {
     })
 
     it('can populate sub-collections', async (done) => {
-        let boomer = await Repo.of(Dog).one('boomer').get()
+        let boomer = await Collection.of(Dog).one('boomer').get()
 
         expect(boomer.toys).not.toBeNull()
 
@@ -104,7 +108,7 @@ describe('Repo', () => {
     })
 
     it('can filter sub-collections', async (done) => {
-        let boomer = await Repo.of(Dog).one('boomer').get()
+        let boomer = await Collection.of(Dog).one('boomer').get()
 
         let filteredToys = await boomer.toys.filter(toy => toy.type.equal('bone')).get()
         expect(filteredToys).not.toBeNull()
@@ -119,13 +123,13 @@ describe('Repo', () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let ben = {
-            name: 'Ben'
+            name: 'Ben',
         }
         await Firestore.collection('owners').doc('ben').set(ben)
         scope.fixtures['ben'] = ben
 
         let alex = {
-            name: 'Alex'
+            name: 'Alex',
         }
         await Firestore.collection('owners').doc('alex').set(alex)
         scope.fixtures['alex'] = alex
@@ -133,21 +137,21 @@ describe('Repo', () => {
         let sparky = {
             name: 'Sparky',
             age: 2,
-            owner: await Firestore.collection('owners').doc('ben')
+            owner: await Firestore.collection('owners').doc('ben'),
         }
         await Firestore.collection('dog').doc('sparky').set(sparky)
         scope.fixtures['sparky'] = sparky
 
         let boomer = {
             name: 'Boomer',
-            age: 5
+            age: 5,
         }
         await Firestore.collection('dog').doc('boomer').set(boomer)
         scope.fixtures['boomer'] = boomer
 
         let lex = {
             name: 'Lex',
-            age: 1
+            age: 1,
         }
         await Firestore.collection('dog').doc('lex').set(lex)
         scope.fixtures['lex'] = lex

@@ -1,4 +1,4 @@
-import { GenericRepository } from '../Model/GenericRepository'
+import { EntityPersister } from '../Model/EntityPersister'
 import { ReactivePromise } from '@typeheim/fire-rx'
 import { DocReference } from '../Persistence/DocReference'
 
@@ -12,7 +12,7 @@ export interface Model {
 }
 
 interface OrmMetadata {
-    repository?: GenericRepository<any>
+    repository?: EntityPersister<any>
 
     docRef?: DocReference
 

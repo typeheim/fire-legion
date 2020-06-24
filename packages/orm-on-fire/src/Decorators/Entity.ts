@@ -1,5 +1,8 @@
 import 'reflect-metadata'
-import { Metadata } from '../singletons'
+import {
+    CollectionFactory,
+    Metadata,
+} from '../singletons'
 import {
     EntityMetadata,
     PropertyMetadata,
@@ -83,6 +86,13 @@ export function CollectionRef(entity: any): PropertyDecorator {
         Metadata.entity(target).addCollectionRef({
             fieldName: propertyKey.toString(),
             entity: entity,
+        })
+
+        Object.defineProperty(target, propertyKey, {
+            value: CollectionFactory.createNullCollection(),
+            writable: true,
+            enumerable: true,
+            configurable: true,
         })
     }
 }

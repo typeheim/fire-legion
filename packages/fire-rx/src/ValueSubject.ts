@@ -47,8 +47,25 @@ export class ValueSubject<T> extends BehaviorSubject<T> {
     }
 
     stop() {
-        this.complete()
+        if (!this.isStopped) {
+            this.complete()
+        }
         this.hub.unsubscribe()
+        if (!this.closed) {
+            this.unsubscribe()
+        }
+    }
+
+    /**
+     * Completes subject with error and unsubscribe all subscriptions
+     */
+    fail(error) {
+        this.error(error)
+        this.hub.unsubscribe()
+
+        if (!this.closed) {
+            this.unsubscribe()
+        }
     }
 
     /**

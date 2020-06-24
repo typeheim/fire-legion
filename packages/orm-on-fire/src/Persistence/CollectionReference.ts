@@ -1,7 +1,7 @@
 import { FirestoreConnection } from './FirestoreConnection'
 import {
     ReactivePromise,
-    StatefulSubject,
+    StatefulStream,
 } from '@typeheim/fire-rx'
 import { DocReference } from './DocReference'
 import { QueryState } from '../Contracts/Query'
@@ -27,8 +27,8 @@ export class CollectionReference {
         return promise
     }
 
-    snapshot(queryState?: QueryState): StatefulSubject<QuerySnapshot> {
-        let subject = new StatefulSubject<QuerySnapshot>()
+    snapshot(queryState?: QueryState): StatefulStream<QuerySnapshot> {
+        let subject = new StatefulStream<QuerySnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.buildQuery(queryState).onSnapshot(snapshot => {

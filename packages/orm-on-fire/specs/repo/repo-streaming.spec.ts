@@ -1,5 +1,5 @@
 import * as FirebaseAdmin from 'firebase-admin'
-import { Repo } from '../../src/singletons'
+import { Collection } from '../../src/singletons'
 import {
     SpecKit,
     User,
@@ -11,7 +11,7 @@ describe('Repo', () => {
     const destroyEvent = new DestroyEvent()
 
     it('can stream data', async (done) => {
-        await Repo.of(User).all().stream().until(destroyEvent).subscribe(users => {
+        await Collection.of(User).all().stream().emitUntil(destroyEvent).subscribe(users => {
             expect(users.length).toEqual(2)
 
             done()
@@ -19,7 +19,7 @@ describe('Repo', () => {
     })
 
     it('can stream changes', async (done) => {
-        await Repo.of(User).all().changes().until(destroyEvent).subscribe(users => {
+        await Collection.of(User).all().changes().emitUntil(destroyEvent).subscribe(users => {
             expect(users.length).toEqual(2)
 
             done()

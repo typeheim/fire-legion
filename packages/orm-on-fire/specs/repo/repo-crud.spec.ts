@@ -1,21 +1,24 @@
 import * as FirebaseAdmin from 'firebase-admin'
-import { Repo } from '../../src/singletons'
+import { Collection } from '../../src/singletons'
 import {
     Car,
     Engine,
     SpecKit,
 } from '../spek-kit'
-import { remove, save } from '../..'
+import {
+    remove,
+    save,
+} from '../..'
 
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()
 
     it('can save updates', async (done) => {
-        let boomer = await Repo.of(Car).one('camry').get()
+        let boomer = await Collection.of(Car).one('camry').get()
 
         boomer.name = 'Camryy'
 
-        let result = await Repo.of(Car).save(boomer)
+        let result = await Collection.of(Car).save(boomer)
         expect(result).not.toBeNull()
 
         let snapshot = await FirebaseAdmin.firestore().collection('car').doc('camry').get()
@@ -28,9 +31,9 @@ describe('Repo', () => {
     })
 
     it('can remove docs', async (done) => {
-        let tesla = await Repo.of(Car).one('tesla').get()
+        let tesla = await Collection.of(Car).one('tesla').get()
 
-        let result = await Repo.of(Car).remove(tesla)
+        let result = await Collection.of(Car).remove(tesla)
         expect(result).not.toBeNull()
 
         let snapshot = await FirebaseAdmin.firestore().collection('car').doc('tesla').get()
@@ -40,7 +43,7 @@ describe('Repo', () => {
     })
 
     it('can remove docs by operator', async (done) => {
-        let tesla = await Repo.of(Car).new()
+        let tesla = await Collection.of(Car).new()
 
         let result = remove(tesla)
         expect(result).not.toBeNull()
@@ -52,7 +55,7 @@ describe('Repo', () => {
     })
 
     it('can create new doc', async (done) => {
-        const repo = Repo.of(Car)
+        const repo = Collection.of(Car)
         let car = await repo.new()
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('car').doc(car.id).get()
         expect(snapshotOfNew.exists).toBeTruthy()
@@ -61,7 +64,7 @@ describe('Repo', () => {
     })
 
     it('can create new doc with default values', async (done) => {
-        const repo = Repo.of(Engine)
+        const repo = Collection.of(Engine)
         let engine = await repo.new()
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('engine').doc(engine.id).get()
         expect(snapshotOfNew.exists).toBeTruthy()
@@ -71,7 +74,7 @@ describe('Repo', () => {
     })
 
     it('can save plain entity', async (done) => {
-        const repo = Repo.of(Car)
+        const repo = Collection.of(Car)
         let car = new Car()
         expect(car.engine).not.toBeNull()
 
@@ -95,7 +98,7 @@ describe('Repo', () => {
     })
 
     it('can save new record with id and update it', async (done) => {
-        const repo = Repo.of(Car)
+        const repo = Collection.of(Car)
         let tucson = await repo.new('tucson')
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('car').doc(tucson.id).get()
         expect(snapshotOfNew.exists).toBeTruthy()
@@ -120,14 +123,14 @@ describe('Repo', () => {
 
         let camry = {
             name: 'Camry',
-            mileage: 0
+            mileage: 0,
         }
         await Firestore.collection('car').doc('camry').set(camry)
         scope.fixtures['camry'] = camry
 
         let tesla = {
             name: 'Tesla',
-            mileage: 100
+            mileage: 100,
         }
         await Firestore.collection('car').doc('tesla').set(tesla)
         scope.fixtures['car'] = tesla

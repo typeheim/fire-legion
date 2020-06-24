@@ -1,11 +1,11 @@
 import { EntityManager } from './EntityManager'
-import { StatefulSubject } from '@typeheim/fire-rx'
+import { StatefulStream } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
 import { CollectionReference } from './CollectionReference'
 import {
     EntityFilter,
-    EntityMetadata,
     FilterFunction,
+    PropertyMetadata,
 } from '../../index'
 
 import { FieldFilter } from './FieldFilter'
@@ -24,7 +24,7 @@ export class CollectionQuery<Entity> {
         exclude: [],
     }
 
-    constructor(protected collectionReference: CollectionReference, protected entityManager: EntityManager<Entity>, protected metadata: EntityMetadata) {}
+    constructor(protected collectionReference: CollectionReference, protected entityManager: EntityManager<Entity>, protected filterFields: PropertyMetadata[]) {}
 
     exclude(id: string)
     exclude(ids: string[])
@@ -41,7 +41,7 @@ export class CollectionQuery<Entity> {
     filter(filterFunction: FilterFunction<Entity>) {
         let filter: EntityFilter<Entity> = {}
 
-        this.metadata.fields.forEach(field => {
+        this.filterFields.forEach(field => {
             filter[field.name] = new FieldFilter(this.queryState, field.name)
         })
 
@@ -56,8 +56,8 @@ export class CollectionQuery<Entity> {
         return this
     }
 
-    get(): StatefulSubject<Entity[]> {
-        let subject = new StatefulSubject<Entity[]>(1)
+    get(): StatefulStream<Entity[]> {
+        let subject = new StatefulStream<Entity[]>(1)
 
         this.collectionReference.get(this.queryState).subscribe((querySnapshot: QuerySnapshot) => {
             let entities = []
@@ -77,8 +77,8 @@ export class CollectionQuery<Entity> {
         return subject
     }
 
-    changes(): StatefulSubject<ChangedEntities<Entity>> {
-        let subject = new StatefulSubject<ChangedEntities<Entity>>(1)
+    changes(): StatefulStream<ChangedEntities<Entity>> {
+        let subject = new StatefulStream<ChangedEntities<Entity>>(1)
 
         this.collectionReference.snapshot(this.queryState).subscribe((querySnapshot: QuerySnapshot) => {
             let entityChanges = []
@@ -97,8 +97,8 @@ export class CollectionQuery<Entity> {
         return subject
     }
 
-    stream(): StatefulSubject<Entity[]> {
-        let subject = new StatefulSubject<Entity[]>(1)
+    stream(): StatefulStream<Entity[]> {
+        let subject = new StatefulStream<Entity[]>(1)
 
         this.collectionReference.snapshot(this.queryState).subscribe((querySnapshot: QuerySnapshot) => {
             let entities = []

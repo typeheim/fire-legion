@@ -1,13 +1,17 @@
 import * as FirebaseAdmin from 'firebase-admin'
-import { Repo } from '../../src/singletons'
+import { Collection } from '../../src/singletons'
 import { SpecKit } from '../spek-kit'
-import { Entity, Field, ID } from '../../src/Decorators'
+import {
+    Entity,
+    Field,
+    ID,
+} from '../../src/Decorators'
 
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()
 
     it('can filter by "==" operator', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.name.equal(scope.fixtures.redCar.name)).get()
+        let toys = await Collection.of(Toy).all().filter(toy => toy.name.equal(scope.fixtures.redCar.name)).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(1)
@@ -18,7 +22,7 @@ describe('Repo', () => {
     })
 
     it('can filter by ">" operator', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.greaterThen(15)).get()
+        let toys = await Collection.of(Toy).all().filter(toy => toy.weight.greaterThen(15)).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(3)
@@ -31,7 +35,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "<" operator', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.lessThen(20)).get()
+        let toys = await Collection.of(Toy).all().filter(toy => toy.weight.lessThen(20)).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(1)
@@ -42,7 +46,7 @@ describe('Repo', () => {
     })
 
     it('can filter by ">=" operator', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.greaterThenOrEqual(25)).get()
+        let toys = await Collection.of(Toy).all().filter(toy => toy.weight.greaterThenOrEqual(25)).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(3)
@@ -55,7 +59,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "<=" operator', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.weight.lessThenOrEqual(25)).get()
+        let toys = await Collection.of(Toy).all().filter(toy => toy.weight.lessThenOrEqual(25)).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(2)
@@ -67,7 +71,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "in" operator', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.type.in(['construction', 'animal'])).get()
+        let toys = await Collection.of(Toy).all().filter(toy => toy.type.in(['construction', 'animal'])).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(2)
@@ -80,7 +84,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "array-contains" operator', async (done) => {
-        let toys = await Repo.of(Toy).all().filter(toy => toy.tags.contain('car')).get()
+        let toys = await Collection.of(Toy).all().filter(toy => toy.tags.contain('car')).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(2)
@@ -93,7 +97,7 @@ describe('Repo', () => {
     })
 
     it('can limit', async (done) => {
-        let toys = await Repo.of(Toy).all().limit(1).get()
+        let toys = await Collection.of(Toy).all().limit(1).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(1)
@@ -102,7 +106,7 @@ describe('Repo', () => {
     })
 
     it('can exclude ids', async (done) => {
-        let toys = await Repo.of(Toy).all().exclude(['redCar', 'copter']).get()
+        let toys = await Collection.of(Toy).all().exclude(['redCar', 'copter']).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(2)
@@ -114,7 +118,7 @@ describe('Repo', () => {
     })
 
     it('can exclude single id', async (done) => {
-        let toys = await Repo.of(Toy).all().exclude('redCar').get()
+        let toys = await Collection.of(Toy).all().exclude('redCar').get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(3)
@@ -137,8 +141,8 @@ describe('Repo', () => {
                 tags: [
                     'toy',
                     'car',
-                    'red'
-                ]
+                    'red',
+                ],
             },
             blueCar: {
                 name: 'blue car',
@@ -147,8 +151,8 @@ describe('Repo', () => {
                 tags: [
                     'toy',
                     'car',
-                    'blue'
-                ]
+                    'blue',
+                ],
             },
             bear: {
                 name: 'bear',
@@ -157,8 +161,8 @@ describe('Repo', () => {
                 tags: [
                     'toy',
                     'bear',
-                    'brown'
-                ]
+                    'brown',
+                ],
             },
             copter: {
                 name: 'copter',
@@ -167,8 +171,8 @@ describe('Repo', () => {
                 tags: [
                     'toy',
                     'helicopter',
-                    'blue'
-                ]
+                    'blue',
+                ],
             },
         }
 

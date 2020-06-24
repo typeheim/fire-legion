@@ -1,53 +1,46 @@
-import { GenericRepository } from './GenericRepository'
+import { EntityPersister } from './EntityPersister'
 import {
     ReactivePromise,
-    StatefulSubject,
+    StatefulStream,
 } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
 import { EntityQuery } from '../Persistence/EntityQuery'
-import {
-    EntityType,
-    FilterFunction,
-} from '../Contracts'
+import { FilterFunction } from '../Contracts'
 import { CollectionQuery } from '../Persistence/CollectionQuery'
-import { Repo } from '../singletons'
+import { QueryFactory } from '../Persistence/QueryFactory'
 
-export class Collection<Entity> {
-    constructor(protected repository: GenericRepository<Entity>) {}
-
-    static of<Entity>(entity: EntityType<Entity>): Collection<Entity> {
-        return new Collection<Entity>(Repo.of(entity))
-    }
+export class GenericCollection<Entity> {
+    constructor(protected queryFactory: QueryFactory<Entity>, protected persister: EntityPersister<Entity>) {}
 
     all(): CollectionQuery<Entity> {
-        return this.repository.all()
+        return this.queryFactory.createCollectionQuery()
     }
 
     one(id: string): EntityQuery<Entity> {
-        return this.repository.one(id)
+        return this.queryFactory.createEntityQuery(id)
     }
 
     new(id?: string): ReactivePromise<Entity> {
-        return this.repository.new(id)
+        return this.persister.new(id)
     }
 
     save(entity: Entity): ReactivePromise<void> {
-        return this.repository.save(entity)
+        return this.persister.save(entity)
     }
 
     remove(entity: Entity): ReactivePromise<void> {
-        return this.repository.remove(entity)
+        return this.persister.remove(entity)
     }
 
     filter(filterFunction: FilterFunction<Entity>): CollectionQuery<Entity> {
-        return this.repository.all().filter(filterFunction)
+        return this.queryFactory.createCollectionQuery().filter(filterFunction)
     }
 
-    get changes(): StatefulSubject<ChangedEntities<Entity>> {
-        return this.repository.all().changes()
+    changes(): StatefulStream<ChangedEntities<Entity>> {
+        return this.queryFactory.createCollectionQuery().changes()
     }
 
-    forEach(callback: ((value: Entity) => void)): StatefulSubject<Entity[]> {
+    forEach(callback: ((value: Entity) => void)): StatefulStream<Entity[]> {
         let subject = this.all().get()
         subject.subscribe(entities => {
             entities.forEach(entity => {
@@ -58,11 +51,11 @@ export class Collection<Entity> {
     }
 
     clean() {
-        let subject = new StatefulSubject(1)
+        let subject = new StatefulStream(1)
 
         this.all().get().subscribe((entities: Entity[]) => {
             entities.forEach(entity => {
-                this.repository.remove(entity)
+                this.persister.remove(entity)
             })
             subject.next(true)
             subject.complete()

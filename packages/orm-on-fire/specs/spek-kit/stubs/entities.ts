@@ -8,7 +8,7 @@ import {
     SearchField,
 } from '../../../src/Decorators/Entity'
 import { Reference } from '../../../src/Model/Reference'
-import { Collection } from '../../../src/Model/Collection'
+import { GenericCollection } from '../../../src/Model/GenericCollection'
 
 
 //
@@ -52,7 +52,7 @@ export class Dog {
     owner: Reference<Owner>
 
     @CollectionRef(Toy)
-    toys: Collection<Toy>
+    toys: GenericCollection<Toy>
 }
 
 //

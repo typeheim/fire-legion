@@ -1,4 +1,4 @@
-import { Repo } from '../../src/singletons'
+import { Collection } from '../../src/singletons'
 import {
     Book,
     SpecKit,
@@ -10,7 +10,7 @@ describe('Repo', () => {
     const scope = SpecKit.prepareScope()
 
     it('can filter by "startsWith" using single term', async (done) => {
-        let books = await Repo.of(Book).all().filter(toy => toy.name.startsWith('Game')).get()
+        let books = await Collection.of(Book).all().filter(toy => toy.name.startsWith('Game')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(2)
@@ -22,7 +22,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "startsWith" using multiple terms', async (done) => {
-        let books = await Repo.of(Book).all().filter(toy => toy.name.startsWith('gAme of')).get()
+        let books = await Collection.of(Book).all().filter(toy => toy.name.startsWith('gAme of')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(1)
@@ -33,7 +33,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "endsWith" using single term', async (done) => {
-        let books = await Repo.of(Book).all().filter(toy => toy.name.endsWith('Thrones')).get()
+        let books = await Collection.of(Book).all().filter(toy => toy.name.endsWith('Thrones')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(1)
@@ -43,7 +43,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "endsWith" using multiple term', async (done) => {
-        let books = await Repo.of(Book).all().filter(toy => toy.name.endsWith('of thrones')).get()
+        let books = await Collection.of(Book).all().filter(toy => toy.name.endsWith('of thrones')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(1)

@@ -1,3 +1,3 @@
-export * from './Collection'
+export * from './GenericCollection'
 export * from './Reference'
-export * from './GenericRepository'
+export * from './EntityPersister'

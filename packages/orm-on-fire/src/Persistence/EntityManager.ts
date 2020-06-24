@@ -2,25 +2,18 @@
 import * as types from '@firebase/firestore-types'
 
 import { EntityMetadata } from '../Contracts/EntityMetadata'
-
-import { GenericRepository } from '../Model/GenericRepository'
-import {
-    Metadata,
-    OrmOnFire,
-} from '../singletons'
-import { Collection } from '../Model/Collection'
-import { EntityType } from '../Contracts/EntityType'
 import { Reference } from '../Model/Reference'
 import { DocInitializer } from './DocInitializer'
 import { DocPersistenceManager } from './DocPersistenceManager'
 import { ReactivePromise } from '@typeheim/fire-rx'
 import { CollectionReference } from './CollectionReference'
 import { DocReference } from './DocReference'
+import { CollectionFactory } from '../singletons'
 import DocumentSnapshot = types.DocumentSnapshot
 import DocumentReference = types.DocumentReference
 
 export class EntityManager<Entity> {
-    constructor(protected metadata: EntityMetadata, protected repository: GenericRepository<Entity>, protected entityConstructor) {}
+    constructor(protected metadata: EntityMetadata, protected entityConstructor, protected collectionReference: CollectionReference) {}
 
     fromSnapshot(docSnapshot: DocumentSnapshot): Entity {
         if (!docSnapshot.exists) {
@@ -82,9 +75,9 @@ export class EntityManager<Entity> {
         return arrName
     }
 
-    createEntity(collectionRef: CollectionReference) {
+    createEntity() {
         let entity = new this.entityConstructor()
-        this.attachMetadataToNewEntity(entity, collectionRef)
+        this.attachMetadataToNewEntity(entity)
 
         return entity
     }
@@ -97,7 +90,7 @@ export class EntityManager<Entity> {
         }
 
         subCollectionsMetadata.forEach(subCollection => {
-            entity[subCollection.fieldName] = new Collection(this.createRepositoryForSubEntity(subCollection.entity, docReference))
+            entity[subCollection.fieldName] = CollectionFactory.createWithRef(subCollection.entity, docReference)
         })
     }
 
@@ -111,17 +104,6 @@ export class EntityManager<Entity> {
             }
         }
     }
-
-    protected createRepositoryForSubEntity<Entity>(entity: EntityType<Entity>, docReference: DocumentReference) {
-        const metadata = Metadata.entity(entity).get()
-        if (metadata.repository) {
-            // @ts-ignore
-            return new metadata.repository<Entity>(metadata, entity, docReference.collection(metadata.collection))
-        } else {
-            return new GenericRepository<Entity>(metadata, entity, new CollectionReference(OrmOnFire, `${docReference.path}/${metadata.collection}`))
-        }
-    }
-
 
     public extractDataFromEntity(entity: Entity) {
         const fields = this.metadata.fields
@@ -150,7 +132,6 @@ export class EntityManager<Entity> {
     public attachOrmMetadataToEntity(entity: Entity, docReference: DocumentReference) {
         let persistenceManager = new DocPersistenceManager(docReference)
         entity['__ormOnFire'] = {
-            repository: this.repository,
             docRef: DocReference.fromNativeRef(docReference),
             save: (): ReactivePromise<boolean> => {
                 return persistenceManager.update(this.extractDataFromEntity(entity))
@@ -161,13 +142,12 @@ export class EntityManager<Entity> {
         }
     }
 
-    public attachMetadataToNewEntity(entity: Entity, collectionRef: CollectionReference) {
+    public attachMetadataToNewEntity(entity: Entity) {
         let docInitializer = new DocInitializer(entity, this)
         entity['__ormOnFire'] = {
-            repository: this.repository,
             docRef: null,
             save: (): ReactivePromise<boolean> => {
-                return docInitializer.addTo(collectionRef)
+                return docInitializer.addTo(this.collectionReference)
             },
             remove: () => {
                 // @todo throw exceptions

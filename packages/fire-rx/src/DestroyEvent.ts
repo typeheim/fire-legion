@@ -19,7 +19,13 @@ export class DestroyEvent extends ReplaySubject<boolean> {
 
     public emit() {
         this.next(true)
-        this.complete()
+        if (!this.isStopped) {
+            this.complete()
+        }
         this.hub.unsubscribe()
+
+        if (!this.closed) {
+            this.unsubscribe()
+        }
     }
 }
