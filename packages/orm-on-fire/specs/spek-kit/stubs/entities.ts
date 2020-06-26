@@ -8,7 +8,7 @@ import {
     SearchField,
 } from '../../../src/Decorators/Entity'
 import { Reference } from '../../../src/Model/Reference'
-import { GenericCollection } from '../../../src/Model/GenericCollection'
+import { Collection } from '../../../src/Model/Collection'
 
 
 //
@@ -52,7 +52,7 @@ export class Dog {
     owner: Reference<Owner>
 
     @CollectionRef(Toy)
-    toys: GenericCollection<Toy>
+    toys: Collection<Toy>
 }
 
 //
@@ -110,4 +110,37 @@ export class Book {
     @SearchField()
     name: string
 }
+
+
+//
+// Items
+//
+
+@Entity()
+export class ItemOwner {
+    @ID()
+    id: string
+}
+
+@Entity()
+export class ItemUser {
+    @ID()
+    id: string
+}
+
+@Entity()
+export class Item {
+    @ID()
+    id: string
+
+    @DocRef(ItemOwner)
+    owner: Reference<ItemOwner>
+
+    @DocRef(ItemUser)
+    user: Reference<ItemOwner>
+
+    @CollectionRef(ItemOwner)
+    oldOwners: Collection<ItemOwner>
+}
+
 

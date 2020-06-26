@@ -2,7 +2,7 @@ import { CollectionReference } from './CollectionReference'
 import { EntityManager } from './EntityManager'
 import { EntityQuery } from './EntityQuery'
 import { CollectionQuery } from './CollectionQuery'
-import { EntityMetadata } from '@typeheim/orm-on-fire'
+import { EntityMetadata } from '../Contracts/EntityMetadata'
 
 export class QueryFactory<Entity> {
     constructor(protected collectionReference: CollectionReference, protected entityManager: EntityManager<Entity>, protected metadata: EntityMetadata) {}

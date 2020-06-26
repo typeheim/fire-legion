@@ -6,4 +6,4 @@ import { Factory } from './Model/CollectionFactory'
 export const Metadata = new MetadataStorage()
 export const OrmOnFire = new FirestoreConnection()
 export const CollectionFactory = new Factory(OrmOnFire, Metadata)
-export const Collection = new CollectionMap(CollectionFactory)
+export const InternalCollectionsMap = new CollectionMap(CollectionFactory)

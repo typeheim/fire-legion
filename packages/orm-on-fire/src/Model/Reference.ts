@@ -19,7 +19,16 @@ export class Reference<Entity> {
     link(reference: Entity | Model): ReactivePromise<void> {
         // @ts-ignore
         this.docRef = reference?.__ormOnFire?.docRef
-        return save(this.owner)
+
+        let result: ReactivePromise<void>
+
+        if (this.owner?.__ormOnFire === undefined || this.owner?.__ormOnFire?.isNew) {
+            result = new ReactivePromise<void>()
+            result.resolve()
+        } else {
+            result = save(this.owner)
+        }
+        return result
     }
 
     get(): StatefulStream<Entity> {

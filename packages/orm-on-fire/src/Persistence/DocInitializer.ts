@@ -18,7 +18,7 @@ export class DocInitializer<Entity> {
         let promise = new ReactivePromise<boolean>()
         documentReference.set(data).then(() => {
             this.entity['id'] = documentReference.nativeRef.id
-            this.entityManager.attachOrmMetadataToEntity(this.entity, documentReference.nativeRef)
+            this.entityManager.refreshNewEntity(this.entity, documentReference.nativeRef)
             promise.resolve(true)
         }).catch(error => {
             promise.reject(error)

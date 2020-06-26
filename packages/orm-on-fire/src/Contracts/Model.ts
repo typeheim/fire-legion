@@ -4,6 +4,7 @@ import { DocReference } from '../Persistence/DocReference'
 
 export interface Model {
     id?: string
+
     __ormOnFire?: OrmMetadata
 
     [key: string]: any
@@ -12,6 +13,8 @@ export interface Model {
 }
 
 interface OrmMetadata {
+    isNew: boolean
+
     repository?: EntityPersister<any>
 
     docRef?: DocReference

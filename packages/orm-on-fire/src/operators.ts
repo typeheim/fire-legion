@@ -1,10 +1,10 @@
 import { Model } from './Contracts/Model'
-import { Collection } from './singletons'
+import { InternalCollectionsMap } from './singletons'
 
 export function save(model: Model | any) {
-    return Collection.of(model.constructor).save(model)
+    return InternalCollectionsMap.of(model.constructor).save(model)
 }
 
 export function remove(model: Model | any) {
-    return Collection.of(model.constructor).remove(model)
+    return InternalCollectionsMap.of(model.constructor).remove(model)
 }

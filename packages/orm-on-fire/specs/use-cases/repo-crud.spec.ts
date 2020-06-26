@@ -1,14 +1,14 @@
 import * as FirebaseAdmin from 'firebase-admin'
-import { Collection } from '../../src/singletons'
 import {
     Car,
     Engine,
     SpecKit,
 } from '../spek-kit'
 import {
+    Collection,
     remove,
     save,
-} from '../..'
+} from '../../index'
 
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()
@@ -56,6 +56,7 @@ describe('Repo', () => {
 
     it('can create new doc', async (done) => {
         const repo = Collection.of(Car)
+
         let car = await repo.new()
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('car').doc(car.id).get()
         expect(snapshotOfNew.exists).toBeTruthy()
@@ -65,6 +66,7 @@ describe('Repo', () => {
 
     it('can create new doc with default values', async (done) => {
         const repo = Collection.of(Engine)
+
         let engine = await repo.new()
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('engine').doc(engine.id).get()
         expect(snapshotOfNew.exists).toBeTruthy()

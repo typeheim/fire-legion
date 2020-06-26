@@ -1,11 +1,11 @@
 import * as FirebaseAdmin from 'firebase-admin'
-import { Collection } from '../../src/singletons'
 import { SpecKit } from '../spek-kit'
 import {
+    Collection,
     Entity,
     Field,
     ID,
-} from '../../src/Decorators'
+} from '../../index'
 
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()

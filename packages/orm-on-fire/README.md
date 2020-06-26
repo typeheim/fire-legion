@@ -1,6 +1,17 @@
 # ORMOnFire
 ORMOnFire is a powerful Firestore ORM. 
 
+## Installation
+Setup ORMOnFire driver:
+```typescript
+// sample for Node.JS
+FirebaseAdmin.initializeApp({
+    credential: FirebaseAdmin.credential.cert('my.key.json'),
+    databaseURL: "https://my-db.firebaseio.com",
+})
+OrmOnFire.driver = FirebaseAdmin.firestore()
+```
+
 ## Easy entity declaration
 ```typescript
 import { Agregate, Entity, Collection, CollectionRef, ID, Field, SearchField } from '@typeheim/orm-on-fire'

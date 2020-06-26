@@ -1,9 +1,7 @@
-import {
-    EntityPersister,
-    EntityType,
-    FirestoreConnection,
-    GenericCollection,
-} from '@typeheim/orm-on-fire'
+import { Collection } from './Collection'
+import { EntityPersister } from './EntityPersister'
+import { FirestoreConnection } from '../Persistence/FirestoreConnection'
+import { EntityType } from '../Contracts/EntityType'
 import { QueryFactory } from '../Persistence/QueryFactory'
 import { EntityManager } from '../Persistence/EntityManager'
 import { CollectionReference } from '../Persistence/CollectionReference'
@@ -19,7 +17,7 @@ export class Factory {
         return new NullCollection()
     }
 
-    createFor<Entity>(entity: EntityType<Entity>): GenericCollection<Entity> {
+    createFor<Entity>(entity: EntityType<Entity>): Collection<Entity> {
         const metadata = this.metadata.entity(entity).get()
 
         return this.create(entity, this.connection.collectionRef(metadata.collection), metadata)
@@ -36,7 +34,7 @@ export class Factory {
         let entityManager = new EntityManager<Entity>(metadata, entity, collectionRef)
         let queryFactory = new QueryFactory(collectionRef, entityManager, metadata)
 
-        return new GenericCollection(queryFactory, new EntityPersister<Entity>(entityManager))
+        return new Collection(queryFactory, new EntityPersister<Entity>(entityManager))
     }
 }
 

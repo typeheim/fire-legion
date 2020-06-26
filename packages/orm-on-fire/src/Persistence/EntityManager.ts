@@ -82,7 +82,6 @@ export class EntityManager<Entity> {
         return entity
     }
 
-
     protected attachSubCollectionsToEntity(entity: Entity, docReference: DocumentReference) {
         let subCollectionsMetadata = this.metadata.collectionRefs
         if (subCollectionsMetadata.length == 0) {
@@ -129,9 +128,15 @@ export class EntityManager<Entity> {
         return dataToSave
     }
 
+    public refreshNewEntity(entity: Entity, docReference: DocumentReference) {
+        this.attachOrmMetadataToEntity(entity, docReference)
+        this.attachSubCollectionsToEntity(entity, docReference)
+    }
+
     public attachOrmMetadataToEntity(entity: Entity, docReference: DocumentReference) {
         let persistenceManager = new DocPersistenceManager(docReference)
         entity['__ormOnFire'] = {
+            isNew: false,
             docRef: DocReference.fromNativeRef(docReference),
             save: (): ReactivePromise<boolean> => {
                 return persistenceManager.update(this.extractDataFromEntity(entity))
@@ -145,6 +150,7 @@ export class EntityManager<Entity> {
     public attachMetadataToNewEntity(entity: Entity) {
         let docInitializer = new DocInitializer(entity, this)
         entity['__ormOnFire'] = {
+            isNew: true,
             docRef: null,
             save: (): ReactivePromise<boolean> => {
                 return docInitializer.addTo(this.collectionReference)

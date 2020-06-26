@@ -1,9 +1,11 @@
-import { Collection } from '../../src/singletons'
 import {
     Book,
     SpecKit,
 } from '../spek-kit'
-import { save } from '../..'
+import {
+    Collection,
+    save,
+} from '../../index'
 import * as FirebaseAdmin from 'firebase-admin'
 
 describe('Repo', () => {

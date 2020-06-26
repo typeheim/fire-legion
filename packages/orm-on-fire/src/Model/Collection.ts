@@ -5,12 +5,20 @@ import {
 } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
 import { EntityQuery } from '../Persistence/EntityQuery'
-import { FilterFunction } from '../Contracts'
+import {
+    EntityType,
+    FilterFunction,
+} from '../Contracts'
 import { CollectionQuery } from '../Persistence/CollectionQuery'
 import { QueryFactory } from '../Persistence/QueryFactory'
+import { InternalCollectionsMap } from '../singletons'
 
-export class GenericCollection<Entity> {
+export class Collection<Entity> {
     constructor(protected queryFactory: QueryFactory<Entity>, protected persister: EntityPersister<Entity>) {}
+
+    static of<Entity>(entity: EntityType<Entity>): Collection<Entity> {
+        return InternalCollectionsMap.of(entity)
+    }
 
     all(): CollectionQuery<Entity> {
         return this.queryFactory.createCollectionQuery()

@@ -1,5 +1,5 @@
 import * as FirebaseAdmin from 'firebase-admin'
-import { Collection } from '../../src/singletons'
+import { Collection } from '../../index'
 import {
     SpecKit,
     User,
