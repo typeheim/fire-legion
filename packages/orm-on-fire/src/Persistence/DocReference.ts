@@ -1,7 +1,7 @@
 import { FirestoreConnection } from './FirestoreConnection'
 import {
     ReactivePromise,
-    StatefulStream,
+    StatefulSubject,
 } from '@typeheim/fire-rx'
 import { OrmOnFire } from '../singletons'
 // Firestore types
@@ -21,8 +21,8 @@ export class DocReference {
         return doc
     }
 
-    get(): StatefulStream<DocumentSnapshot> {
-        let subject = new StatefulStream<DocumentSnapshot>()
+    get(): StatefulSubject<DocumentSnapshot> {
+        let subject = new StatefulSubject<DocumentSnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.nativeRef.get().then((snapshot: DocumentSnapshot) => {
@@ -74,8 +74,8 @@ export class DocReference {
         return promise
     }
 
-    snapshot(): StatefulStream<DocumentSnapshot> {
-        let subject = new StatefulStream<DocumentSnapshot>()
+    snapshot(): StatefulSubject<DocumentSnapshot> {
+        let subject = new StatefulSubject<DocumentSnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
                 this.nativeRef.onSnapshot((snapshot: DocumentSnapshot) => {

@@ -1,50 +1,55 @@
-import {
-    DestroyEvent,
-    StatefulSubject,
-} from '..'
+import { StatefulSubject } from '../src/StatefulSubject'
 
-describe('StatefulStream', () => {
-    it('unsubscribe all subscriptions on stop ', async (done) => {
+describe('StatefulSubject', () => {
+    it('can be executed as promise', async (done) => {
         let subject = new StatefulSubject<number>(1)
-        let subscriptions = []
 
-        subscriptions.push(subject.subscribe(data => data))
-        subscriptions.push(subject.subscribe(data => data))
+        subject.next(5)
+        let value = await subject
+        expect(value).toEqual(5)
 
-        subject.next(1)
+        subject.next(6)
+        let nextValue = await subject
 
-        subject.stop()
+        expect(nextValue).toEqual(6)
 
-        expect(subject.isStopped).toBeTruthy()
-        expect(subject.closed).toBeTruthy()
-
-        expect(subscriptions[0].closed).toBeTruthy()
-        expect(subscriptions[0].closed).toBeTruthy()
+        subject.complete()
+        subject.unsubscribe()
 
         done()
     })
 
-    it('unsubscribe all subscriptions on stop', async (done) => {
+    it('can replay values as promise', async (done) => {
         let subject = new StatefulSubject<number>(1)
-        let destroyEvent = new DestroyEvent()
 
-        subject.emitUntil(destroyEvent)
+        subject.next(5)
+        expect(await subject).toEqual(5)
+        expect(await subject).toEqual(5)
 
-        let subscriptions = []
+        subject.next(6)
+        expect(await subject).toEqual(6)
+        expect(await subject).toEqual(6)
 
-        subscriptions.push(subject.subscribe(data => data))
-        subscriptions.push(subject.subscribe(data => data))
+        subject.complete()
 
-        subject.next(1)
+        expect(await subject).toEqual(6)
 
-        destroyEvent.emit()
-
-        expect(subject.isStopped).toBeTruthy()
-        expect(subject.closed).toBeTruthy()
-
-        expect(subscriptions[0].closed).toBeTruthy()
-        expect(subscriptions[0].closed).toBeTruthy()
+        subject.complete()
+        subject.unsubscribe()
 
         done()
+    })
+
+    it('can be run as typical subject', async (done) => {
+        let subject = new StatefulSubject<number>(1)
+
+        subject.next(5)
+
+        let value = await subject.subscribe(value => {
+            expect(value).toEqual(5)
+            subject.complete()
+            subject.unsubscribe()
+            done()
+        })
     })
 })

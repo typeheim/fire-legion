@@ -1,6 +1,6 @@
 import {
     ReactivePromise,
-    StatefulStream,
+    StatefulSubject,
 } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
 import { EntityQuery } from '../Persistence/EntityQuery'
@@ -35,11 +35,11 @@ export class NullCollection<Entity> {
         throw EntityNotSavedException.withMessage('Entity must be saved prior to using sub-collections')
     }
 
-    changes(): StatefulStream<ChangedEntities<Entity>> {
+    changes(): StatefulSubject<ChangedEntities<Entity>> {
         throw EntityNotSavedException.withMessage('Entity must be saved prior to using sub-collections')
     }
 
-    forEach(callback: ((value: Entity) => void)): StatefulStream<Entity[]> {
+    forEach(callback: ((value: Entity) => void)): StatefulSubject<Entity[]> {
         throw EntityNotSavedException.withMessage('Entity must be saved prior to using sub-collections')
     }
 

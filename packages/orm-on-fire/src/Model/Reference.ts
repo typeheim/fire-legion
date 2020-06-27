@@ -3,7 +3,7 @@ import { Metadata } from '../singletons'
 import { EntityQuery } from '../Persistence/EntityQuery'
 import {
     ReactivePromise,
-    StatefulStream,
+    StatefulSubject,
 } from '@typeheim/fire-rx'
 import { DocReference } from '../Persistence/DocReference'
 import { CollectionReference } from '../Persistence/CollectionReference'
@@ -31,11 +31,11 @@ export class Reference<Entity> {
         return result
     }
 
-    get(): StatefulStream<Entity> {
+    get(): StatefulSubject<Entity> {
         return new EntityQuery<Entity>(this.docRef, this.entityBuilder).get()
     }
 
-    stream(): StatefulStream<Entity> {
+    stream(): StatefulSubject<Entity> {
         return new EntityQuery<Entity>(this.docRef, this.entityBuilder).stream()
     }
 

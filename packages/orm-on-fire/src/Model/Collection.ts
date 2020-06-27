@@ -1,7 +1,7 @@
 import { EntityPersister } from './EntityPersister'
 import {
     ReactivePromise,
-    StatefulStream,
+    StatefulSubject,
 } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
 import { EntityQuery } from '../Persistence/EntityQuery'
@@ -44,11 +44,11 @@ export class Collection<Entity> {
         return this.queryFactory.createCollectionQuery().filter(filterFunction)
     }
 
-    changes(): StatefulStream<ChangedEntities<Entity>> {
+    changes(): StatefulSubject<ChangedEntities<Entity>> {
         return this.queryFactory.createCollectionQuery().changes()
     }
 
-    forEach(callback: ((value: Entity) => void)): StatefulStream<Entity[]> {
+    forEach(callback: ((value: Entity) => void)): StatefulSubject<Entity[]> {
         let subject = this.all().get()
         subject.subscribe(entities => {
             entities.forEach(entity => {
@@ -59,7 +59,7 @@ export class Collection<Entity> {
     }
 
     clean() {
-        let subject = new StatefulStream(1)
+        let subject = new StatefulSubject(1)
 
         this.all().get().subscribe((entities: Entity[]) => {
             entities.forEach(entity => {

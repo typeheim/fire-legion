@@ -65,26 +65,16 @@ UsersCollection.one('tom').get().subscribe((tom: User) => {
 
 # FireRx 
 
-RxJS on steroids. Adds memory safety and garbage collection  features to work with subjects and subscriptions. 
-Adds streams that behave both like subjects behave and promises to support async/await. 
+RxJS on steroids. Adds memory safety and garbage collection features to work with subjects and subscriptions. 
+Adds subjects that behave both like subjects and promises to support async/await. 
 
 ## StatefulSubject
-StatefulSubject extends ReplaySubject from RxJS and adds memory safety and garbage collection.
+StatefulSubject acts as ReplaySubject and Promise so that you can use async/await operators on it as well as regular Subject methods.
+Adds memory safety and garbage collection automatically calling unsubscribe on subscriptions.
 ```typescript
 import { StatefulSubject } from '@typeheim/fire-rx'
 
 let subject = new StatefulSubject<number>(1)
-
-subject.next(5) // emits to all subscriptions 5
-subject.stop() // completes subject and unsubscribe all subscriptions
-```
-
-## StatefulStream
-StatefulStream extends StatefulSubject and adds Promise interface so that you can use async/await operators on it.
-```typescript
-import { StatefulStream } from '@typeheim/fire-rx'
-
-let subject = new StatefulStream<number>(1)
 
 subject.next(5)  
 await subject // returns 5
