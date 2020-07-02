@@ -22,6 +22,8 @@ export interface FireFilter<Entity> {
     startsWith(glue: string): FireFilter<Entity>
 
     endsWith(glue: string): FireFilter<Entity>
+
+    field(fieldName: string): FireFilter<Entity>
 }
 
 export interface FieldCondition {

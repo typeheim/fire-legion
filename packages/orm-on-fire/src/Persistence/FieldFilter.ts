@@ -73,6 +73,10 @@ export class FieldFilter<Entity> implements FireFilter<Entity> {
         return this
     }
 
+    field(fieldName: string): FieldFilter<Entity> {
+        return new FieldFilter(this.queryState, `${this.fieldName}.${fieldName}`)
+    }
+
     protected reverseSearchTerm(text: string) {
         return text.split('').reverse().join('')
     }

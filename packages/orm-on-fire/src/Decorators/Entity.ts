@@ -48,6 +48,40 @@ export function SearchField(metadata?: PropertyMetadata): PropertyDecorator {
     }
 }
 
+export function CreatedDateField(metadata?: PropertyMetadata): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        if (metadata) {
+            metadata.isDate = true
+            metadata.generateOnCreate = true
+        } else {
+            metadata = {
+                name: '',
+                isDate: true,
+                generateOnCreate: true,
+            }
+        }
+
+        addFieldMetadata(target, metadata, propertyKey)
+    }
+}
+
+export function UpdatedDateField(metadata?: PropertyMetadata): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        if (metadata) {
+            metadata.isDate = true
+            metadata.updateOnSave = true
+        } else {
+            metadata = {
+                name: '',
+                isDate: true,
+                updateOnSave: true,
+            }
+        }
+
+        addFieldMetadata(target, metadata, propertyKey)
+    }
+}
+
 function addFieldMetadata(target, metadata, propertyKey) {
     if (!metadata) {
         metadata = {

@@ -1,11 +1,13 @@
 import {
     Aggregate,
     CollectionRef,
+    CreatedDateField,
     DocRef,
     Entity,
     Field,
     ID,
     SearchField,
+    UpdatedDateField,
 } from '../../../src/Decorators/Entity'
 import { Reference } from '../../../src/Model/Reference'
 import { Collection } from '../../../src/Model/Collection'
@@ -142,5 +144,37 @@ export class Item {
     @CollectionRef(ItemOwner)
     oldOwners: Collection<ItemOwner>
 }
+
+// MapItems
+
+interface SubMap {
+    name: string
+    age: number
+}
+
+@Entity()
+export class MapItem {
+    @ID()
+    id: string
+
+    @Field()
+    map: SubMap
+}
+
+@Entity()
+export class DateItem {
+    @ID()
+    id: string
+
+    @CreatedDateField()
+    createdAt: Date
+
+    @UpdatedDateField()
+    updatedAt: Date
+
+    @Field()
+    customDate: Date
+}
+
 
 

@@ -11,6 +11,9 @@ export interface EntityMetadata {
 export interface PropertyMetadata {
     name: string
     isText?: boolean
+    isDate?: boolean
+    updateOnSave?: boolean
+    generateOnCreate?: boolean
 }
 
 export interface CollectionRefMetadata {

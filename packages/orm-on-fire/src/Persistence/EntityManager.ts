@@ -9,6 +9,8 @@ import { ReactivePromise } from '@typeheim/fire-rx'
 import { CollectionReference } from './CollectionReference'
 import { DocReference } from './DocReference'
 import { CollectionFactory } from '../singletons'
+import { Timestamp } from '@google-cloud/firestore'
+import { Model } from '../Contracts/Model'
 import DocumentSnapshot = types.DocumentSnapshot
 import DocumentReference = types.DocumentReference
 
@@ -29,7 +31,11 @@ export class EntityManager<Entity> {
         this.attachRefsToEntity(entity, data)
 
         this.metadata.fields.forEach(field => {
-            if (data[field.name] !== undefined) {
+            if (data[field.name] === undefined) {
+                return
+            } else if (field.isDate || (typeof data[field.name] === 'object' && data[field.name] instanceof Timestamp)) {
+                entity[field.name] = data[field.name].toDate()
+            } else {
                 entity[field.name] = data[field.name]
             }
         })
@@ -104,11 +110,19 @@ export class EntityManager<Entity> {
         }
     }
 
-    public extractDataFromEntity(entity: Entity) {
+    public extractDataFromEntity(entity: Model) {
         const fields = this.metadata.fields
         let dataToSave = {}
         fields.forEach(field => {
-            if (entity[field.name] !== undefined) {
+            if (field.isDate && field.updateOnSave) {
+                let date = new Date()
+                entity[field.name] = date
+                dataToSave[field.name] = Timestamp.fromDate(date)
+            } else if (field.isDate && field.generateOnCreate && (entity?.__ormOnFire?.isNew || entity.__ormOnFire === undefined)) {
+                let date = new Date()
+                entity[field.name] = date
+                dataToSave[field.name] = Timestamp.fromDate(date)
+            } else if (entity[field.name] !== undefined) {
                 dataToSave[field.name] = entity[field.name]
                 if (field.isText) {
                     dataToSave[`__idx__text__${field.name}`] = this.createTextIndex(entity[field.name])

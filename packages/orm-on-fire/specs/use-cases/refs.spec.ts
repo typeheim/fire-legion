@@ -165,15 +165,6 @@ describe('Collection', () => {
         let user = new ItemUser()
         user.id = 'user'
         await save(user)
-
-        // scope.fixtures['got'] = {
-        //     id: got.id,
-        //     name: got.name,
-        // }
-        // scope.fixtures['gc'] = {
-        //     id: gc.id,
-        //     name: gc.name,
-        // }
     }))
 
     afterAll(SpecKit.runScopeAction(scope, async (scope) => {
