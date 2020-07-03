@@ -32,7 +32,7 @@ export class EntityManager<Entity> {
         this.metadata.fields.forEach(field => {
             if (data[field.name] === undefined) {
                 return
-            } else if (field.isDate || (typeof data[field.name] === 'object' && data[field.name].constructor.name === 'Timestamp')) {
+            } else if (field.isDate || (typeof data[field.name] === 'object' && data[field.name]?.constructor?.name === 'Timestamp')) {
                 entity[field.name] = data[field.name].toDate()
             } else {
                 entity[field.name] = data[field.name]
