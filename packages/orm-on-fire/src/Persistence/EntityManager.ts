@@ -9,7 +9,6 @@ import { ReactivePromise } from '@typeheim/fire-rx'
 import { CollectionReference } from './CollectionReference'
 import { DocReference } from './DocReference'
 import { CollectionFactory } from '../singletons'
-import { Timestamp } from '@google-cloud/firestore'
 import { Model } from '../Contracts/Model'
 import DocumentSnapshot = types.DocumentSnapshot
 import DocumentReference = types.DocumentReference
@@ -33,7 +32,7 @@ export class EntityManager<Entity> {
         this.metadata.fields.forEach(field => {
             if (data[field.name] === undefined) {
                 return
-            } else if (field.isDate || (typeof data[field.name] === 'object' && data[field.name] instanceof Timestamp)) {
+            } else if (field.isDate || (typeof data[field.name] === 'object' && data[field.name].constructor.name === 'Timestamp')) {
                 entity[field.name] = data[field.name].toDate()
             } else {
                 entity[field.name] = data[field.name]
@@ -117,11 +116,11 @@ export class EntityManager<Entity> {
             if (field.isDate && field.updateOnSave) {
                 let date = new Date()
                 entity[field.name] = date
-                dataToSave[field.name] = Timestamp.fromDate(date)
+                dataToSave[field.name] = date
             } else if (field.isDate && field.generateOnCreate && (entity?.__ormOnFire?.isNew || entity.__ormOnFire === undefined)) {
                 let date = new Date()
                 entity[field.name] = date
-                dataToSave[field.name] = Timestamp.fromDate(date)
+                dataToSave[field.name] = date
             } else if (entity[field.name] !== undefined) {
                 dataToSave[field.name] = entity[field.name]
                 if (field.isText) {
