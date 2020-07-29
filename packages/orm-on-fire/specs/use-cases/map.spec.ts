@@ -49,7 +49,7 @@ describe('Collection', () => {
         done()
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope) => {
+    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
         let firstItem = new MapItem()
         firstItem.id = 'first'
         firstItem.map = {
@@ -67,13 +67,17 @@ describe('Collection', () => {
 
         scope.fixtures['first'] = firstItem
         scope.fixtures['second'] = secondItem
+
+        done()
     }))
 
-    afterAll(SpecKit.runScopeAction(scope, async (scope) => {
+    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
         let items = await Firestore.collection('map-item').get()
         items.forEach(item => item.ref.delete())
+
+        done()
     }))
 })
 

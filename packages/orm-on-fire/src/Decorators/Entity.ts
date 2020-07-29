@@ -33,6 +33,9 @@ export function Field(metadata?: PropertyMetadata): PropertyDecorator {
     }
 }
 
+/**
+ * @deprecated
+ */
 export function SearchField(metadata?: PropertyMetadata): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         if (metadata) {

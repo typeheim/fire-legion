@@ -26,7 +26,7 @@ describe('Repo', () => {
         })
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope) => {
+    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
         let ben = {
@@ -40,9 +40,13 @@ describe('Repo', () => {
         }
         await Firestore.collection('user').doc('alex').set(alex)
         scope.fixtures['alex'] = alex
+
+        done()
     }))
 
-    afterAll(() => { destroyEvent.emit() })
+    afterAll(() => {
+        destroyEvent.emit()
+    })
 })
 
 

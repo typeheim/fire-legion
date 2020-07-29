@@ -32,8 +32,23 @@ export interface FieldCondition {
     compareValue: any
 }
 
+export enum SortOrder {
+    Ascending = 0,
+    Descending = 1
+}
+
 export interface QueryState {
     conditions?: FieldCondition[]
     limit?: number
+    orderBy?: OrderByCondition[]
+    startAt?: any
+    startAfter?: any
+    endAt?: any
+    endBefore?: any
     exclude?: string[]
+}
+
+interface OrderByCondition {
+    field: string
+    sortOrder?: SortOrder
 }

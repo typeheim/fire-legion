@@ -10,6 +10,7 @@ export class FirestoreConnection {
      * @type {Firestore}
      */
     protected _driver: Firestore
+
     protected _isInitializedSubject = new ReactivePromise<boolean>()
 
     set driver(driver) {

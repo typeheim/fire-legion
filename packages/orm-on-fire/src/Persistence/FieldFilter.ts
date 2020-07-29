@@ -9,8 +9,8 @@ export class FieldFilter<Entity> implements FireFilter<Entity> {
     protected textReverseIndexName: string
 
     constructor(protected queryState: QueryState, protected readonly fieldName) {
-        this.textIndexName = `__idx__text__${fieldName}`
-        this.textReverseIndexName = `__idx__text__reverse__${fieldName}`
+        this.textIndexName = `__ormOnFireMetadata.idx__txt__${fieldName}`
+        this.textReverseIndexName = `__ormOnFireMetadata.idx__rtxt__${fieldName}`
     }
 
     equal(value: any): FieldFilter<Entity> {

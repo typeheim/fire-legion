@@ -1,11 +1,14 @@
-import { ScopeAction, SpecScope } from './utils/contracts'
+import {
+    ScopeAction,
+    SpecScope,
+} from './utils/contracts'
 import * as FirebaseAdmin from 'firebase-admin'
 import { OrmOnFire } from '../../src/singletons'
 
 async function SetUpFirebase() {
     FirebaseAdmin.initializeApp({
         credential: FirebaseAdmin.credential.cert(process.cwd() + '/firestore.key.json'),
-        databaseURL: "https://fire-legion.firebaseio.com",
+        databaseURL: 'https://fire-legion.firebaseio.com',
     })
     // @ts-ignore - there is no error but TS can't compile
     OrmOnFire.driver = FirebaseAdmin.firestore()
@@ -19,21 +22,21 @@ export const SpecKit = {
     },
 
     setUpFixtures: (executionScope: SpecScope, action: ScopeAction) => {
-        return async () => {
+        return async (done) => {
             await SetUpFirebase()
-            await action(executionScope)
+            await action(executionScope, done)
         }
     },
 
     runScopeAction: (executionScope: SpecScope, action: ScopeAction) => {
-        return async () => {
-            await action(executionScope)
+        return async (done) => {
+            await action(executionScope, done)
         }
     },
 
-    runAsyncAction: (action: () => void) => {
-        return async () => {
-            await action()
+    runAsyncAction: (action: (done?) => void) => {
+        return async (done) => {
+            await action(done)
         }
-    }
+    },
 }

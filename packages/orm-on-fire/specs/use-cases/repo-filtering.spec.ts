@@ -5,6 +5,7 @@ import {
     Entity,
     Field,
     ID,
+    SortOrder,
 } from '../../index'
 
 describe('Repo', () => {
@@ -25,11 +26,12 @@ describe('Repo', () => {
         let toys = await Collection.of(Toy).all().filter(toy => toy.weight.greaterThen(15)).get()
 
         expect(toys).not.toBeNull()
-        expect(toys.length).toEqual(3)
+        expect(toys.length).toEqual(4)
 
         expect(toys[0].id).toEqual('redCar')
         expect(toys[1].id).toEqual('bear')
-        expect(toys[2].id).toEqual('copter')
+        expect(toys[2].id).toEqual('bear2')
+        expect(toys[3].id).toEqual('copter')
 
         done()
     })
@@ -49,11 +51,12 @@ describe('Repo', () => {
         let toys = await Collection.of(Toy).all().filter(toy => toy.weight.greaterThenOrEqual(25)).get()
 
         expect(toys).not.toBeNull()
-        expect(toys.length).toEqual(3)
+        expect(toys.length).toEqual(4)
 
         expect(toys[0].id).toEqual('redCar')
         expect(toys[1].id).toEqual('bear')
-        expect(toys[2].id).toEqual('copter')
+        expect(toys[2].id).toEqual('bear2')
+        expect(toys[3].id).toEqual('copter')
 
         done()
     })
@@ -71,14 +74,29 @@ describe('Repo', () => {
     })
 
     it('can filter by "in" operator', async (done) => {
-        let toys = await Collection.of(Toy).all().filter(toy => toy.type.in(['construction', 'animal'])).get()
+        let toys = await Collection.of(Toy).all().filter(toy => toy.type.in(['construction', 'animal', 'bear2'])).get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(3)
+
+        expect(toys[0].id).toEqual('bear')
+        expect(toys[1].id).toEqual('bear2')
+        expect(toys[2].id).toEqual('blueCar')
+
+
+        done()
+    })
+    it('can filter by "in" and greater than operator', async (done) => {
+        let toys = await Collection.of(Toy).all().filter(toy => {
+            toy.type.in(['construction', 'animal', 'bear2'])
+            toy.weight.greaterThen(30)
+        }).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(2)
 
         expect(toys[0].id).toEqual('bear')
-        expect(toys[1].id).toEqual('blueCar')
-
+        expect(toys[1].id).toEqual('bear2')
 
         done()
     })
@@ -106,7 +124,7 @@ describe('Repo', () => {
     })
 
     it('can exclude ids', async (done) => {
-        let toys = await Collection.of(Toy).all().exclude(['redCar', 'copter']).get()
+        let toys = await Collection.of(Toy).all().exclude(['redCar', 'copter', 'bear2']).get()
 
         expect(toys).not.toBeNull()
         expect(toys.length).toEqual(2)
@@ -121,16 +139,166 @@ describe('Repo', () => {
         let toys = await Collection.of(Toy).all().exclude('redCar').get()
 
         expect(toys).not.toBeNull()
-        expect(toys.length).toEqual(3)
+        expect(toys.length).toEqual(4)
 
         expect(toys[0].id).toEqual('bear')
-        expect(toys[1].id).toEqual('blueCar')
-        expect(toys[2].id).toEqual('copter')
+        expect(toys[1].id).toEqual('bear2')
+        expect(toys[2].id).toEqual('blueCar')
+        expect(toys[3].id).toEqual('copter')
 
         done()
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope) => {
+    it('can order by ascending', async (done) => {
+        let toys = await Collection.of(Toy).all().orderBy('name').get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(5)
+
+        expect(toys[0].id).toEqual('bear')
+        expect(toys[1].id).toEqual('bear2')
+        expect(toys[2].id).toEqual('blueCar')
+        expect(toys[3].id).toEqual('copter')
+        expect(toys[4].id).toEqual('redCar')
+
+        done()
+    })
+
+    it('can order by descending', async (done) => {
+        let toys = await Collection.of(Toy).all().orderBy('name', SortOrder.Descending).get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(5)
+
+        expect(toys[0].id).toEqual('redCar')
+        expect(toys[1].id).toEqual('copter')
+        expect(toys[2].id).toEqual('blueCar')
+        expect(toys[3].id).toEqual('bear2')
+        expect(toys[4].id).toEqual('bear')
+
+        done()
+    })
+
+    it('can order by multiple fields', async (done) => {
+        let toys = await Collection.of(Toy).all()
+                                   .orderBy('name')
+                                   .orderBy('weight', SortOrder.Descending).get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(5)
+
+        expect(toys[0].id).toEqual('bear2')
+        expect(toys[1].id).toEqual('bear')
+        expect(toys[2].id).toEqual('blueCar')
+        expect(toys[3].id).toEqual('copter')
+        expect(toys[4].id).toEqual('redCar')
+
+        done()
+    })
+
+    it('can order by and start from position', async (done) => {
+        let toys = await Collection.of(Toy)
+                                   .all()
+                                   .orderBy('position')
+                                   .startAt(3)
+                                   .get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(3)
+
+        expect(toys[0].id).toEqual('blueCar')
+        expect(toys[1].id).toEqual('bear2')
+        expect(toys[2].id).toEqual('redCar')
+
+        done()
+    })
+
+    it('can order by and start after position', async (done) => {
+        let toys = await Collection.of(Toy)
+                                   .all()
+                                   .orderBy('position')
+                                   .startAfter(3)
+                                   .get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(2)
+
+        expect(toys[0].id).toEqual('bear2')
+        expect(toys[1].id).toEqual('redCar')
+
+        done()
+    })
+
+    it('can order by and start from position by value', async (done) => {
+        let toys = await Collection.of(Toy)
+                                   .all()
+                                   .orderBy('weight')
+                                   .startAt(25)
+                                   .get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(4)
+
+        expect(toys[0].id).toEqual('redCar')
+        expect(toys[1].id).toEqual('bear')
+        expect(toys[2].id).toEqual('bear2')
+        expect(toys[3].id).toEqual('copter')
+
+        done()
+    })
+
+    it('can order by end at position', async (done) => {
+        let toys = await Collection.of(Toy)
+                                   .all()
+                                   .orderBy('position')
+                                   .endAt(3)
+                                   .get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(3)
+
+        expect(toys[0].id).toEqual('copter')
+        expect(toys[1].id).toEqual('bear')
+        expect(toys[2].id).toEqual('blueCar')
+
+        done()
+    })
+
+    it('can order by end before position', async (done) => {
+        let toys = await Collection.of(Toy)
+                                   .all()
+                                   .orderBy('position')
+                                   .endBefore(3)
+                                   .get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(2)
+
+        expect(toys[0].id).toEqual('copter')
+        expect(toys[1].id).toEqual('bear')
+
+        done()
+    })
+
+    it('can order by position and fetch in range', async (done) => {
+        let toys = await Collection.of(Toy)
+                                   .all()
+                                   .orderBy('position')
+                                   .startAfter(1)
+                                   .endAt(4)
+                                   .get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(3)
+
+        expect(toys[0].id).toEqual('bear')
+        expect(toys[1].id).toEqual('blueCar')
+        expect(toys[2].id).toEqual('bear2')
+
+        done()
+    })
+
+    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
         let fixtures = {
@@ -138,6 +306,7 @@ describe('Repo', () => {
                 name: 'red car',
                 weight: 25,
                 type: 'electronic',
+                position: 5,
                 tags: [
                     'toy',
                     'car',
@@ -148,6 +317,7 @@ describe('Repo', () => {
                 name: 'blue car',
                 weight: 15,
                 type: 'construction',
+                position: 3,
                 tags: [
                     'toy',
                     'car',
@@ -158,6 +328,18 @@ describe('Repo', () => {
                 name: 'bear',
                 weight: 40,
                 type: 'animal',
+                position: 2,
+                tags: [
+                    'toy',
+                    'bear',
+                    'brown',
+                ],
+            },
+            bear2: {
+                name: 'bear',
+                weight: 90,
+                type: 'animal',
+                position: 4,
                 tags: [
                     'toy',
                     'bear',
@@ -167,6 +349,7 @@ describe('Repo', () => {
             copter: {
                 name: 'copter',
                 weight: 100,
+                position: 1,
                 type: 'electronic',
                 tags: [
                     'toy',
@@ -181,17 +364,19 @@ describe('Repo', () => {
         }
 
         scope.fixtures = fixtures
+
+        done()
     }))
 
 
-    afterAll(SpecKit.runScopeAction(scope, async (scope) => {
+    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
         let toys = await Firestore.collection('toy').get()
         toys.forEach(toy => toy.ref.delete())
+
+        done()
     }))
-
-
 })
 
 @Entity()
@@ -200,5 +385,6 @@ class Toy {
     @Field() name: string
     @Field() weight: number
     @Field() type: string
+    @Field() position: number
     @Field() tags: string[]
 }

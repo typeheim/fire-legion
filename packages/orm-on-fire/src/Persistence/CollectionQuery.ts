@@ -9,7 +9,10 @@ import {
 } from '../../index'
 
 import { FieldFilter } from './FieldFilter'
-import { QueryState } from '../Contracts/Query'
+import {
+    QueryState,
+    SortOrder,
+} from '../Contracts/Query'
 // Firestore types
 import * as types from '@firebase/firestore-types'
 import QuerySnapshot = types.QuerySnapshot
@@ -21,6 +24,7 @@ export class CollectionQuery<Entity> {
     protected queryState: QueryState = {
         conditions: [],
         limit: -1,
+        orderBy: [],
         exclude: [],
     }
 
@@ -56,23 +60,60 @@ export class CollectionQuery<Entity> {
         return this
     }
 
+    orderBy(field: string, sortOrder = SortOrder.Ascending) {
+        this.queryState.orderBy.push({
+            field,
+            sortOrder,
+        })
+
+        return this
+    }
+
+    startAt(position: Entity | any) {
+        this.queryState.startAt = position
+
+        return this
+    }
+
+    startAfter(position: Entity | any) {
+        this.queryState.startAfter = position
+
+        return this
+    }
+
+    endAt(position: Entity | any) {
+        this.queryState.endAt = position
+
+        return this
+    }
+
+    endBefore(position: Entity | any) {
+        this.queryState.endBefore = position
+
+        return this
+    }
+
     get(): StatefulSubject<Entity[]> {
         let subject = new StatefulSubject<Entity[]>(1)
 
-        this.collectionReference.get(this.queryState).subscribe((querySnapshot: QuerySnapshot) => {
-            let entities = []
-            let docs
-            if (this.queryState.exclude) {
-                docs = querySnapshot.docs.filter(doc => !this.queryState.exclude.includes(doc.id))
-            } else {
-                docs = querySnapshot
-            }
-            docs.forEach((docSnapshot: DocumentSnapshot) => {
-                entities.push(this.entityManager.fromSnapshot(docSnapshot))
-            })
-            subject.next(entities)
-            subject.complete()
-        }, error => subject.error(error))
+        this.collectionReference.get(this.queryState).subscribe({
+            next: (querySnapshot: QuerySnapshot) => {
+                let entities = []
+                let docs
+                if (this.queryState.exclude) {
+                    docs = querySnapshot.docs.filter(doc => !this.queryState.exclude.includes(doc.id))
+                } else {
+                    docs = querySnapshot
+                }
+                docs.forEach((docSnapshot: DocumentSnapshot) => {
+                    entities.push(this.entityManager.fromSnapshot(docSnapshot))
+                })
+
+                subject.next(entities)
+                subject.complete()
+            },
+            error: (error) => subject.error(error),
+        })
 
         return subject
     }
@@ -80,19 +121,22 @@ export class CollectionQuery<Entity> {
     changes(): StatefulSubject<ChangedEntities<Entity>> {
         let subject = new StatefulSubject<ChangedEntities<Entity>>(1)
 
-        this.collectionReference.snapshot(this.queryState).subscribe((querySnapshot: QuerySnapshot) => {
-            let entityChanges = []
-            querySnapshot.docChanges().forEach((docSnapshot: DocumentChange) => {
-                let entity = this.entityManager.fromSnapshot(docSnapshot.doc)
-                if (entity) {
-                    entityChanges.push({
-                        type: docSnapshot.type,
-                        entity,
-                    })
-                }
-            })
-            subject.next(new ChangedEntities<Entity>(entityChanges))
-        }, error => subject.error(error))
+        this.collectionReference.snapshot(this.queryState).subscribe({
+            next: (querySnapshot: QuerySnapshot) => {
+                let entityChanges = []
+                querySnapshot.docChanges().forEach((change: DocumentChange) => {
+                    let entity = this.entityManager.fromSnapshot(change.doc)
+                    if (entity) {
+                        entityChanges.push({
+                            type: change.type,
+                            entity,
+                        })
+                    }
+                })
+                subject.next(new ChangedEntities<Entity>(entityChanges))
+            },
+            error: error => subject.error(error),
+        })
 
         return subject
     }
@@ -100,17 +144,20 @@ export class CollectionQuery<Entity> {
     stream(): StatefulSubject<Entity[]> {
         let subject = new StatefulSubject<Entity[]>(1)
 
-        this.collectionReference.snapshot(this.queryState).subscribe((querySnapshot: QuerySnapshot) => {
-            let entities = []
+        this.collectionReference.snapshot(this.queryState).subscribe({
+            next: (querySnapshot: QuerySnapshot) => {
+                let entities = []
 
-            querySnapshot.forEach((docSnapshot: QueryDocumentSnapshot) => {
-                let entity = this.entityManager.fromSnapshot(docSnapshot)
-                if (entity) {
-                    entities.push(entity)
-                }
-            })
-            subject.next(entities)
-        }, error => subject.error(error))
+                querySnapshot.forEach((docSnapshot: QueryDocumentSnapshot) => {
+                    let entity = this.entityManager.fromSnapshot(docSnapshot)
+                    if (entity) {
+                        entities.push(entity)
+                    }
+                })
+                subject.next(entities)
+            },
+            error: error => subject.error(error),
+        })
 
         return subject
     }

@@ -153,7 +153,7 @@ describe('Collection', () => {
         done()
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope) => {
+    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
         let item = new Item()
         item.id = 'item'
         await save(item)
@@ -165,9 +165,11 @@ describe('Collection', () => {
         let user = new ItemUser()
         user.id = 'user'
         await save(user)
+
+        done()
     }))
 
-    afterAll(SpecKit.runScopeAction(scope, async (scope) => {
+    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
         let items = await Firestore.collection('item').get()
@@ -178,6 +180,8 @@ describe('Collection', () => {
 
         let itemUsers = await Firestore.collection('item-user').get()
         itemUsers.forEach(itemUser => itemUser.ref.delete())
+
+        done()
     }))
 })
 

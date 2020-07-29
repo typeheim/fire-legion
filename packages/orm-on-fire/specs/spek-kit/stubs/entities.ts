@@ -6,7 +6,6 @@ import {
     Entity,
     Field,
     ID,
-    SearchField,
     UpdatedDateField,
 } from '../../../src/Decorators/Entity'
 import { Reference } from '../../../src/Model/Reference'
@@ -109,7 +108,7 @@ export class Book {
     @ID()
     id: string
 
-    @SearchField()
+    @Field()
     name: string
 }
 

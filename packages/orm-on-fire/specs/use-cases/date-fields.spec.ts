@@ -82,7 +82,7 @@ describe('Collection', () => {
     })
 
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope) => {
+    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
         let fixtureDate = new Date()
 
         let firstItem = new DateItem()
@@ -98,13 +98,17 @@ describe('Collection', () => {
         scope.fixtures['fixtureDate'] = fixtureDate
         scope.fixtures['first'] = firstItem
         scope.fixtures['second'] = secondItem
+
+        done()
     }))
 
-    afterAll(SpecKit.runScopeAction(scope, async (scope) => {
+    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
         let items = await Firestore.collection('date-item').get()
         items.forEach(item => item.ref.delete())
+
+        done()
     }))
 })
 

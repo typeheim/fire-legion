@@ -4,7 +4,10 @@ import {
     StatefulSubject,
 } from '@typeheim/fire-rx'
 import { DocReference } from './DocReference'
-import { QueryState } from '../Contracts/Query'
+import {
+    QueryState,
+    SortOrder,
+} from '../Contracts/Query'
 // Firestore types
 import * as types from '@firebase/firestore-types'
 import QuerySnapshot = types.QuerySnapshot
@@ -50,10 +53,48 @@ export class CollectionReference {
                 })
             }
 
+            if (queryState.orderBy?.length > 0) {
+                queryState.orderBy.forEach(orderCondition => {
+                    if (orderCondition.sortOrder === SortOrder.Descending) {
+                        query = query.orderBy(orderCondition.field, 'desc')
+                    } else {
+                        query = query.orderBy(orderCondition.field)
+                    }
+                })
+            }
+
             if (queryState.limit > 0) {
                 query = query.limit(queryState.limit)
             }
 
+            if (queryState.startAt !== undefined) {
+                if (queryState.startAt?.__ormOnFire?.docRef) {
+                    query = query.startAt(queryState.startAt?.__ormOnFire?.docRef?.nativeRef)
+                } else {
+                    query = query.startAt(queryState.startAt)
+                }
+            }
+            if (queryState.startAfter !== undefined) {
+                if (queryState.startAfter?.__ormOnFire?.docRef) {
+                    query = query.startAfter(queryState.startAfter?.__ormOnFire?.docRef?.nativeRef)
+                } else {
+                    query = query.startAfter(queryState.startAfter)
+                }
+            }
+            if (queryState.endAt !== undefined) {
+                if (queryState.endAt?.__ormOnFire?.docRef) {
+                    query = query.endAt(queryState.endAt?.__ormOnFire?.docRef?.nativeRef)
+                } else {
+                    query = query.endAt(queryState.endAt)
+                }
+            }
+            if (queryState.endBefore !== undefined) {
+                if (queryState.endBefore?.__ormOnFire?.docRef) {
+                    query = query.endBefore(queryState.endBefore?.__ormOnFire?.docRef?.nativeRef)
+                } else {
+                    query = query.endBefore(queryState.endBefore)
+                }
+            }
         }
 
         return query

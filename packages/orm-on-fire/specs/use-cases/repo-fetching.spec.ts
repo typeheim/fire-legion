@@ -119,7 +119,7 @@ describe('Repo', () => {
         done()
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope) => {
+    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
         let ben = {
@@ -159,10 +159,12 @@ describe('Repo', () => {
         let toysCollection = Firestore.collection('dog').doc('boomer').collection('toys')
         await toysCollection.doc('bone').set({ type: 'bone' })
         await toysCollection.doc('ball').set({ type: 'ball' })
+
+        done()
     }))
 
 
-    afterAll(SpecKit.runScopeAction(scope, async (scope) => {
+    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
         let dogs = await Firestore.collection('dog').get()
@@ -174,6 +176,8 @@ describe('Repo', () => {
         owners.forEach(ownerRef => {
             ownerRef.ref.delete()
         })
+
+        done()
     }))
 })
 

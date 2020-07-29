@@ -120,7 +120,7 @@ describe('Repo', () => {
         done()
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope) => {
+    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
         let camry = {
@@ -136,16 +136,20 @@ describe('Repo', () => {
         }
         await Firestore.collection('car').doc('tesla').set(tesla)
         scope.fixtures['car'] = tesla
+
+        done()
     }))
 
 
-    afterAll(SpecKit.runScopeAction(scope, async (scope) => {
+    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
         let cars = await Firestore.collection('car').get()
         cars.forEach(carRef => {
             carRef.ref.delete()
         })
+
+        done()
     }))
 })
 

@@ -123,10 +123,6 @@ export class EntityManager<Entity> {
                 dataToSave[field.name] = date
             } else if (entity[field.name] !== undefined) {
                 dataToSave[field.name] = entity[field.name]
-                if (field.isText) {
-                    dataToSave[`__idx__text__${field.name}`] = this.createTextIndex(entity[field.name])
-                    dataToSave[`__idx__text__reverse__${field.name}`] = this.createReverseTextIndex(entity[field.name])
-                }
             }
         })
         const docRefs = this.metadata.docRefs

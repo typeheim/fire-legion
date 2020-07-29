@@ -2,18 +2,15 @@ import {
     Book,
     SpecKit,
 } from '../spek-kit'
-import {
-    Collection,
-    save,
-} from '../../index'
+import { Collection } from '../../index'
 import * as FirebaseAdmin from 'firebase-admin'
+import { TextIndexGenerator } from '../../src/Functions/TextIndexGenerator'
 
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()
 
     it('can filter by "startsWith" using single term', async (done) => {
         let books = await Collection.of(Book).all().filter(toy => toy.name.startsWith('Game')).get()
-
         expect(books).not.toBeNull()
         expect(books.length).toEqual(2)
 
@@ -55,30 +52,55 @@ describe('Repo', () => {
         done()
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope) => {
-        let got = new Book()
-        got.name = 'Game of Thrones'
-        await save(got)
-
-        let gc = new Book()
-        gc.name = 'Game Club'
-        await save(gc)
+    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
+        const Firestore = FirebaseAdmin.firestore()
+        const generator = new TextIndexGenerator()
 
         scope.fixtures['got'] = {
-            id: got.id,
-            name: got.name,
+            id: 'got',
+            name: 'Game of Thrones',
         }
         scope.fixtures['gc'] = {
-            id: gc.id,
-            name: gc.name,
+            id: 'gc',
+            name: 'Game Club',
         }
+
+        await Firestore.collection('book').doc(scope.fixtures['got'].id).set({
+            name: scope.fixtures['got'].name,
+            __ormOnFireMetadata: generator.generateIndex(scope.fixtures['got'], ['name']),
+        })
+        await Firestore.collection('book').doc(scope.fixtures['gc'].id).set({
+            name: scope.fixtures['gc'].name,
+            __ormOnFireMetadata: generator.generateIndex(scope.fixtures['gc'], ['name']),
+        })
+
+        Firestore.collection('book').onSnapshot(snapshot => {
+            snapshot.docs.forEach(docSnapshot => {
+                if (!docSnapshot.exists) {
+                    return
+                }
+                let docData = docSnapshot.data()
+                let oldMetadata = docData['__ormOnFireMetadata']
+                let newMetadata = generator.generateIndex(docSnapshot.data(), ['name'])
+
+                if (oldMetadata != newMetadata) {
+                    docSnapshot.ref.update({
+                        __ormOnFireMetadata: newMetadata,
+                    })
+                }
+            })
+        })
+
+        done()
     }))
 
-    afterAll(SpecKit.runScopeAction(scope, async (scope) => {
+    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
         let books = await Firestore.collection('book').get()
         books.forEach(book => book.ref.delete())
+
+        done()
     }))
 
 })
