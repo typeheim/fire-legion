@@ -1,9 +1,0 @@
-node_modules
-specs
-docs
-dev-server.ts
-dev-server.d.ts
-dev-server.js
-dev-server.js.map
-*.ts
-!*.d.ts
