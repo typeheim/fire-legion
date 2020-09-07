@@ -12,6 +12,7 @@ import {
 import { CollectionQuery } from '../Persistence/CollectionQuery'
 import { QueryFactory } from '../Persistence/QueryFactory'
 import { InternalCollectionsMap } from '../singletons'
+import { EntityStream } from '../Data/EntityStream'
 
 export class Collection<Entity> {
     constructor(protected queryFactory: QueryFactory<Entity>, protected persister: EntityPersister<Entity>) {}
@@ -44,11 +45,11 @@ export class Collection<Entity> {
         return this.queryFactory.createCollectionQuery().filter(filterFunction)
     }
 
-    changes(): StatefulSubject<ChangedEntities<Entity>> {
+    changes(): EntityStream<ChangedEntities<Entity>> {
         return this.queryFactory.createCollectionQuery().changes()
     }
 
-    forEach(callback: ((value: Entity) => void)): StatefulSubject<Entity[]> {
+    forEach(callback: ((value: Entity) => void)): EntityStream<Entity[]> {
         let subject = this.all().get()
         subject.subscribe(entities => {
             entities.forEach(entity => {

@@ -11,6 +11,7 @@ describe('Repo', () => {
 
     it('can filter by "startsWith" using single term', async (done) => {
         let books = await Collection.of(Book).all().filter(toy => toy.name.startsWith('Game')).get()
+
         expect(books).not.toBeNull()
         expect(books.length).toEqual(2)
 
@@ -65,16 +66,21 @@ describe('Repo', () => {
             name: 'Game Club',
         }
 
-        await Firestore.collection('book').doc(scope.fixtures['got'].id).set({
-            name: scope.fixtures['got'].name,
-            __ormOnFireMetadata: generator.generateIndex(scope.fixtures['got'], ['name']),
-        })
-        await Firestore.collection('book').doc(scope.fixtures['gc'].id).set({
-            name: scope.fixtures['gc'].name,
-            __ormOnFireMetadata: generator.generateIndex(scope.fixtures['gc'], ['name']),
-        })
+        try {
+            await Firestore.collection('book').doc(scope.fixtures['got'].id).set({
+                name: scope.fixtures['got'].name,
+                __ormOnFireMetadata: generator.generateIndex(scope.fixtures['got'], ['name']),
+            })
+            await Firestore.collection('book').doc(scope.fixtures['gc'].id).set({
+                name: scope.fixtures['gc'].name,
+                __ormOnFireMetadata: generator.generateIndex(scope.fixtures['gc'], ['name']),
+            })
+        } catch (error) {
+            console.log(error)
+        }
 
-        Firestore.collection('book').onSnapshot(snapshot => {
+
+        scope['textIndexDestructor'] = Firestore.collection('book').onSnapshot(snapshot => {
             snapshot.docs.forEach(docSnapshot => {
                 if (!docSnapshot.exists) {
                     return
@@ -86,7 +92,7 @@ describe('Repo', () => {
                 if (oldMetadata != newMetadata) {
                     docSnapshot.ref.update({
                         __ormOnFireMetadata: newMetadata,
-                    })
+                    }).catch(error => console.log(error))
                 }
             })
         })
@@ -95,6 +101,7 @@ describe('Repo', () => {
     }))
 
     afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
+        scope['textIndexDestructor']()
         const Firestore = FirebaseAdmin.firestore()
 
         let books = await Firestore.collection('book').get()

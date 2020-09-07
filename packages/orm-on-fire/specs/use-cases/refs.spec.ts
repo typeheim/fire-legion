@@ -16,11 +16,25 @@ describe('Collection', () => {
     const scope = SpecKit.prepareScope()
 
     it('can link multiple items', async (done) => {
+        let item = new Item()
+
+        // default refs should return null
+        expect(await item.owner.get()).toBeNull()
+        expect(await item.user.get()).toBeNull()
+
+        done()
+    })
+
+    it('can link multiple items', async (done) => {
         const Firestore = FirebaseAdmin.firestore()
 
         let item = await Collection.of(Item).one('item').get()
         let owner = await Collection.of(ItemOwner).one('owner').get()
         let user = await Collection.of(ItemUser).one('user').get()
+
+        // default refs should return null
+        expect(await item.owner.get()).toBeNull()
+        expect(await item.user.get()).toBeNull()
 
         item.owner.link(owner)
         item.user.link(user)

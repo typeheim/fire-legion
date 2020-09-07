@@ -22,6 +22,7 @@ firestore.key.json
 *.js
 *.js.map
 *.d.ts
+!prepare-build.js
 
 # Runtime data
 pids

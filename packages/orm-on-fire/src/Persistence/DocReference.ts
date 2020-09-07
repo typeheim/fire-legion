@@ -28,9 +28,9 @@ export class DocReference {
                 this.nativeRef.get().then((snapshot: DocumentSnapshot) => {
                     subject.next(snapshot)
                     subject.complete()
-                })
+                }).catch(error => subject.fail(error))
             }
-        }).catch(error => subject.error(error))
+        }).catch(error => subject.fail(error))
 
         return subject
     }
@@ -39,9 +39,9 @@ export class DocReference {
         let promise = new ReactivePromise<boolean>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.nativeRef.set(data).then(() => {
-                    promise.resolve()
-                })
+                this.nativeRef.set(data)
+                    .then(() => promise.resolve(true))
+                    .catch(() => promise.resolve(false))
             }
         }).catch(error => promise.reject(error))
 
@@ -52,9 +52,9 @@ export class DocReference {
         let promise = new ReactivePromise<boolean>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.nativeRef.update(data).then(() => {
-                    promise.resolve(true)
-                })
+                this.nativeRef.update(data)
+                    .then(() => promise.resolve(true))
+                    .catch(() => promise.resolve(false))
             }
         }).catch(error => promise.reject(error))
 
@@ -65,9 +65,9 @@ export class DocReference {
         let promise = new ReactivePromise<boolean>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.nativeRef.delete().then(() => {
-                    promise.resolve(true)
-                })
+                this.nativeRef.delete()
+                    .then(() => promise.resolve(true))
+                    .catch(() => promise.resolve(false))
             }
         }).catch(error => promise.reject(error))
 
@@ -78,11 +78,15 @@ export class DocReference {
         let subject = new StatefulSubject<DocumentSnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.nativeRef.onSnapshot((snapshot: DocumentSnapshot) => {
+                let unsubscribeSnapshot = this.nativeRef.onSnapshot((snapshot: DocumentSnapshot) => {
                     subject.next(snapshot)
                 })
+
+                subject.subscribe({
+                    complete: () => unsubscribeSnapshot(),
+                })
             }
-        }).catch(error => subject.error(error))
+        }).catch(error => subject.fail(error))
 
         return subject
     }

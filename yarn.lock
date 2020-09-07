@@ -1768,6 +1768,13 @@
   dependencies:
     rxjs "^6.5.5"
 
+"@typeheim/fire-rx@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.5.tgz#f9dbafcfe0fb1ac8ceb1458e39ea6d18df30ec66"
+  integrity sha512-VqSUbQdZs0fa3evGkRRadiVLEbNW606h07aXOv1TKAtl7xaKHnwFOKJyUGn8sEmS2Lwlixhyffo3eteUiTLTrw==
+  dependencies:
+    rxjs "^6.5.5"
+
 "@types/babel__core@^7.1.7":
   version "7.1.9"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.9.tgz#77e59d438522a6fb898fa43dc3455c6e72f3963d"

@@ -12,6 +12,7 @@ import {
 import * as types from '@firebase/firestore-types'
 import QuerySnapshot = types.QuerySnapshot
 import Query = types.Query
+import { EntityStream } from '../Data/EntityStream'
 
 export class CollectionReference {
     constructor(protected connection: FirestoreConnection, protected collectionPath: string) {}
@@ -23,7 +24,7 @@ export class CollectionReference {
             if (isInitialized) {
                 this.buildQuery(queryState).get().then((snapshot: QuerySnapshot) => {
                     promise.resolve(snapshot)
-                })
+                }).catch(error => promise.reject(error))
             }
         })
 
@@ -32,11 +33,15 @@ export class CollectionReference {
 
     snapshot(queryState?: QueryState): StatefulSubject<QuerySnapshot> {
         let subject = new StatefulSubject<QuerySnapshot>()
+
+
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.buildQuery(queryState).onSnapshot(snapshot => {
-                    subject.next(snapshot)
-                })
+                this.buildQuery(queryState).onSnapshot(
+                    snapshot => subject.next(snapshot),
+                    error => subject.fail(error),
+                    () => subject.complete(),
+                )
             }
         })
 

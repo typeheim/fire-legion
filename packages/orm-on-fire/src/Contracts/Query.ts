@@ -1,6 +1,8 @@
 // Firestore types
 import * as types from '@firebase/firestore-types'
 import WhereFilterOp = types.WhereFilterOp
+import { MonoTypeOperatorFunction } from 'rxjs/src/internal/types'
+import { SchedulerLike } from 'rxjs'
 
 export interface FireFilter<Entity> {
     equal(value: any): FireFilter<Entity>
@@ -46,7 +48,11 @@ export interface QueryState {
     endAt?: any
     endBefore?: any
     exclude?: string[]
+    map?: MapOperator<any>
+    debounceUpdatesTime?: number
 }
+
+export type MapOperator<T> = (value: T[]) => any
 
 interface OrderByCondition {
     field: string

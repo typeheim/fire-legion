@@ -9,6 +9,8 @@ import { DocReference } from '../Persistence/DocReference'
 import { CollectionReference } from '../Persistence/CollectionReference'
 import { Model } from '../Contracts'
 import { save } from '../operators'
+import { EntityPromise } from '../Data/EntityPromise'
+import { EntityStream } from '../Data/EntityStream'
 
 export class Reference<Entity> {
     protected _entityBuilder: EntityManager<Entity>
@@ -31,11 +33,11 @@ export class Reference<Entity> {
         return result
     }
 
-    get(): StatefulSubject<Entity> {
+    get(): EntityPromise<Entity> {
         return new EntityQuery<Entity>(this.docRef, this.entityBuilder).get()
     }
 
-    stream(): StatefulSubject<Entity> {
+    stream(): EntityStream<Entity> {
         return new EntityQuery<Entity>(this.docRef, this.entityBuilder).stream()
     }
 

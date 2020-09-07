@@ -6,6 +6,7 @@ import {
     EntityFilter,
     FilterFunction,
     PropertyMetadata,
+    MapOperator
 } from '../../index'
 
 import { FieldFilter } from './FieldFilter'
@@ -19,6 +20,7 @@ import QuerySnapshot = types.QuerySnapshot
 import DocumentChange = types.DocumentChange
 import DocumentSnapshot = types.DocumentSnapshot
 import QueryDocumentSnapshot = types.QueryDocumentSnapshot
+import { EntityStream } from '../Data/EntityStream'
 
 export class CollectionQuery<Entity> {
     protected queryState: QueryState = {
@@ -38,6 +40,18 @@ export class CollectionQuery<Entity> {
         } else {
             this.queryState.exclude = ids
         }
+
+        return this
+    }
+
+    map(operator: MapOperator<Entity>) {
+        this.queryState.map = operator
+
+        return this
+    }
+
+    debounceUpdates(dueTime: number) {
+        this.queryState.debounceUpdatesTime = dueTime
 
         return this
     }
@@ -93,72 +107,90 @@ export class CollectionQuery<Entity> {
         return this
     }
 
-    get(): StatefulSubject<Entity[]> {
-        let subject = new StatefulSubject<Entity[]>(1)
+    get(): EntityStream<Entity[]> {
+        let stream = new EntityStream<Entity[]>((executor) => {
+            let firestoreSource = this.collectionReference.get(this.queryState)
+            firestoreSource.subscribe({
+                next: (querySnapshot: QuerySnapshot) => {
+                    let entities = []
+                    let docs
+                    if (this.queryState.exclude) {
+                        docs = querySnapshot.docs.filter(doc => !this.queryState.exclude.includes(doc.id))
+                    } else {
+                        docs = querySnapshot
+                    }
+                    docs.forEach((docSnapshot: DocumentSnapshot) => {
+                        entities.push(this.entityManager.fromSnapshot(docSnapshot))
+                    })
 
-        this.collectionReference.get(this.queryState).subscribe({
-            next: (querySnapshot: QuerySnapshot) => {
-                let entities = []
-                let docs
-                if (this.queryState.exclude) {
-                    docs = querySnapshot.docs.filter(doc => !this.queryState.exclude.includes(doc.id))
-                } else {
-                    docs = querySnapshot
-                }
-                docs.forEach((docSnapshot: DocumentSnapshot) => {
-                    entities.push(this.entityManager.fromSnapshot(docSnapshot))
-                })
+                    if (this.queryState.map) {
+                        entities = this.queryState.map(entities)
+                    }
 
-                subject.next(entities)
-                subject.complete()
-            },
-            error: (error) => subject.error(error),
+                    executor.next(entities)
+                    executor.stop()
+                },
+                error: (error) => executor.fail(error),
+            })
         })
 
-        return subject
+        return stream
     }
 
-    changes(): StatefulSubject<ChangedEntities<Entity>> {
-        let subject = new StatefulSubject<ChangedEntities<Entity>>(1)
-
-        this.collectionReference.snapshot(this.queryState).subscribe({
-            next: (querySnapshot: QuerySnapshot) => {
-                let entityChanges = []
-                querySnapshot.docChanges().forEach((change: DocumentChange) => {
-                    let entity = this.entityManager.fromSnapshot(change.doc)
-                    if (entity) {
-                        entityChanges.push({
-                            type: change.type,
-                            entity,
-                        })
+    changes(): EntityStream<ChangedEntities<Entity>> {
+        let stream = new EntityStream<ChangedEntities<Entity>>((context) => {
+            let snapshotStream = this.collectionReference.snapshot(this.queryState)
+            context.subscribe({
+                complete: () => snapshotStream.complete(),
+            })
+            snapshotStream.subscribe({
+                next: (querySnapshot: QuerySnapshot) => {
+                    let entityChanges = []
+                    querySnapshot.docChanges().forEach((change: DocumentChange) => {
+                        let entity = this.entityManager.fromSnapshot(change.doc)
+                        if (entity) {
+                            entityChanges.push({
+                                type: change.type,
+                                entity,
+                            })
+                        }
+                    })
+                    if (this.queryState.map) {
+                        entityChanges = this.queryState.map(entityChanges)
                     }
-                })
-                subject.next(new ChangedEntities<Entity>(entityChanges))
-            },
-            error: error => subject.error(error),
+
+                    context.next(new ChangedEntities<Entity>(entityChanges))
+                },
+                error: error => context.fail(error),
+                complete: () => context.stop(),
+            })
         })
 
-        return subject
+        return stream
     }
 
-    stream(): StatefulSubject<Entity[]> {
-        let subject = new StatefulSubject<Entity[]>(1)
+    stream(): EntityStream<Entity[]> {
+        let stream = new EntityStream<Entity[]>((context) => {
+            this.collectionReference.snapshot(this.queryState).subscribe({
+                next: (querySnapshot: QuerySnapshot) => {
+                    let entities = []
 
-        this.collectionReference.snapshot(this.queryState).subscribe({
-            next: (querySnapshot: QuerySnapshot) => {
-                let entities = []
-
-                querySnapshot.forEach((docSnapshot: QueryDocumentSnapshot) => {
-                    let entity = this.entityManager.fromSnapshot(docSnapshot)
-                    if (entity) {
-                        entities.push(entity)
+                    querySnapshot.forEach((docSnapshot: QueryDocumentSnapshot) => {
+                        let entity = this.entityManager.fromSnapshot(docSnapshot)
+                        if (entity) {
+                            entities.push(entity)
+                        }
+                    })
+                    if (this.queryState.map) {
+                        entities = this.queryState.map(entities)
                     }
-                })
-                subject.next(entities)
-            },
-            error: error => subject.error(error),
+                    context.next(entities)
+                },
+                error: error => context.fail(error),
+                complete: () => context.stop(),
+            })
         })
 
-        return subject
+        return stream
     }
 }

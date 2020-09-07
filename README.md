@@ -1,5 +1,11 @@
 # Fire Legion
-DDD framework for Firebase and RxJS based applications.
+DDD framework for Firebase applications.
+<p>
+    <a href="https://www.npmjs.com/package/@typeheim/fire-legion" target="_blank"><img src="https://img.shields.io/npm/v/@typeheim/fire-legion.svg" alt="NPM Version" /></a>
+    <a href="https://travis-ci.org/github/typeheim/fire-legion" target="_blank"><img src="https://travis-ci.org/typeheim/fire-legion.svg?branch=master" alt="Build Status" /></a>
+    <a href="https://www.npmjs.com/package/@typeheim/fire-legion" target="_blank"><img src="https://img.shields.io/npm/l/@typeheim/fire-legion.svg" alt="Package License" /></a>
+    <a href="https://discord.gg/dmMznp9" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+</p>
 
 # Getting Started
 Install package

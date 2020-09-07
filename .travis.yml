@@ -1,0 +1,14 @@
+sudo: false
+install: true
+language: node_js
+node_js:
+  - stable
+before_install:
+  - npm i -g yarn
+  - yarn --version
+script:
+  - yarn install
+  - yarn run run:bootstrap
+  - yarn run run:spec
+cache:
+  yarn: true

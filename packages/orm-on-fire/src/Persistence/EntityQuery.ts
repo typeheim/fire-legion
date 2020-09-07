@@ -5,28 +5,40 @@ import { StatefulSubject } from '@typeheim/fire-rx'
 import { EntityManager } from './EntityManager'
 import { DocReference } from './DocReference'
 import DocumentSnapshot = types.DocumentSnapshot
+import { EntityStream } from '../Data/EntityStream'
+import { EntityPromise } from '../Data/EntityPromise'
 
 export class EntityQuery<Entity> {
     constructor(protected docReference: DocReference, protected entityBuilder: EntityManager<Entity>) {}
 
-    get(): StatefulSubject<Entity> {
-        let subject = new StatefulSubject<Entity>(1)
+    get(): EntityPromise<Entity> {
+        let promise = new EntityPromise<Entity>()
 
-        this.docReference.get().subscribe((docSnapshot: DocumentSnapshot) => {
-            subject.next(this.entityBuilder.fromSnapshot(docSnapshot))
-            subject.complete()
-        }, error => subject.error(error))
+        if (this.docReference) {
+            this.docReference.get().subscribe({
+                next: (docSnapshot: DocumentSnapshot) => {
+                    promise.resolve(this.entityBuilder.fromSnapshot(docSnapshot))
+                },
+                error: error => promise.reject(error),
+            })
+        } else {
+            promise.resolve(null)
+        }
 
-        return subject
+        return promise
     }
 
-    stream(): StatefulSubject<Entity> {
-        let subject = new StatefulSubject<Entity>(1)
+    stream(): EntityStream<Entity> {
+        let stream = new EntityStream<Entity>((context) => {
+            this.docReference.snapshot().subscribe({
+                next: (docSnapshot: DocumentSnapshot) => {
+                    context.next(this.entityBuilder.fromSnapshot(docSnapshot))
+                },
+                error: error => context.fail(error),
+                complete: () => context.stop(),
+            })
+        })
 
-        this.docReference.snapshot().subscribe((docSnapshot: DocumentSnapshot) => {
-            subject.next(this.entityBuilder.fromSnapshot(docSnapshot))
-        }, error => subject.error(error))
-
-        return subject
+        return stream
     }
 }
