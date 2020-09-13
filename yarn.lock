@@ -1768,12 +1768,10 @@
   dependencies:
     rxjs "^6.5.5"
 
-"@typeheim/fire-rx@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.5.tgz#f9dbafcfe0fb1ac8ceb1458e39ea6d18df30ec66"
-  integrity sha512-VqSUbQdZs0fa3evGkRRadiVLEbNW606h07aXOv1TKAtl7xaKHnwFOKJyUGn8sEmS2Lwlixhyffo3eteUiTLTrw==
-  dependencies:
-    rxjs "^6.5.5"
+"@typeheim/fire-rx@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.7.tgz#fd17b170f97178fa05cf3e79d26400b1963078be"
+  integrity sha512-hCK2A0BvxvOtheA5TIgaez3OBJAt39RkyVYPvJFtwBxc0eHVDny5CnNybRcD6OsoetQmExZ/BGet9xWUUSzqUQ==
 
 "@types/babel__core@^7.1.7":
   version "7.1.9"
@@ -8618,6 +8616,13 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   integrity sha1-6Eg5bwV9Ij8kOGkkYY4laUFh7Ec=
   dependencies:
     aproba "^1.1.1"
+
+rxjs@^6.0.0:
+  version "6.6.3"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.3.tgz#8ca84635c4daa900c0d3967a6ee7ac60271ee552"
+  integrity sha512-trsQc+xYYXZ3urjOiJOuCOa5N3jAZ3eiSpQB5hIT8zGlL2QfnHLJ2r7GMkBGuIausdJN1OneaI6gQlsqNHHmZQ==
+  dependencies:
+    tslib "^1.9.0"
 
 rxjs@^6.4.0, rxjs@^6.5.5:
   version "6.6.0"

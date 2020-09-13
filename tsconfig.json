@@ -21,7 +21,13 @@
     "paths": {
       "@typeheim/fire-auth": ["packages/fire-auth"],
       "@typeheim/fire-rx": ["packages/fire-rx"],
-      "@typeheim/orm-on-fire": ["packages/orm-on-fire"]
+      "@typeheim/orm-on-fire": ["packages/orm-on-fire"],
+      "rxjs": [
+        "node_modules/rxjs"
+      ],
+      "rxjs/*": [
+        "node_modules/rxjs/*"
+      ]
     }
   },
   "exclude": [

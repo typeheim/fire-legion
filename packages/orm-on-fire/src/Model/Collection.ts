@@ -2,6 +2,7 @@ import { EntityPersister } from './EntityPersister'
 import {
     ReactivePromise,
     StatefulSubject,
+    AsyncStream,
 } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
 import { EntityQuery } from '../Persistence/EntityQuery'
@@ -13,6 +14,8 @@ import { CollectionQuery } from '../Persistence/CollectionQuery'
 import { QueryFactory } from '../Persistence/QueryFactory'
 import { InternalCollectionsMap } from '../singletons'
 import { EntityStream } from '../Data/EntityStream'
+import { map } from 'rxjs/operators'
+import { Observable } from 'rxjs'
 
 export class Collection<Entity> {
     constructor(protected queryFactory: QueryFactory<Entity>, protected persister: EntityPersister<Entity>) {}
@@ -49,14 +52,12 @@ export class Collection<Entity> {
         return this.queryFactory.createCollectionQuery().changes()
     }
 
-    forEach(callback: ((value: Entity) => void)): EntityStream<Entity[]> {
-        let subject = this.all().get()
-        subject.subscribe(entities => {
+    forEach(callback: ((value: Entity) => void)): AsyncStream<any> {
+        return new AsyncStream(this.all().get().pipe(map(entities => {
             entities.forEach(entity => {
                 callback(entity)
             })
-        })
-        return subject
+        })))
     }
 
     clean() {

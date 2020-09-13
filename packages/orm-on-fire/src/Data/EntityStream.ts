@@ -1,5 +1,5 @@
-import { StatefulProducer } from '@typeheim/fire-rx'
+import { ReactiveStream } from '@typeheim/fire-rx'
 
-export class EntityStream<T> extends StatefulProducer<T> {
+export class EntityStream<T> extends ReactiveStream<T> {
     // fully inherited
 }

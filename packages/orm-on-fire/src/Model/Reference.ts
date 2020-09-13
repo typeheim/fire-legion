@@ -1,10 +1,7 @@
 import { EntityManager } from '../Persistence/EntityManager'
 import { Metadata } from '../singletons'
 import { EntityQuery } from '../Persistence/EntityQuery'
-import {
-    ReactivePromise,
-    StatefulSubject,
-} from '@typeheim/fire-rx'
+import { ReactivePromise } from '@typeheim/fire-rx'
 import { DocReference } from '../Persistence/DocReference'
 import { CollectionReference } from '../Persistence/CollectionReference'
 import { Model } from '../Contracts'

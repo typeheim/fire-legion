@@ -1,0 +1,95 @@
+import {
+    StatefulStream,
+    AsyncStream,
+} from '@typeheim/fire-rx'
+import * as firebase from 'firebase'
+import { User } from 'firebase'
+import { map } from 'rxjs/operators'
+
+export class AuthSession {
+    public readonly userStream: StatefulStream<User>
+    public readonly isLoggedInStream: StatefulStream<boolean>
+    public readonly authStateStream: StatefulStream<AuthState>
+    public readonly idTokenStream: StatefulStream<firebase.auth.IdTokenResult>
+
+    constructor(protected firebaseAuth: firebase.auth.Auth) {
+        this.userStream = new StatefulStream((context) => {
+            this.firebaseAuth.onAuthStateChanged({
+                next: user => context.next(user),
+                error: error => context.fail(error),
+                complete: () => context.stop(),
+            })
+        })
+        this.authStateStream = new StatefulStream((context) => {
+            this.firebaseAuth.onAuthStateChanged({
+                next: (user: User) => {
+                    let state = null
+                    if (user) {
+                        state = new AuthState(AuthStateType.isAuthorised)
+                    } else if (user && user.isAnonymous) {
+                        state = new AuthState(AuthStateType.isAnonymous)
+                    } else {
+                        state = new AuthState(AuthStateType.isUnauthorised)
+                    }
+                    context.next(state)
+                },
+                error: error => context.fail(error),
+                complete: () => context.stop(),
+            })
+        })
+        this.isLoggedInStream = new StatefulStream((context) => {
+            this.firebaseAuth.onAuthStateChanged({
+                next: user => {
+                    context.next(user || (user && user.isAnonymous))
+                },
+                error: error => context.fail(error),
+                complete: () => context.stop(),
+            })
+        })
+        this.idTokenStream = new StatefulStream((context) => {
+            this.firebaseAuth.onIdTokenChanged({
+                next: async (user: User) => context.next(await user.getIdTokenResult()),
+                error: error => context.fail(error),
+                complete: () => context.stop(),
+            })
+        })
+    }
+
+    getToken(forceRefresh = false): AsyncStream<string> {
+        return new AsyncStream(this.userStream.pipe(map(async (user) => await user.getIdToken(forceRefresh))))
+    }
+
+    getTokenInfo(forceRefresh = false): AsyncStream<firebase.auth.IdTokenResult> {
+        return new AsyncStream(this.userStream.pipe(map(async (user) => await user.getIdTokenResult(forceRefresh))))
+    }
+
+    async signOut(): Promise<void> {
+        return this.firebaseAuth.signOut()
+    }
+}
+
+export class AuthState {
+    constructor(protected state: AuthStateType) {}
+
+    isLoggedIn(): boolean {
+        return this.isAuthorised() || this.isAnonymous()
+    }
+
+    isAuthorised(): boolean {
+        return this.state === AuthStateType.isAuthorised
+    }
+
+    isUnauthorised(): boolean {
+        return this.state === AuthStateType.isUnauthorised
+    }
+
+    isAnonymous(): boolean {
+        return this.state === AuthStateType.isAnonymous
+    }
+}
+
+export enum AuthStateType {
+    isAuthorised,
+    isAnonymous,
+    isUnauthorised
+}

@@ -1,12 +1,11 @@
 // Firestore types
 import * as types from '@firebase/firestore-types'
-
-import { StatefulSubject } from '@typeheim/fire-rx'
 import { EntityManager } from './EntityManager'
 import { DocReference } from './DocReference'
-import DocumentSnapshot = types.DocumentSnapshot
 import { EntityStream } from '../Data/EntityStream'
 import { EntityPromise } from '../Data/EntityPromise'
+import { map } from 'rxjs/operators'
+import DocumentSnapshot = types.DocumentSnapshot
 
 export class EntityQuery<Entity> {
     constructor(protected docReference: DocReference, protected entityBuilder: EntityManager<Entity>) {}
@@ -29,16 +28,11 @@ export class EntityQuery<Entity> {
     }
 
     stream(): EntityStream<Entity> {
-        let stream = new EntityStream<Entity>((context) => {
-            this.docReference.snapshot().subscribe({
-                next: (docSnapshot: DocumentSnapshot) => {
-                    context.next(this.entityBuilder.fromSnapshot(docSnapshot))
-                },
-                error: error => context.fail(error),
-                complete: () => context.stop(),
-            })
-        })
+        let snapshotStream = this.docReference.snapshot()
+        let source = snapshotStream.pipe(map((docSnapshot: DocumentSnapshot) => {
+            return this.entityBuilder.fromSnapshot(docSnapshot)
+        }))
 
-        return stream
+        return new EntityStream<Entity>(source, snapshotStream)
     }
 }

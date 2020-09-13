@@ -21,6 +21,10 @@
   "main": "index.js",
   "types": "index.d.ts",
   "dependencies": {
-    "reflect-metadata": "^0.1.13"
+    "@typeheim/fire-rx": "^0.0.7",
+    "firebase": "^7.14.4"
+  },
+  "devDependencies": {
+    "rxjs": "^6.0.0"
   }
 }
