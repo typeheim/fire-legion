@@ -1,6 +1,6 @@
 {
   "name": "@typeheim/fire-auth",
-  "version": "0.0.0-beta.8",
+  "version": "0.0.0-beta.24",
   "description": "Firebase authentication library",
   "keywords": [
     "firestore",
