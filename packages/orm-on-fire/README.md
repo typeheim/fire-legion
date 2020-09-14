@@ -1,7 +1,7 @@
 # ORMOnFire
 ORMOnFire is a powerful Firestore ORM. 
 
-**IMPORTANT NOTICE: in beta 24 changed return types of all of the fect methods!**
+**IMPORTANT NOTICE: in beta 24 changed return types of all of the fetch methods!**
 
 ## Installation
 Setup ORMOnFire driver:
