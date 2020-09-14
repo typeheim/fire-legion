@@ -26,7 +26,7 @@ import DocumentChange = types.DocumentChange
 import DocumentSnapshot = types.DocumentSnapshot
 import QueryDocumentSnapshot = types.QueryDocumentSnapshot
 
-export class CollectionQuery<Entity> {
+export class CollectionQuery<Entity, FetchType = Entity[]> {
     protected queryState: QueryState = {
         conditions: [],
         limit: -1,
@@ -48,10 +48,10 @@ export class CollectionQuery<Entity> {
         return this
     }
 
-    map(operator: MapOperator<Entity>) {
+    map<T = Entity, R = any>(operator: ((value: Entity[]) => R)): CollectionQuery<T, R> {
         this.queryState.map = operator
 
-        return this
+        return this as any
     }
 
     debounceUpdates(dueTime: number) {
@@ -111,8 +111,8 @@ export class CollectionQuery<Entity> {
         return this
     }
 
-    get(): EntityPromise<Entity[]> {
-        let entitiesPromise = new EntityPromise<Entity[]>()
+    get(): EntityPromise<FetchType> {
+        let entitiesPromise = new EntityPromise<any>()
         this.collectionReference.get(this.queryState).then((querySnapshot: QuerySnapshot) => {
             let entities = []
             let docs
@@ -160,7 +160,7 @@ export class CollectionQuery<Entity> {
         return new EntityStream<ChangedEntities<Entity>>(source, snapshotStream)
     }
 
-    stream(): EntityStream<Entity[]> {
+    stream(): EntityStream<FetchType> {
         let snapshotStream = this.collectionReference.snapshot(this.queryState)
         let dataStream = this.queryState.debounceUpdatesTime ? snapshotStream.pipe(debounceTime(this.queryState.debounceUpdatesTime)) : snapshotStream
 
@@ -179,6 +179,6 @@ export class CollectionQuery<Entity> {
             return entities
         }))
 
-        return new EntityStream<Entity[]>(source, snapshotStream)
+        return new EntityStream<FetchType>(source, snapshotStream)
     }
 }

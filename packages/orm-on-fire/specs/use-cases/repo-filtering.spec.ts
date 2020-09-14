@@ -298,6 +298,14 @@ describe('Repo', () => {
         done()
     })
 
+    it('can use map operator', async (done) => {
+        let toyName = await Collection.of(Toy).all().filter(toy => toy.name.equal(scope.fixtures.redCar.name)).map(toys => toys[0].name).get()
+
+        expect(toyName).toEqual('red car')
+
+        done()
+    })
+
     beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
