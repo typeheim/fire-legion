@@ -1,5 +1,7 @@
 export * from './src/Contracts'
 export * from './src/Data'
+export * from './src/Data/EntityPromise'
+export * from './src/Data/EntityStream'
 export * from './src/Decorators'
 export * from './src/Exceptions'
 export * from './src/Model'
