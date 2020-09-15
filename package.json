@@ -46,7 +46,6 @@
     "@types/jest": "^25.2.1",
     "@types/node": "^13.13.0",
     "@types/reflect-metadata": "^0.1.0",
-    "express": "^4.17.1",
     "firebase": "^7.14.4",
     "firebase-admin": "^8.13.0",
     "firebase-functions": "^3.7.0",
