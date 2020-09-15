@@ -1,5 +1,8 @@
 import { ReactivePromise } from '@typeheim/fire-rx'
-import { CollectionReference } from './CollectionReference'
+import {
+    CollectionReference,
+    CollectionRefType,
+} from './CollectionReference'
 import { DocReference } from './DocReference'
 
 import * as FirestoreTypes from '@firebase/firestore-types'
@@ -28,6 +31,10 @@ export class FirestoreConnection {
 
     collectionRef(collectionPath: string) {
         return new CollectionReference(this, collectionPath)
+    }
+
+    collectionGroupRef(collectionPath: string) {
+        return new CollectionReference(this, collectionPath, CollectionRefType.Group)
     }
 
     docRef(docPath?: string) {

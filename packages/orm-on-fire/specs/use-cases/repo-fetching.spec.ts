@@ -119,6 +119,43 @@ describe('Repo', () => {
         done()
     })
 
+    it('can fetch data from sub-collection', async (done) => {
+        let toys = await Collection.of(Dog).one('boomer').collection(Toy).all().get()
+
+        expect(toys).not.toBeNull()
+
+        expect(toys.length).toEqual(2)
+
+        expect(toys[0].id).toEqual('ball')
+        expect(toys[1].id).toEqual('bone')
+
+        done()
+    })
+
+    it('can fetch group', async (done) => {
+        let toys = await Collection.groupOf(Toy).all().get()
+
+        expect(toys).not.toBeNull()
+
+        expect(toys.length).toEqual(2)
+
+        expect(toys[0].id).toEqual('ball')
+        expect(toys[1].id).toEqual('bone')
+
+        done()
+    })
+
+    it('can filter group request', async (done) => {
+        let toys = await Collection.groupOf(Toy).all().filter(toy => toy.type.equal('bone')).get()
+
+        expect(toys).not.toBeNull()
+
+        expect(toys.length).toEqual(1)
+        expect(toys[0].id).toEqual('bone')
+
+        done()
+    })
+
     beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()
 
@@ -162,7 +199,6 @@ describe('Repo', () => {
 
         done()
     }))
-
 
     afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
         const Firestore = FirebaseAdmin.firestore()

@@ -13,8 +13,13 @@ import * as types from '@firebase/firestore-types'
 import QuerySnapshot = types.QuerySnapshot
 import Query = types.Query
 
+export enum CollectionRefType {
+    Basic,
+    Group
+}
+
 export class CollectionReference {
-    constructor(protected connection: FirestoreConnection, protected collectionPath: string) {}
+    constructor(protected connection: FirestoreConnection, protected collectionPath: string, protected type: CollectionRefType = CollectionRefType.Basic ) {}
 
     get(queryState?: QueryState): ReactivePromise<QuerySnapshot> {
         let promise = new ReactivePromise<QuerySnapshot>()
@@ -47,7 +52,7 @@ export class CollectionReference {
     }
 
     protected buildQuery(queryState?: QueryState): Query {
-        let collection = this.connection.driver.collection(this.collectionPath)
+        let collection = this.buildNativeCollection()
         let query: any = collection
         if (queryState) {
             if (queryState.conditions?.length > 0) {
@@ -101,6 +106,12 @@ export class CollectionReference {
         }
 
         return query
+    }
+
+    buildNativeCollection() {
+        return this.type === CollectionRefType.Basic ?
+            this.connection.driver.collection(this.collectionPath):
+            this.connection.driver.collectionGroup(this.collectionPath)
     }
 
     doc(docPath?: string) {

@@ -68,7 +68,7 @@ let usersStartsWithAlex = await UsersCollection.all().filter(user => user.firstN
 let usersEndsWithLex = await UsersCollection.all().filter(user => user.firstName.endsWith('lex')).get()
 ```
 
-Support of filter scopes:
+## Support of filter scopes:
 ```typescript
 class UserScope {
     static active() {
@@ -78,5 +78,18 @@ class UserScope {
     }
 }
 
+// fetch all active users
 let activeUsers = await UsersCollection.all().filter(UserScope.active()).get()
+```
+
+## Support of sub-collection queries:
+```typescript
+// fetch all PDF files from user suwth id "userId"
+let userFiles = await UsersCollection.one('userId').collecction(UserFile).filter(UserFile.pdf()).get()
+```
+
+## Support of group collection queries:
+```typescript
+// fetch all file attachments that exist in any collection and sub-collection
+let attechments = await Collection.groupOf(Attachment).all().filter(Attachment.file()).get()
 ```

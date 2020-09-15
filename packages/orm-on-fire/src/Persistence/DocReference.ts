@@ -95,8 +95,13 @@ export class DocReference {
         if (!this._nativeRef) {
             let baseRef = this.collectionPath ? this.connection.driver.collection(this.collectionPath) : this.connection.driver
             // @ts-ignore
+
             this._nativeRef = this.docPath ? baseRef.doc(this.docPath) : baseRef.doc()
         }
         return this._nativeRef
+    }
+
+    get path() {
+        return this.collectionPath ? `${this.collectionPath}/${this.docPath}` : this.docPath
     }
 }

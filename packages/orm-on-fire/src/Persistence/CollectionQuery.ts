@@ -5,7 +5,6 @@ import {
     EntityFilter,
     FilterFunction,
     PropertyMetadata,
-    MapOperator,
 } from '../../index'
 
 import { FieldFilter } from './FieldFilter'

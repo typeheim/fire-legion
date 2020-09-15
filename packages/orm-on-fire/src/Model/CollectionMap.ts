@@ -4,6 +4,7 @@ import { Collection } from './Collection'
 
 export class CollectionMap {
     protected storage: CollectionsStorage = {}
+    protected groupStorage: CollectionsStorage = {}
 
     constructor(protected factory: Factory) {}
 
@@ -14,6 +15,15 @@ export class CollectionMap {
         }
 
         return this.storage[entityClassName]
+    }
+
+    groupOf<Entity>(entity: EntityType<Entity>): Collection<Entity> {
+        const entityClassName = entity.prototype.constructor.name
+        if (!this.groupStorage.hasOwnProperty(entityClassName)) {
+            this.groupStorage[entityClassName] = this.factory.createGroupFor(entity)
+        }
+
+        return this.groupStorage[entityClassName]
     }
 }
 

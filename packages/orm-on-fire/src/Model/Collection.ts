@@ -15,13 +15,16 @@ import { QueryFactory } from '../Persistence/QueryFactory'
 import { InternalCollectionsMap } from '../singletons'
 import { EntityStream } from '../Data/EntityStream'
 import { map } from 'rxjs/operators'
-import { Observable } from 'rxjs'
 
 export class Collection<Entity> {
     constructor(protected queryFactory: QueryFactory<Entity>, protected persister: EntityPersister<Entity>) {}
 
     static of<Entity>(entity: EntityType<Entity>): Collection<Entity> {
         return InternalCollectionsMap.of(entity)
+    }
+
+    static groupOf<Entity>(entity: EntityType<Entity>): Collection<Entity> {
+        return InternalCollectionsMap.groupOf(entity)
     }
 
     all(): CollectionQuery<Entity> {

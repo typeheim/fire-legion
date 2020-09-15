@@ -17,6 +17,13 @@ export class Factory {
         return new NullCollection()
     }
 
+    createGroupFor<Entity>(entity: EntityType<Entity>): Collection<Entity> {
+        const metadata = this.metadata.entity(entity).get()
+
+        // @ts-ignore
+        return this.create(entity, this.connection.collectionGroupRef(metadata.collection), metadata)
+    }
+
     createFor<Entity>(entity: EntityType<Entity>): Collection<Entity> {
         const metadata = this.metadata.entity(entity).get()
 
@@ -26,6 +33,13 @@ export class Factory {
     createWithRef<Entity>(entity: EntityType<Entity>, docReference: DocumentReference) {
         const metadata = this.metadata.entity(entity).get()
         let collectionRef = new CollectionReference(this.connection, `${docReference.path}/${metadata.collection}`)
+
+        return this.create(entity, collectionRef, metadata)
+    }
+
+    createFromBasePath<Entity>(entity: EntityType<Entity>, path: string) {
+        const metadata = this.metadata.entity(entity).get()
+        let collectionRef = new CollectionReference(this.connection, `${path}/${metadata.collection}`)
 
         return this.create(entity, collectionRef, metadata)
     }
