@@ -30,7 +30,7 @@ export class AuthSession {
                     let state = null
                     if (user) {
                         state = new AuthState(AuthStateType.isAuthorised)
-                    } else if (user && user.isAnonymous) {
+                    } else if (user && user?.isAnonymous) {
                         state = new AuthState(AuthStateType.isAnonymous)
                     } else {
                         state = new AuthState(AuthStateType.isUnauthorised)
@@ -44,7 +44,7 @@ export class AuthSession {
         this.isLoggedInStream = new StatefulStream((context) => {
             this.firebaseAuth.onAuthStateChanged({
                 next: user => {
-                    context.next(user || (user && user.isAnonymous))
+                    context.next(user || (user && user?.isAnonymous))
                 },
                 error: error => context.fail(error),
                 complete: () => context.stop(),
@@ -52,7 +52,13 @@ export class AuthSession {
         })
         this.idTokenStream = new StatefulStream((context) => {
             this.firebaseAuth.onIdTokenChanged({
-                next: async (user: User) => context.next(await user.getIdTokenResult()),
+                next: async (user: User) => {
+                    if (user) {
+                        context.next(await user?.getIdTokenResult())
+                    } else {
+                        context.next(null)
+                    }
+                },
                 error: error => context.fail(error),
                 complete: () => context.stop(),
             })
