@@ -2,7 +2,10 @@ import * as firebase from 'firebase/app'
 import { ReactivePromise } from '@typeheim/fire-rx'
 
 export class AuthManager {
-    constructor(protected firebaseAuth: firebase.auth.Auth, usePersistence = true) {
+    protected firebaseAuth: firebase.auth.Auth
+
+    setAuthDriver(driver: firebase.auth.Auth, usePersistence = true) {
+        this.firebaseAuth = driver
         if (usePersistence) {
             this.enablePersistence()
         }
@@ -169,6 +172,14 @@ export class AuthManager {
     }
 }
 
+class AuthProvidersList {
+    get Google() {
+        return new firebase.auth.GoogleAuthProvider()
+    }
+}
+
+export const AuthProviders = new AuthProvidersList()
+
 export class AuthMethod {
     protected arguments = []
     protected authMethod = ''
@@ -231,130 +242,3 @@ export class EmailLinkAuth extends AuthMethod {
         ]
     }
 }
-
-// base impl
-// export class AuthManager {
-//     constructor(protected firebaseAuth: firebase.auth.Auth, usePersistence = true) {
-//         if (usePersistence) {
-//             this.enablePersistence()
-//         }
-//     }
-//
-//     signInWithPopup(provider): ReactivePromise<firebase.auth.UserCredential> {
-//         let promise = new ReactivePromise<firebase.auth.UserCredential>()
-//         this.firebaseAuth.signInWithPopup(provider)
-//             .then(credential => promise.resolve(credential))
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-//
-//     signInWithEmailAndPassword(email, password): ReactivePromise<firebase.auth.UserCredential> {
-//         let promise = new ReactivePromise<firebase.auth.UserCredential>()
-//         this.firebaseAuth.signInWithEmailAndPassword(email, password)
-//             .then(credential => promise.resolve(credential))
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-//
-//     signInWithRedirect(provider): ReactivePromise<void> {
-//         let promise = new ReactivePromise<void>()
-//         this.firebaseAuth.signInWithRedirect(provider)
-//             .then(() => promise.resolve())
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-//
-//     signInAnonymously(): ReactivePromise<firebase.auth.UserCredential> {
-//         let promise = new ReactivePromise<firebase.auth.UserCredential>()
-//         this.firebaseAuth.signInAnonymously()
-//             .then((credential) => promise.resolve(credential))
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-//
-//     signInWithCredential(credential: firebase.auth.AuthCredential): ReactivePromise<firebase.auth.UserCredential> {
-//         let promise = new ReactivePromise<firebase.auth.UserCredential>()
-//         this.firebaseAuth.signInWithCredential(credential)
-//             .then((credential) => promise.resolve(credential))
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-//
-//     signInWithCustomToken(token: string): ReactivePromise<firebase.auth.UserCredential> {
-//         let promise = new ReactivePromise<firebase.auth.UserCredential>()
-//         this.firebaseAuth.signInWithCustomToken(token)
-//             .then((credential) => promise.resolve(credential))
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-//
-//     signInWithEmailLink( email: string, emailLink?: string): ReactivePromise<firebase.auth.UserCredential> {
-//         let promise = new ReactivePromise<firebase.auth.UserCredential>()
-//         this.firebaseAuth.signInWithEmailLink(email, emailLink)
-//             .then((credential) => promise.resolve(credential))
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-//
-//     signInWithPhoneNumber( phoneNumber: string, applicationVerifier: firebase.auth.ApplicationVerifier): ReactivePromise<firebase.auth.ConfirmationResult> {
-//         let promise = new ReactivePromise<firebase.auth.ConfirmationResult>()
-//         this.firebaseAuth.signInWithPhoneNumber(phoneNumber, applicationVerifier)
-//             .then((confirmResult) => promise.resolve(confirmResult))
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-//
-//     getRedirectResult(): ReactivePromise<firebase.auth.UserCredential> {
-//         let promise = new ReactivePromise<firebase.auth.UserCredential>()
-//         this.firebaseAuth.getRedirectResult()
-//             .then(credential => promise.resolve(credential))
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-//
-//     signOut(): ReactivePromise<void> {
-//         let promise = new ReactivePromise<void>()
-//         this.firebaseAuth.signOut()
-//             .then(() => promise.resolve())
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-//
-//     enablePersistence(): ReactivePromise<void> {
-//         let promise = new ReactivePromise<void>()
-//         this.firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-//             .then(() => promise.resolve())
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-//
-//     disablePersistence(): ReactivePromise<void> {
-//         let promise = new ReactivePromise<void>()
-//         this.firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.NONE)
-//             .then(() => promise.resolve())
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-//
-//     async enableSessionPersistence(): Promise<void> {
-//         let promise = new ReactivePromise<void>()
-//         this.firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
-//             .then(() => promise.resolve())
-//             .catch(error => promise.reject(error))
-//
-//         return promise
-//     }
-// }
-

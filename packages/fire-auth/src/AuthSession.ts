@@ -7,12 +7,15 @@ import { User } from 'firebase'
 import { map } from 'rxjs/operators'
 
 export class AuthSession {
-    public readonly userStream: StatefulStream<User>
-    public readonly isLoggedInStream: StatefulStream<boolean>
-    public readonly authStateStream: StatefulStream<AuthState>
-    public readonly idTokenStream: StatefulStream<firebase.auth.IdTokenResult>
+    protected firebaseAuth: firebase.auth.Auth
+    public userStream: StatefulStream<User>
+    public isLoggedInStream: StatefulStream<boolean>
+    public authStateStream: StatefulStream<AuthState>
+    public idTokenStream: StatefulStream<firebase.auth.IdTokenResult>
 
-    constructor(protected firebaseAuth: firebase.auth.Auth) {
+    setAuthDriver(driver: firebase.auth.Auth) {
+        this.firebaseAuth = driver
+
         this.userStream = new StatefulStream((context) => {
             this.firebaseAuth.onAuthStateChanged({
                 next: user => context.next(user),
@@ -20,6 +23,7 @@ export class AuthSession {
                 complete: () => context.stop(),
             })
         })
+
         this.authStateStream = new StatefulStream((context) => {
             this.firebaseAuth.onAuthStateChanged({
                 next: (user: User) => {
@@ -72,9 +76,12 @@ export class AuthState {
     constructor(protected state: AuthStateType) {}
 
     isLoggedIn(): boolean {
-        return this.isAuthorised() || this.isAnonymous()
+        return this.state === AuthStateType.isAuthorised
     }
 
+    /**
+     * @deprecated
+     */
     isAuthorised(): boolean {
         return this.state === AuthStateType.isAuthorised
     }
