@@ -1,4 +1,6 @@
 import * as firebase from 'firebase/app'
+import 'firebase/auth'
+
 import { ReactivePromise } from '@typeheim/fire-rx'
 
 export class AuthManager {

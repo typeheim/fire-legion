@@ -2,13 +2,13 @@ import {
     StatefulStream,
     AsyncStream,
 } from '@typeheim/fire-rx'
-import * as firebase from 'firebase'
-import { User } from 'firebase'
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
 import { map } from 'rxjs/operators'
 
 export class AuthSession {
     protected authDriver: firebase.auth.Auth
-    public userStream: StatefulStream<User>
+    public userStream: StatefulStream<firebase.User>
     public isLoggedInStream: AsyncStream<boolean>
     public authStateStream: AsyncStream<AuthState>
     public accessTokenStream: AsyncStream<string>
@@ -25,7 +25,7 @@ export class AuthSession {
             })
         })
 
-        this.authStateStream = new AsyncStream(this.userStream.pipe(map((user: User) => {
+        this.authStateStream = new AsyncStream(this.userStream.pipe(map((user: firebase.User) => {
             let state = null
             if (user) {
                 state = new AuthState(AuthStateType.isAuthorised)
@@ -37,9 +37,9 @@ export class AuthSession {
             return state
         })))
 
-        this.isLoggedInStream = new AsyncStream(this.userStream.pipe(map((user: User) => { !!(user || (user && user?.isAnonymous)) })))
+        this.isLoggedInStream = new AsyncStream(this.userStream.pipe(map((user: firebase.User) => { !!(user || (user && user?.isAnonymous)) })))
 
-        this.accessTokenStream = new AsyncStream(this.userStream.pipe(map(async (user: User) => {
+        this.accessTokenStream = new AsyncStream(this.userStream.pipe(map(async (user: firebase.User) => {
             let token = null
             if (user) {
                 token = await user.getIdToken()
@@ -49,7 +49,7 @@ export class AuthSession {
 
         this.idTokenStream = new StatefulStream((context) => {
             this.authDriver.onIdTokenChanged({
-                next: async (user: User) => {
+                next: async (user: firebase.User) => {
                     if (user) {
                         context.next(await user?.getIdTokenResult())
                     } else {
