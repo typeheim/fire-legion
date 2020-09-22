@@ -2,28 +2,28 @@ import * as firebase from 'firebase/app'
 import { ReactivePromise } from '@typeheim/fire-rx'
 
 export class AuthManager {
-    protected firebaseAuth: firebase.auth.Auth
+    protected authDriver: firebase.auth.Auth
 
     setAuthDriver(driver: firebase.auth.Auth, usePersistence = true) {
-        this.firebaseAuth = driver
+        this.authDriver = driver
         if (usePersistence) {
             this.enablePersistence()
         }
     }
 
     useDeviceLanguage(): void {
-        return this.firebaseAuth.useDeviceLanguage()
+        return this.authDriver.useDeviceLanguage()
     }
 
     signIn(authMethod: AuthMethod): ReactivePromise<firebase.auth.UserCredential> {
-        return authMethod.run(this.firebaseAuth)
+        return authMethod.run(this.authDriver)
     }
 
     throughProvider(provider) {
         return {
             signInWithPopup: (): ReactivePromise<firebase.auth.UserCredential> => {
                 let promise = new ReactivePromise<firebase.auth.UserCredential>()
-                this.firebaseAuth.signInWithPopup(provider)
+                this.authDriver.signInWithPopup(provider)
                     .then(credential => promise.resolve(credential))
                     .catch(error => promise.reject(error))
 
@@ -32,7 +32,7 @@ export class AuthManager {
 
             signInWithRedirect: (): ReactivePromise<void> => {
                 let promise = new ReactivePromise<void>()
-                this.firebaseAuth.signInWithRedirect(provider)
+                this.authDriver.signInWithRedirect(provider)
                     .then(() => promise.resolve())
                     .catch(error => promise.reject(error))
 
@@ -43,7 +43,7 @@ export class AuthManager {
 
     signInWithPhoneNumber(phoneNumber: string, applicationVerifier: firebase.auth.ApplicationVerifier): ReactivePromise<firebase.auth.ConfirmationResult> {
         let promise = new ReactivePromise<firebase.auth.ConfirmationResult>()
-        this.firebaseAuth.signInWithPhoneNumber(phoneNumber, applicationVerifier)
+        this.authDriver.signInWithPhoneNumber(phoneNumber, applicationVerifier)
             .then((confirmResult) => promise.resolve(confirmResult))
             .catch(error => promise.reject(error))
 
@@ -52,7 +52,7 @@ export class AuthManager {
 
     getRedirectResult(): ReactivePromise<firebase.auth.UserCredential> {
         let promise = new ReactivePromise<firebase.auth.UserCredential>()
-        this.firebaseAuth.getRedirectResult()
+        this.authDriver.getRedirectResult()
             .then(credential => promise.resolve(credential))
             .catch(error => promise.reject(error))
 
@@ -61,7 +61,7 @@ export class AuthManager {
 
     signOut(): ReactivePromise<void> {
         let promise = new ReactivePromise<void>()
-        this.firebaseAuth.signOut()
+        this.authDriver.signOut()
             .then(() => promise.resolve())
             .catch(error => promise.reject(error))
 
@@ -70,7 +70,7 @@ export class AuthManager {
 
     enablePersistence(): ReactivePromise<void> {
         let promise = new ReactivePromise<void>()
-        this.firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        this.authDriver.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
             .then(() => promise.resolve())
             .catch(error => promise.reject(error))
 
@@ -79,7 +79,7 @@ export class AuthManager {
 
     disablePersistence(): ReactivePromise<void> {
         let promise = new ReactivePromise<void>()
-        this.firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.NONE)
+        this.authDriver.setPersistence(firebase.auth.Auth.Persistence.NONE)
             .then(() => promise.resolve())
             .catch(error => promise.reject(error))
 
@@ -88,7 +88,7 @@ export class AuthManager {
 
     async enableSessionPersistence(): Promise<void> {
         let promise = new ReactivePromise<void>()
-        this.firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
+        this.authDriver.setPersistence(firebase.auth.Auth.Persistence.SESSION)
             .then(() => promise.resolve())
             .catch(error => promise.reject(error))
 
@@ -97,7 +97,7 @@ export class AuthManager {
 
     createUserWithEmailAndPassword(email: string, password: string): ReactivePromise<firebase.auth.UserCredential> {
         let promise = new ReactivePromise<firebase.auth.UserCredential>()
-        this.firebaseAuth.createUserWithEmailAndPassword(email, password)
+        this.authDriver.createUserWithEmailAndPassword(email, password)
             .then((credential) => promise.resolve(credential))
             .catch(error => promise.reject(error))
 
@@ -106,7 +106,7 @@ export class AuthManager {
 
     sendPasswordResetEmail(email: string, actionCodeSettings?: firebase.auth.ActionCodeSettings): ReactivePromise<void> {
         let promise = new ReactivePromise<void>()
-        this.firebaseAuth.sendPasswordResetEmail(email, actionCodeSettings)
+        this.authDriver.sendPasswordResetEmail(email, actionCodeSettings)
             .then(() => promise.resolve())
             .catch(error => promise.reject(error))
 
@@ -115,7 +115,7 @@ export class AuthManager {
 
     verifyPasswordResetCode(code: string): ReactivePromise<string> {
         let promise = new ReactivePromise<string>()
-        this.firebaseAuth.verifyPasswordResetCode(code)
+        this.authDriver.verifyPasswordResetCode(code)
             .then((email) => promise.resolve(email))
             .catch(error => promise.reject(error))
 
@@ -124,7 +124,7 @@ export class AuthManager {
 
     sendSignInLinkToEmail(email: string, actionCodeSettings?: firebase.auth.ActionCodeSettings): ReactivePromise<void> {
         let promise = new ReactivePromise<void>()
-        this.firebaseAuth.sendSignInLinkToEmail(email, actionCodeSettings)
+        this.authDriver.sendSignInLinkToEmail(email, actionCodeSettings)
             .then(() => promise.resolve())
             .catch(error => promise.reject(error))
 
@@ -132,12 +132,12 @@ export class AuthManager {
     }
 
     isSignInWithEmailLink(emailLink: string): boolean {
-        return this.firebaseAuth.isSignInWithEmailLink(emailLink)
+        return this.authDriver.isSignInWithEmailLink(emailLink)
     }
 
     fetchSignInMethodsForEmail(email: string): ReactivePromise<string[]> {
         let promise = new ReactivePromise<string[]>()
-        this.firebaseAuth.fetchSignInMethodsForEmail(email)
+        this.authDriver.fetchSignInMethodsForEmail(email)
             .then((methods) => promise.resolve(methods))
             .catch(error => promise.reject(error))
 
@@ -146,7 +146,7 @@ export class AuthManager {
 
     confirmPasswordReset(verificationCode: string, newPassword: string): ReactivePromise<void> {
         let promise = new ReactivePromise<void>()
-        this.firebaseAuth.confirmPasswordReset(verificationCode, newPassword)
+        this.authDriver.confirmPasswordReset(verificationCode, newPassword)
             .then(() => promise.resolve())
             .catch(error => promise.reject(error))
 
@@ -155,7 +155,7 @@ export class AuthManager {
 
     applyActionCode(code: string): ReactivePromise<void> {
         let promise = new ReactivePromise<void>()
-        this.firebaseAuth.applyActionCode(code)
+        this.authDriver.applyActionCode(code)
             .then(() => promise.resolve())
             .catch(error => promise.reject(error))
 
@@ -164,7 +164,7 @@ export class AuthManager {
 
     checkActionCode(code: string): ReactivePromise<firebase.auth.ActionCodeInfo> {
         let promise = new ReactivePromise<firebase.auth.ActionCodeInfo>()
-        this.firebaseAuth.checkActionCode(code)
+        this.authDriver.checkActionCode(code)
             .then((codeInfo) => promise.resolve(codeInfo))
             .catch(error => promise.reject(error))
 
