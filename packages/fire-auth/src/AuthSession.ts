@@ -13,6 +13,7 @@ import { of } from 'rxjs'
 export class AuthSession {
     protected authDriver: firebase.auth.Auth
     public userStream: StatefulStream<firebase.User>
+    public isAnonymousStream: AsyncStream<boolean>
     public isLoggedInStream: AsyncStream<boolean>
     public authStateStream: AsyncStream<AuthState>
     public accessTokenStream: AsyncStream<string>
@@ -31,7 +32,7 @@ export class AuthSession {
 
         this.authStateStream = new AsyncStream(this.userStream.pipe(map((user: firebase.User) => {
             let state = null
-            if (user) {
+            if (user && !user?.isAnonymous) {
                 state = new AuthState(AuthStateType.isAuthorised)
             } else if (user && user?.isAnonymous) {
                 state = new AuthState(AuthStateType.isAnonymous)
@@ -41,9 +42,9 @@ export class AuthSession {
             return state
         })))
 
-        this.isLoggedInStream = new AsyncStream(this.userStream.pipe(map((user: firebase.User) => {
-            return !!(user || (user && user?.isAnonymous))
-        })))
+        this.isLoggedInStream = new AsyncStream(this.authStateStream.pipe(map(state => state.isLoggedIn())))
+
+        this.isAnonymousStream = new AsyncStream(this.authStateStream.pipe(map(state => state.isAnonymous())))
 
         this.accessTokenStream = new AsyncStream(this.userStream.pipe(switchMap(user => user ? user?.getIdToken() : of(null))))
 
