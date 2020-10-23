@@ -1799,6 +1799,11 @@
   resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.7.tgz#fd17b170f97178fa05cf3e79d26400b1963078be"
   integrity sha512-hCK2A0BvxvOtheA5TIgaez3OBJAt39RkyVYPvJFtwBxc0eHVDny5CnNybRcD6OsoetQmExZ/BGet9xWUUSzqUQ==
 
+"@typeheim/fire-rx@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.8.tgz#0f5159b54f3f4944fd5a51970b974027261126be"
+  integrity sha512-z8gCt0m/6BYQDhkvEP69uF8nODD01Rt/UuPVkLwQNJnMD3Y9MgPgBrl02yt+7T22Q/DQNc3BZrMYGtijShEMQg==
+
 "@types/babel__core@^7.1.7":
   version "7.1.9"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.9.tgz#77e59d438522a6fb898fa43dc3455c6e72f3963d"

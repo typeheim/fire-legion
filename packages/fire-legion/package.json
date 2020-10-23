@@ -39,7 +39,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "dependencies": {
-    "@typeheim/fire-rx": "^0.0.0-beta.19",
+    "@typeheim/fire-auth": "^0.0.0-beta.33",
     "@typeheim/orm-on-fire": "^0.0.0-beta.27"
   }
 }
