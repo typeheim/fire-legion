@@ -1787,13 +1787,6 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
-"@typeheim/fire-rx@^0.0.0-beta.19":
-  version "0.0.0-beta-4"
-  resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.0-beta-4.tgz#4f6131511d69fb2326c3c8864f03b399acc4e858"
-  integrity sha512-OidZ/qV6T2v2wSrb1sxXKDJnO+3pKHd1pMskXS4AyyfJc7/zkJEeEj5jyXd1HWT+Inl4vLPeOQX6RZpm8JeSeA==
-  dependencies:
-    rxjs "^6.5.5"
-
 "@typeheim/fire-rx@^0.0.7":
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.7.tgz#fd17b170f97178fa05cf3e79d26400b1963078be"
@@ -8796,7 +8789,7 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   dependencies:
     aproba "^1.1.1"
 
-rxjs@^6.0.0, rxjs@^6.4.0, rxjs@^6.5.5:
+rxjs@^6.0.0, rxjs@^6.4.0:
   version "6.6.3"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.3.tgz#8ca84635c4daa900c0d3967a6ee7ac60271ee552"
   integrity sha512-trsQc+xYYXZ3urjOiJOuCOa5N3jAZ3eiSpQB5hIT8zGlL2QfnHLJ2r7GMkBGuIausdJN1OneaI6gQlsqNHHmZQ==
