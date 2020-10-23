@@ -21,7 +21,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "dependencies": {
-    "@typeheim/fire-rx": "^0.0.7",
+    "@typeheim/fire-rx": "^0.0.8",
     "firebase": "^7.14.4"
   },
   "devDependencies": {
