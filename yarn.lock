@@ -1787,11 +1787,6 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
-"@typeheim/fire-rx@^0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.7.tgz#fd17b170f97178fa05cf3e79d26400b1963078be"
-  integrity sha512-hCK2A0BvxvOtheA5TIgaez3OBJAt39RkyVYPvJFtwBxc0eHVDny5CnNybRcD6OsoetQmExZ/BGet9xWUUSzqUQ==
-
 "@typeheim/fire-rx@^0.0.8":
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.8.tgz#0f5159b54f3f4944fd5a51970b974027261126be"
