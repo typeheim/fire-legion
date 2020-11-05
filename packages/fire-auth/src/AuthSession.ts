@@ -4,11 +4,7 @@ import {
 } from '@typeheim/fire-rx'
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
-import {
-    map,
-    switchMap,
-} from 'rxjs/operators'
-import { of } from 'rxjs'
+import { map } from 'rxjs/operators'
 
 export class AuthSession {
     protected authDriver: firebase.auth.Auth
@@ -46,8 +42,6 @@ export class AuthSession {
 
         this.isAnonymousStream = new AsyncStream(this.authStateStream.pipe(map(state => state.isAnonymous())))
 
-        this.accessTokenStream = new AsyncStream(this.userStream.pipe(switchMap(user => user ? user?.getIdToken() : of(null))))
-
         this.idTokenStream = new StatefulStream((context) => {
             this.authDriver.onIdTokenChanged({
                 next: async (user: firebase.User) => {
@@ -61,6 +55,8 @@ export class AuthSession {
                 complete: () => context.stop(),
             })
         })
+
+        this.accessTokenStream = new AsyncStream(this.idTokenStream.pipe(map(idToken => idToken ? idToken?.token : null)))
     }
 
     getToken(forceRefresh = false): AsyncStream<string> {
