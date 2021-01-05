@@ -22,6 +22,20 @@ describe('Repo', () => {
         done()
     })
 
+    it('can filter by "!=" operator', async (done) => {
+        let toys = await Collection.of(Toy).all().filter(toy => toy.type.notEqual('animal')).get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(3)
+
+
+        expect(toys[0].id).toEqual('blueCar')
+        expect(toys[1].id).toEqual('copter')
+        expect(toys[2].id).toEqual('redCar')
+
+        done()
+    })
+
     it('can filter by ">" operator', async (done) => {
         let toys = await Collection.of(Toy).all().filter(toy => toy.weight.greaterThen(15)).get()
 

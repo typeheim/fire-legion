@@ -6,6 +6,7 @@ import {
     Entity,
     Field,
     ID,
+    MapField,
     UpdatedDateField,
 } from '../../../src/Decorators/Entity'
 import { Reference } from '../../../src/Model/Reference'
@@ -146,7 +147,7 @@ export class Item {
 
 // MapItems
 
-interface SubMap {
+export class SubMap {
     name: string
     age: number
 }
@@ -156,8 +157,11 @@ export class MapItem {
     @ID()
     id: string
 
-    @Field()
+    @MapField()
     map: SubMap
+
+    @MapField(SubMap)
+    mapList: SubMap[]
 }
 
 @Entity()
@@ -174,6 +178,4 @@ export class DateItem {
     @Field()
     customDate: Date
 }
-
-
 

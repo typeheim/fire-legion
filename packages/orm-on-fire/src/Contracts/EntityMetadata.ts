@@ -12,6 +12,8 @@ export interface PropertyMetadata {
     name: string
     isText?: boolean
     isDate?: boolean
+    isMap?: boolean
+    constructor?: any
     updateOnSave?: boolean
     generateOnCreate?: boolean
 }

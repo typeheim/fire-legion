@@ -68,6 +68,24 @@ export function CreatedDateField(metadata?: PropertyMetadata): PropertyDecorator
     }
 }
 
+export function MapField(constructor?, metadata?: PropertyMetadata): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        let reflectionType = Reflect.getMetadata("design:type", target, propertyKey)
+        if (metadata) {
+            metadata.isMap = true
+            metadata.constructor = constructor ?? reflectionType
+        } else {
+            metadata = {
+                name: '',
+                isMap: true,
+                constructor: constructor ?? reflectionType
+            }
+        }
+
+        addFieldMetadata(target, metadata, propertyKey)
+    }
+}
+
 export function UpdatedDateField(metadata?: PropertyMetadata): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         if (metadata) {

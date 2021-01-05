@@ -9,12 +9,21 @@ export class FieldFilter<Entity> implements FireFilter<Entity> {
     protected textReverseIndexName: string
 
     constructor(protected queryState: QueryState, protected readonly fieldName) {
+        if (this.fieldName === 'id') {
+            this.fieldName = '__name__'
+        }
         this.textIndexName = `__ormOnFireMetadata.idx__txt__${fieldName}`
         this.textReverseIndexName = `__ormOnFireMetadata.idx__rtxt__${fieldName}`
     }
 
     equal(value: any): FieldFilter<Entity> {
         this.addCondition('==', value)
+
+        return this
+    }
+
+    notEqual(value: any): FieldFilter<Entity> {
+        this.addCondition('!=', value)
 
         return this
     }

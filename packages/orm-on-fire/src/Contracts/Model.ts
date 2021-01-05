@@ -1,6 +1,7 @@
 import { EntityPersister } from '../Model/EntityPersister'
 import { ReactivePromise } from '@typeheim/fire-rx'
 import { DocReference } from '../Persistence/DocReference'
+import { MutationTracker } from '../Persistence/EntityManager'
 
 export interface Model {
     id?: string
@@ -14,6 +15,8 @@ export interface Model {
 
 interface OrmMetadata {
     isNew: boolean
+
+    mutation?: MutationTracker
 
     repository?: EntityPersister<any>
 

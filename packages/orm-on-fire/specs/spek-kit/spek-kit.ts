@@ -6,8 +6,13 @@ import * as FirebaseAdmin from 'firebase-admin'
 import { OrmOnFire } from '../../src/singletons'
 
 async function SetUpFirebase() {
+    let keyOrPath = process?.env?.FL_ACCESS_KEY ?? process.cwd() + '/firestore.key.json'
+    if (process?.env?.FL_ACCESS_KEY) {
+        keyOrPath = JSON.parse(process?.env?.FL_ACCESS_KEY)
+    }
+
     FirebaseAdmin.initializeApp({
-        credential: FirebaseAdmin.credential.cert(process.cwd() + '/firestore.key.json'),
+        credential: FirebaseAdmin.credential.cert(keyOrPath),
         databaseURL: 'https://fire-legion.firebaseio.com',
     })
     // @ts-ignore - there is no error but TS can't compile

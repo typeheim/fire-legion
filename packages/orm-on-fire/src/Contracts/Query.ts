@@ -5,6 +5,8 @@ import WhereFilterOp = types.WhereFilterOp
 export interface FireFilter<Entity> {
     equal(value: any): FireFilter<Entity>
 
+    notEqual(value: any): FireFilter<Entity>
+
     greaterThen(value: any): FireFilter<Entity>
 
     lessThen(value: any): FireFilter<Entity>

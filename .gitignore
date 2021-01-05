@@ -13,6 +13,8 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 packages/function-test/*
 function-test/*
 
+drafts.ts
+
 dev-server.ts
 dev-server.js
 
