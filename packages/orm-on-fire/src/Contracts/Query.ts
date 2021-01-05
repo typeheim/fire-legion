@@ -21,10 +21,6 @@ export interface FireFilter<Entity> {
 
     containAnyOf(list: any): FireFilter<Entity>
 
-    startsWith(glue: string): FireFilter<Entity>
-
-    endsWith(glue: string): FireFilter<Entity>
-
     field(fieldName: string): FireFilter<Entity>
 }
 
@@ -41,6 +37,7 @@ export enum SortOrder {
 
 export interface QueryState {
     conditions?: FieldCondition[]
+    indexes?: FieldCondition[]
     limit?: number
     orderBy?: OrderByCondition[]
     startAt?: any

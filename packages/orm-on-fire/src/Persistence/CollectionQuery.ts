@@ -3,7 +3,9 @@ import { ChangedEntities } from '../Data/ChangedEntities'
 import { CollectionReference } from './CollectionReference'
 import {
     EntityFilter,
+    EntityIndex,
     FilterFunction,
+    IndexFunction,
     PropertyMetadata,
 } from '../../index'
 
@@ -24,10 +26,12 @@ import QuerySnapshot = types.QuerySnapshot
 import DocumentChange = types.DocumentChange
 import DocumentSnapshot = types.DocumentSnapshot
 import QueryDocumentSnapshot = types.QueryDocumentSnapshot
+import { IndexFilter } from './IndexFilter'
 
 export class CollectionQuery<Entity, FetchType = Entity[]> {
     protected queryState: QueryState = {
         conditions: [],
+        indexes: [],
         limit: -1,
         orderBy: [],
         exclude: [],
@@ -55,6 +59,18 @@ export class CollectionQuery<Entity, FetchType = Entity[]> {
 
     debounceUpdates(dueTime: number) {
         this.queryState.debounceUpdatesTime = dueTime
+
+        return this
+    }
+
+    useIndex(indexFunction: IndexFunction<Entity>) {
+        let filter: EntityIndex<Entity> = {}
+
+        this.filterFields.forEach(field => {
+            filter[field.name] = new IndexFilter(this.queryState, field.name)
+        })
+
+        indexFunction(filter)
 
         return this
     }

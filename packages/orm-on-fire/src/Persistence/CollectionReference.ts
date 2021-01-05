@@ -26,9 +26,18 @@ export class CollectionReference {
 
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.buildQuery(queryState).get().then((snapshot: QuerySnapshot) => {
-                    promise.resolve(snapshot)
-                }).catch(error => promise.reject(error))
+                if (queryState?.indexes?.length > 0) {
+                    this.fetchIndex(queryState).then((snapshot: QuerySnapshot) => {
+                        let ids = snapshot.docs.map(snapshot => snapshot.id)
+                        this.buildQuery(queryState).where('__name__', 'in', ids).get().then((snapshot: QuerySnapshot) => {
+                            promise.resolve(snapshot)
+                        }).catch(error => promise.reject(error))
+                    }).catch(error => promise.reject(error))
+                } else {
+                    this.buildQuery(queryState).get().then((snapshot: QuerySnapshot) => {
+                        promise.resolve(snapshot)
+                    }).catch(error => promise.reject(error))
+                }
             }
         })
 
@@ -40,15 +49,35 @@ export class CollectionReference {
 
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.buildQuery(queryState).onSnapshot(
-                    snapshot => subject.next(snapshot),
-                    error => subject.fail(error),
-                    () => subject.stop(),
-                )
+                if (queryState?.indexes?.length > 0) {
+                    this.fetchIndex(queryState).get().then((snapshot: QuerySnapshot) => {
+                        let ids = snapshot.docs.map(snapshot => snapshot.id)
+                        this.buildQuery(queryState).where('__name__', 'in', ids).onSnapshot(
+                            snapshot => subject.next(snapshot),
+                            error => subject.fail(error),
+                            () => subject.stop(),
+                        )
+                    }).catch(error =>subject.fail(error))
+                } else {
+                    this.buildQuery(queryState).onSnapshot(
+                        snapshot => subject.next(snapshot),
+                        error => subject.fail(error),
+                        () => subject.stop(),
+                    )
+                }
             }
         })
 
         return subject
+    }
+
+    protected fetchIndex(queryState: QueryState) {
+        let collection =  this.buildNativeIndexCollection()
+        let query: any = collection
+        queryState.indexes.forEach(index => {
+            query = collection.where(index.fieldName, index.operator, index.compareValue)
+        })
+        return query.get()
     }
 
     protected buildQuery(queryState?: QueryState): Query {
@@ -112,6 +141,10 @@ export class CollectionReference {
         return this.type === CollectionRefType.Basic ?
             this.connection.driver.collection(this.collectionPath):
             this.connection.driver.collectionGroup(this.collectionPath)
+    }
+
+    buildNativeIndexCollection() {
+        return this.connection.driver.collection(`of-metadata/${this.collectionPath}/indexes`)
     }
 
     doc(docPath?: string) {

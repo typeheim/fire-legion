@@ -32,21 +32,19 @@ export function TextIndex(functionsProvider) {
         buildTrigger() {
             return functionsProvider.firestore
                                     .document(config.collection)
-                                    .onWrite(BuildTrigger(config))
+                                    .onWrite(BuildTrigger(config, functionsProvider.firestore))
         },
     }
 
     return builder
 }
 
-function BuildTrigger(config: TextTriggerConfig) {
+function BuildTrigger(config: TextTriggerConfig, firestore) {
     return (change) => {
         let metadata = Generator.buildMetadata(config, change)
 
         if (metadata) {
-            return change.after.ref.set({
-                __ormOnFireMetadata: metadata,
-            }, { merge: true })
+            return firestore.collection(`of-metadata/${config.collection}/indexes`).set(metadata, { merge: true })
         } else {
             return null
         }

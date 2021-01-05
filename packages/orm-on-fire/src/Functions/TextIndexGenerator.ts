@@ -29,7 +29,7 @@ export class TextIndexGenerator {
     }
 
     generateIndex(data, fields: string[]) {
-        let metadata = data?.__ormOnFire ? data.__ormOnFire : {}
+        let metadata = {}
         fields.forEach(fieldName => {
             if (data[fieldName] !== undefined) {
                 metadata[`idx__txt__${fieldName}`] = this.createTextIndex(data[fieldName])

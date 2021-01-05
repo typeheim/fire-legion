@@ -2,15 +2,15 @@ import {
     Book,
     SpecKit,
 } from '../spek-kit'
-import { Collection } from '../../index'
 import * as FirebaseAdmin from 'firebase-admin'
 import { TextIndexGenerator } from '../../src/Functions/TextIndexGenerator'
+import { Collection } from '../../src/Model'
 
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()
 
     it('can filter by "startsWith" using single term', async (done) => {
-        let books = await Collection.of(Book).all().filter(toy => toy.name.startsWith('Game')).get()
+        let books = await Collection.of(Book).all().useIndex(toy => toy.name.startsWith('Game')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(2)
@@ -22,7 +22,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "startsWith" using multiple terms', async (done) => {
-        let books = await Collection.of(Book).all().filter(toy => toy.name.startsWith('gAme of')).get()
+        let books = await Collection.of(Book).all().useIndex(toy => toy.name.startsWith('gAme of')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(1)
@@ -33,7 +33,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "endsWith" using single term', async (done) => {
-        let books = await Collection.of(Book).all().filter(toy => toy.name.endsWith('Thrones')).get()
+        let books = await Collection.of(Book).all().useIndex(toy => toy.name.endsWith('Thrones')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(1)
@@ -43,7 +43,7 @@ describe('Repo', () => {
     })
 
     it('can filter by "endsWith" using multiple term', async (done) => {
-        let books = await Collection.of(Book).all().filter(toy => toy.name.endsWith('of thrones')).get()
+        let books = await Collection.of(Book).all().useIndex(toy => toy.name.endsWith('of thrones')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(1)
@@ -66,15 +66,21 @@ describe('Repo', () => {
             name: 'Game Club',
         }
 
+        const indexCollection = `of-metadata/book/indexes`
+
         try {
-            await Firestore.collection('book').doc(scope.fixtures['got'].id).set({
-                name: scope.fixtures['got'].name,
-                __ormOnFireMetadata: generator.generateIndex(scope.fixtures['got'], ['name']),
-            })
-            await Firestore.collection('book').doc(scope.fixtures['gc'].id).set({
-                name: scope.fixtures['gc'].name,
-                __ormOnFireMetadata: generator.generateIndex(scope.fixtures['gc'], ['name']),
-            })
+            await Promise.all([
+                // models
+                Firestore.collection('book').doc(scope.fixtures['got'].id).set({
+                    name: scope.fixtures['got'].name,
+                }),
+                Firestore.collection('book').doc(scope.fixtures['gc'].id).set({
+                    name: scope.fixtures['gc'].name,
+                }),
+                // indexes
+                Firestore.collection(indexCollection).doc(scope.fixtures['got'].id).set(generator.generateIndex(scope.fixtures['got'], ['name'])),
+                Firestore.collection(indexCollection).doc(scope.fixtures['gc'].id).set(generator.generateIndex(scope.fixtures['gc'], ['name'])),
+            ])
         } catch (error) {
             console.log(error)
         }
@@ -85,15 +91,9 @@ describe('Repo', () => {
                 if (!docSnapshot.exists) {
                     return
                 }
-                let docData = docSnapshot.data()
-                let oldMetadata = docData['__ormOnFireMetadata']
-                let newMetadata = generator.generateIndex(docSnapshot.data(), ['name'])
 
-                if (oldMetadata != newMetadata) {
-                    docSnapshot.ref.update({
-                        __ormOnFireMetadata: newMetadata,
-                    }).catch(error => console.log(error))
-                }
+                let newMetadata = generator.generateIndex(docSnapshot.data(), ['name'])
+                Firestore.collection(indexCollection).doc(docSnapshot.id).set(newMetadata).catch(error => console.log(error))
             })
         })
 
