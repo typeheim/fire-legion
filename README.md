@@ -1,4 +1,5 @@
 # Fire Legion
+
 DDD framework for Firebase applications.
 <p>
     <a href="https://www.npmjs.com/package/@typeheim/fire-legion" target="_blank"><img src="https://img.shields.io/npm/v/@typeheim/fire-legion.svg" alt="NPM Version" /></a>
@@ -8,7 +9,9 @@ DDD framework for Firebase applications.
 </p>
 
 # Getting Started
+
 Install package
+
 ```shell
 yarn add @typeheim/fire-legion
 //or
@@ -16,12 +19,13 @@ npm -i @typeheim/fire-legion
 ```
 
 # ORMOnFire
-ORMOnFire is a powerful Firestore ORM. 
 
-**IMPORTANT NOTICE: in beta 24 changed return types of all of the fetch methods!**
+ORMOnFire is a powerful Firestore ORM.
 
 ## Installation
+
 Setup ORMOnFire driver:
+
 ```typescript
 // sample for Node.JS
 FirebaseAdmin.initializeApp({
@@ -32,16 +36,24 @@ OrmOnFire.driver = FirebaseAdmin.firestore()
 ```
 
 ## Easy entity declaration
+
 ```typescript
-import { Agregate, Entity, Collection, CollectionRef, ID, Field, SearchField } from '@typeheim/orm-on-fire'
+import {
+    Agregate,
+    Entity,
+    Collection,
+    CollectionRef,
+    ID,
+    Field
+} from '@typeheim/orm-on-fire'
 
 @Agregate()
 export class User {
     @ID() id: string
 
-    @SearchField() firstName: string
+    @Field() firstName: string
 
-    @SearchField() lastName: string
+    @Field() lastName: string
 
     @Field() status: string
 
@@ -69,4 +81,5 @@ UsersCollection.one('tom').get().subscribe((tom: User) => {
     })
 }) 
 ```
+
 [Read more...](packages/orm-on-fire/README.md)

@@ -34,7 +34,6 @@
   },
   "license": "MIT",
   "main": "index.js",
-  "types": "index.d.ts",
   "dependencies": {
     "@typeheim/fire-rx": "^0.0.8",
     "firebase": "^8.2.1",

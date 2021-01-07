@@ -1,7 +1,9 @@
 # Fire Legion
+
 DDD framework to work with Firebase
 
 Includes:
+
 * ORM On Fire - Firestore ORM
 * FireRx - RxJS extension that provides async capabilities
 
@@ -10,7 +12,14 @@ Includes:
 Delightful Firestore ORM
 
 ```typescript
-import { Aggregate, Entity, Collection, CollectionRef, ID, Field } from '@typeheim/orm-on-fire'
+import {
+    Aggregate,
+    Entity,
+    Collection,
+    CollectionRef,
+    ID,
+    Field
+} from '@typeheim/orm-on-fire'
 
 @Aggregate()
 export class User {
@@ -25,7 +34,7 @@ export class User {
     @CollectionRef(UserFile) files: Collection<UserFile>
 }
 
-@Entity({collection: 'user-files'})
+@Entity({ collection: 'user-files' })
 export class UserFile {
     @ID() id: string
 
@@ -44,20 +53,4 @@ Users.one('tom').get().subscribe((tom: User) => {
         // some cool stuff
     })
 }) 
-```
-
-## FireRx
-
-Want Rx.JS to work as promises? Here you go: 
-
-```typescript
-import { FireReplaySubject } from '@typeheim/fire-rx'
-
-let subject = new FireReplaySubject<number>(1)
-
-subject.next(5)
-let value = await subject // 5
-
-subject.next(6)
-let nextValue = await subject // 6
 ```

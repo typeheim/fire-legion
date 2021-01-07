@@ -3,16 +3,18 @@ import { TextIndexGenerator } from './TextIndexGenerator'
 
 const Generator = new TextIndexGenerator()
 
-export function TextIndex(functionsProvider) {
+export function TextIndex(functionsProvider, firebaseAdmin) {
     let config = {
         collection: '',
+        documentPath: '',
         recalculateOnSave: false,
         fields: [],
     }
 
     let builder = {
         forCollection: (collection: string) => {
-            config.collection = `${collection}/{id}`
+            config.collection = collection
+            config.documentPath = `${collection}/{id}`
 
             return builder
         },
@@ -31,8 +33,8 @@ export function TextIndex(functionsProvider) {
 
         buildTrigger() {
             return functionsProvider.firestore
-                                    .document(config.collection)
-                                    .onWrite(BuildTrigger(config, functionsProvider.firestore))
+                                    .document(config.documentPath)
+                                    .onWrite(BuildTrigger(config, firebaseAdmin.firestore()))
         },
     }
 
@@ -41,10 +43,13 @@ export function TextIndex(functionsProvider) {
 
 function BuildTrigger(config: TextTriggerConfig, firestore) {
     return (change) => {
-        let metadata = Generator.buildMetadata(config, change)
-
-        if (metadata) {
-            return firestore.collection(`of-metadata/${config.collection}/indexes`).set(metadata, { merge: true })
+        if (change?.after?.exists) {
+            let metadata = Generator.buildMetadata(config, change)
+            console.log(`Writing index to "of-metadata/${config.collection}/indexes/${change.after.id}"`)
+            return metadata ? firestore.collection(`of-metadata/${config.collection}/indexes`).doc(change.after.id).set(metadata, { merge: true }) : null
+        } else if (!change?.after?.exists) {
+            console.log(`Removing index at "of-metadata/${config.collection}/indexes/${change.after.id}"`)
+            return firestore.collection(`of-metadata/${config.collection}/indexes`).doc(change.after.id).delete()
         } else {
             return null
         }

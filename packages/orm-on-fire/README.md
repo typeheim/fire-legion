@@ -1,10 +1,11 @@
 # ORMOnFire
-ORMOnFire is a powerful Firestore ORM. 
 
-**IMPORTANT NOTICE: in beta 24 changed return types of all of the fetch methods!**
+ORMOnFire is a powerful Firestore ORM.
 
 ## Installation
+
 Setup ORMOnFire driver:
+
 ```typescript
 // sample for Node.JS
 FirebaseAdmin.initializeApp({
@@ -15,16 +16,35 @@ OrmOnFire.driver = FirebaseAdmin.firestore()
 ```
 
 ## Easy entity declaration
+
+To define entity you need to use `@Entity` or `@Agregate` decorators for simple and nested collections. Note both
+decorators will transform class name to kebab case - lowercase and split words with hyphens, like `UserFiles` <
+=> `user-files`.
+
+Then, each document field must be decorated with `@Field`, `@MapField`, `@CreatedDateField`, `@UpdatedDateField`
+or `@DocRef`(for document references) decorators. Sub-collections can be referenced by `@CollectionRef` decorator.
+
 ```typescript
-import { Agregate, Entity, Collection, CollectionRef, ID, Field, SearchField } from '@typeheim/orm-on-fire'
+import {
+    Agregate,
+    Entity,
+    Collection,
+    CollectionRef,
+    ID,
+    Field,
+    CreatedDateField,
+    UpdatedDateField,
+    MapField
+} from '@typeheim/orm-on-fire'
+import { CreatedDateField } from './Entity'
 
 @Agregate()
 export class User {
     @ID() id: string
 
-    @SearchField() firstName: string
+    @Field() firstName: string
 
-    @SearchField() lastName: string
+    @Field() lastName: string
 
     @Field() status: string
 
@@ -36,10 +56,21 @@ export class UserFile {
     @ID() id: string
 
     @Field() name: string
+
+    @MapField() properties: FileProperties
+
+    @CreatedDateField() createdAt: Date
+
+    @UpdatedDateField() createdAt: Date
+}
+
+class FileProperties {
+    type: "image" | "doc"
 }
 ```
 
-## Simple data fetching 
+## Simple data fetching
+
 ```typescript
 import { Collection } from '@typeheim/orm-on-fire'
 
@@ -55,20 +86,52 @@ Collection.of(User).one('tom').get().subscribe((tom: User) => {
 ```
 
 ## Powerful filtering
+
+### Using firestore operators
+
 ```typescript
 import { Collection } from '@typeheim/orm-on-fire'
 const UsersCollection = Collection.of(User)
 
 // Search using regular Firesotre operators
 let activeUsers = await UsersCollection.all().filter(user => user.status.equal('active')).get()
-
-// Text index queries - required @SearchField() decorator for field
-// Note: search is case-insensitive 
-let usersStartsWithAlex = await UsersCollection.all().filter(user => user.firstName.startsWith('Alex')).get()
-let usersEndsWithLex = await UsersCollection.all().filter(user => user.firstName.endsWith('lex')).get()
+let notActiveUsers = await UsersCollection.all().filter(user => user.status.notEqual('active')).get()
+let adultUsers = await UsersCollection.all().filter(user => user.age.greaterThan(18)).get()
 ```
 
-## Support of filter scopes:
+### Test index search
+
+To use text index search you first need to add text index hook Firebase function to your Firebase functions list for
+each colelction you want to be idndexed
+
+```typescript
+import { TextIndex } from '@typeheim/orm-on-fire'
+import * as functions from 'firebase-functions'
+import * as FirebaseAdmin from 'firebase-admin'
+
+FirebaseAdmin.initializeApp()
+
+export const generateUserIndex = TextIndex(functions, FirebaseAdmin).forCollection('users')
+                                                     .fields(['name', 'text'])
+                                                     .buildTrigger()
+```
+
+Official functions deployment
+guide: [Get started: write, test, and deploy your first functions](https://firebase.google.com/docs/functions/get-started)
+
+Once you deploy hooks, you can use index search as below:
+
+```typescript
+// Note: text index search is case-insensitive 
+let usersStartsWithAlex = await UsersCollection.all().useIndex(user => user.firstName.startsWith('Alex')).get()
+let usersEndsWithLex = await UsersCollection.all().useIndex(user => user.firstName.endsWith('lex')).get()
+```
+NOTE: for now text index won't work with collection group queries. Support coming in next releases.
+
+## Filter scopes:
+
+Commonly used filer conditions can be organized in named filter scopes for easy code reuse:
+
 ```typescript
 class UserScope {
     static active() {
@@ -82,13 +145,22 @@ class UserScope {
 let activeUsers = await UsersCollection.all().filter(UserScope.active()).get()
 ```
 
-## Support of sub-collection queries:
+## Sub-collection queries:
+
+For nested collections you don't need to fetch each document separately and can access required collection under
+specific document ID:
+
 ```typescript
 // fetch all PDF files from user suwth id "userId"
 let userFiles = await UsersCollection.one('userId').collecction(UserFile).filter(UserFile.pdf()).get()
 ```
 
-## Support of group collection queries:
+## Group collection queries:
+
+ORMOnFire support easy declaration
+of [collection groups](https://firebase.googleblog.com/2019/06/understanding-collection-group-queries.html) the same way
+as for regular collections.
+
 ```typescript
 // fetch all file attachments that exist in any collection and sub-collection
 let attechments = await Collection.groupOf(Attachment).all().filter(Attachment.file()).get()

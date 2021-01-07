@@ -12,16 +12,26 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "lib": ["esnext"],
-    "typeRoots": ["./node_modules/@types"],
+    "lib": [
+      "esnext"
+    ],
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
     "strictFunctionTypes": true,
     "baseUrl": "./",
     "strictNullChecks": false,
     "noImplicitAny": false,
     "paths": {
-      "@typeheim/fire-auth": ["packages/fire-auth"],
-      "@typeheim/fire-rx": ["packages/fire-rx"],
-      "@typeheim/orm-on-fire": ["packages/orm-on-fire"],
+      "@typeheim/fire-auth": [
+        "packages/fire-auth"
+      ],
+      "@typeheim/fire-rx": [
+        "packages/fire-rx"
+      ],
+      "@typeheim/orm-on-fire": [
+        "packages/orm-on-fire"
+      ],
       "rxjs": [
         "node_modules/rxjs"
       ],
@@ -32,6 +42,7 @@
   },
   "exclude": [
     "./node_modules/**",
+    "drafts.ts",
     "node_modules",
     "specs",
     "**/specs/**",

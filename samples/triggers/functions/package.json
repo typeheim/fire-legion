@@ -1,5 +1,6 @@
 {
-  "name": "@typeheim/function-test",
+  "name": "@typeheim/triggers-sample",
+  "version": "dev",
   "private": true,
   "scripts": {
     "build": "npx tsc",
@@ -9,16 +10,16 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
-  "main": "lib/src/index.js",
+  "main": "src/index.js",
   "dependencies": {
-    "@typeheim/fire-rx": "file:./../../packages/fire-rx",
-    "@typeheim/orm-on-fire": "file:./../../packages/orm-on-fire",
-    "firebase-admin": "^8.13.0",
-    "firebase-functions": "^3.7.0",
+    "@typeheim/fire-rx": "^0.0.8",
+    "@typeheim/orm-on-fire": "^0.0.0-beta.34",
+    "firebase-admin": "^9.4.2",
+    "firebase-functions": "^3.13.0",
     "google-gax": "^2.6.3"
   },
   "devDependencies": {
-    "firebase-functions-test": "^0.2.1",
+    "firebase-functions-test": "^0.2.3",
     "typescript": "^3.9.0"
   }
 }

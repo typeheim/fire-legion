@@ -34,6 +34,9 @@ export class TextIndexGenerator {
             if (data[fieldName] !== undefined) {
                 metadata[`idx__txt__${fieldName}`] = this.createTextIndex(data[fieldName])
                 metadata[`idx__rtxt__${fieldName}`] = this.createReverseTextIndex(data[fieldName])
+            } else {
+                metadata[`idx__txt__${fieldName}`] = []
+                metadata[`idx__rtxt__${fieldName}`] = []
             }
         })
 
