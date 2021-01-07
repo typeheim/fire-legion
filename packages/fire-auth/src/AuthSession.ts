@@ -2,7 +2,7 @@ import {
     StatefulStream,
     AsyncStream,
 } from '@typeheim/fire-rx'
-import * as firebase from 'firebase/app'
+import firebase from 'firebase/app'
 import 'firebase/auth'
 import { map } from 'rxjs/operators'
 
