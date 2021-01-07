@@ -7,9 +7,6 @@ import { OrmOnFire } from '../../src/singletons'
 
 async function SetUpFirebase() {
     let keyOrPath = process?.env?.FL_ACCESS_KEY ?? process.cwd() + '/firestore.key.json'
-    if (process?.env?.FL_ACCESS_KEY) {
-        keyOrPath = JSON.parse(process?.env?.FL_ACCESS_KEY)
-    }
 
     FirebaseAdmin.initializeApp({
         credential: FirebaseAdmin.credential.cert(keyOrPath),

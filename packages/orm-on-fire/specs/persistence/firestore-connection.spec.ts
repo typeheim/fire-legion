@@ -13,8 +13,9 @@ describe('OrmOnFire', () => {
     })
 
     beforeAll(() => {
+        let keyOrPath = process?.env?.FL_ACCESS_KEY ?? process.cwd() + '/firestore.key.json'
         FirebaseAdmin.initializeApp({
-            credential: FirebaseAdmin.credential.cert(process.cwd() + '/firestore.key.json'),
+            credential: FirebaseAdmin.credential.cert(keyOrPath),
             databaseURL: 'https://fire-legion.firebaseio.com',
         })
     })
