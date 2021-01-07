@@ -5,8 +5,7 @@
   "main": "index.js",
   "private": true,
   "workspaces": [
-    "packages/*",
-    "samples/triggers/*"
+    "packages/*"
   ],
   "scripts": {
     "run:build": "npx tsc",
