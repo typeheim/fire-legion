@@ -1,16 +1,20 @@
-# Fire Legion
-
-DDD framework for Firebase applications.
+<header style="background-color: #04030E; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-bottom: 20px">
+    <h1>
+        <span style="color: #E16232; font-weight: bold">Fire</span><span style="color: #FFBE64; font-weight: bold">Legion</span>
+    </h1>
+    <img style="max-width: 256px; max-height: 256px" src="https://raw.githubusercontent.com/typeheim/fire-legion/72fd86c68b1d10d8d29c8d24004def09f63bbf79/packages/fire-legion/docs/fire-legion.svg"></img>
+</header>
 <p>
     <a href="https://www.npmjs.com/package/@typeheim/fire-legion" target="_blank"><img src="https://img.shields.io/npm/v/@typeheim/fire-legion.svg" alt="NPM Version" /></a>
     <a href="https://app.buddy.works/typeheim/fire-legion/pipelines/pipeline/300564" target="_blank"><img src="https://app.buddy.works/typeheim/fire-legion/pipelines/pipeline/300564/badge.svg?token=aad32357cefae9d70b31d8b440fdf3f3d5d2a244a0412ff42ac294abbfc508f5" alt="Build Status" /></a>
     <a href="https://www.npmjs.com/package/@typeheim/fire-legion" target="_blank"><img src="https://img.shields.io/npm/l/@typeheim/fire-legion.svg" alt="Package License" /></a>
     <a href="https://discord.gg/dmMznp9" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
 </p>
+DDD framework for Firebase applications that includes ORMOnFire and FireAuth libraries.
 
 # Getting Started
 
-Install package
+Install root package that adds all of the latest FireLegion packages to dependencies
 
 ```shell
 yarn add @typeheim/fire-legion
@@ -21,21 +25,6 @@ npm -i @typeheim/fire-legion
 # ORMOnFire
 
 ORMOnFire is a powerful Firestore ORM.
-
-## Installation
-
-Setup ORMOnFire driver:
-
-```typescript
-// sample for Node.JS
-FirebaseAdmin.initializeApp({
-    credential: FirebaseAdmin.credential.cert('my.key.json'),
-    databaseURL: "https://my-db.firebaseio.com",
-})
-OrmOnFire.driver = FirebaseAdmin.firestore()
-```
-
-## Easy entity declaration
 
 ```typescript
 import {
@@ -81,5 +70,28 @@ UsersCollection.one('tom').get().subscribe((tom: User) => {
     })
 }) 
 ```
+[Read more...](https://github.com/typeheim/fire-legion/tree/master/packages/orm-on-fire)
 
-[Read more...](packages/orm-on-fire/README.md)
+# FireAuth
+
+FireAuth is Firebase auth library based on Rx principles.
+
+```typescript
+import { FireAuth, FireAuthSession, AuthProvidersList } from '@typeheim/fire-auth'
+
+// through provider
+FireAuth.throughProvider(AuthProvidersList.Google).signInWithPopup()
+
+// using email/password flow
+FireAuth.signIn(new PasswordAuth('email', 'password'))
+
+// getting user object
+FireAuthSession.userStream.subscribe(user => /*do your magick*/)
+
+// gedding auth status
+FireAuthSession.isLoggedInStream.subscribe(isLoggedIn => /*do your magick*/)
+
+// gedding access token
+FireAuthSession.accessTokenStream.subscribe(token => /*do your magick*/)
+```
+[Read more...](https://github.com/typeheim/fire-legion/tree/master/packages/fire-atuh)

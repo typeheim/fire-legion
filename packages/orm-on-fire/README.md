@@ -1,8 +1,26 @@
-# ORMOnFire
+<header style="background-color: #04030E; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-bottom: 20px">
+    <h1>
+        <span style="color: #E16232; font-weight: bold">ORM</span><span style="color: #FFBE64; font-weight: bold">OnFire</span>
+    </h1>
+    <img style="max-width: 256px; max-height: 256px" src="https://raw.githubusercontent.com/typeheim/fire-legion/72fd86c68b1d10d8d29c8d24004def09f63bbf79/packages/orm-on-fire/docs/orm-on-fire.svg"></img>
+</header>
+<p>
+    <a href="https://www.npmjs.com/package/@typeheim/orm-on-fire" target="_blank"><img src="https://img.shields.io/npm/v/@typeheim/orm-on-fire.svg" alt="NPM Version" /></a>
+    <a href="https://app.buddy.works/typeheim/fire-legion/pipelines/pipeline/300564" target="_blank"><img src="https://app.buddy.works/typeheim/fire-legion/pipelines/pipeline/300564/badge.svg?token=aad32357cefae9d70b31d8b440fdf3f3d5d2a244a0412ff42ac294abbfc508f5" alt="Build Status" /></a>
+    <a href="https://www.npmjs.com/package/@typeheim/orm-on-fire" target="_blank"><img src="https://img.shields.io/npm/l/@typeheim/orm-on-fire.svg" alt="Package License" /></a>
+    <a href="https://discord.gg/dmMznp9" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+</p>
 
 ORMOnFire is a powerful Firestore ORM.
 
 ## Installation
+Install package
+
+```shell
+yarn add @typeheim/orm-on-fire
+//or
+npm -i @typeheim/orm-on-fire
+```
 
 Setup ORMOnFire driver:
 
