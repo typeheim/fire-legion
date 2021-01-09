@@ -91,4 +91,4 @@ FireAuthSession.isLoggedInStream.subscribe(isLoggedIn => /*do your magick*/)
 // gedding access token
 FireAuthSession.accessTokenStream.subscribe(token => /*do your magick*/)
 ```
-[Read more...](https://github.com/typeheim/fire-legion/tree/master/packages/fire-atuh)
+[Read more...](https://github.com/typeheim/fire-legion/tree/master/packages/fire-auth)
