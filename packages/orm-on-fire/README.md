@@ -1,8 +1,5 @@
 <p align="center">
-    <h1>
-        <span style="color: #E16232; font-weight: bold">ORM</span><span style="color: #FFBE64; font-weight: bold">OnFire</span>
-    </h1>
-    <img style="max-width: 100%" width="256" src="https://raw.githubusercontent.com/typeheim/fire-legion/72fd86c68b1d10d8d29c8d24004def09f63bbf79/packages/orm-on-fire/docs/orm-on-fire.svg"></img>
+    <img style="max-width: 100%" width="1200" src="https://raw.githubusercontent.com/typeheim/fire-legion/46726290060f4631bb0fb10017bdf7954f7e21d9/packages/orm-on-fire/docs/orm-on-fire-logo.svg">
 </p>
 <p>
     <a href="https://www.npmjs.com/package/@typeheim/orm-on-fire" target="_blank"><img src="https://img.shields.io/npm/v/@typeheim/orm-on-fire.svg" alt="NPM Version" /></a>

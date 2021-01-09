@@ -1,8 +1,5 @@
 <p align="center">
-    <h1>
-        <span style="color: #E16232; font-weight: bold">Fire</span><span style="color: #FFBE64; font-weight: bold">Auth</span>
-    </h1>
-    <img style="max-width: 100%" width="256" src="https://raw.githubusercontent.com/typeheim/fire-legion/4d7ec170cbb3af03c875583e0941ed5d7fe06cf1/packages/fire-auth/docs/fire-auth.svg">
+    <img style="max-width: 100%" width="1200" src="https://raw.githubusercontent.com/typeheim/fire-legion/46726290060f4631bb0fb10017bdf7954f7e21d9/packages/fire-auth/docs/fire-auth-logo.svg">
 </p>
 <p>
     <a href="https://www.npmjs.com/package/@typeheim/fire-auth" target="_blank"><img src="https://img.shields.io/npm/v/@typeheim/fire-auth.svg" alt="NPM Version" /></a>

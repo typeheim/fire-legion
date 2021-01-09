@@ -1,8 +1,5 @@
 <p align="center">
-    <h1>
-        <span style="color: #E16232; font-weight: bold">Fire</span><span style="color: #FFBE64; font-weight: bold">Legion</span>
-    </h1>
-    <img style="max-width: 100%" width="256" src="https://raw.githubusercontent.com/typeheim/fire-legion/72fd86c68b1d10d8d29c8d24004def09f63bbf79/packages/fire-legion/docs/fire-legion.svg">
+    <img style="max-width: 100%" width="1200" src="https://raw.githubusercontent.com/typeheim/fire-legion/46726290060f4631bb0fb10017bdf7954f7e21d9/packages/fire-legion/docs/fire-legion-logo.svg">
 </p>
 <p>
     <a href="https://www.npmjs.com/package/@typeheim/fire-legion" target="_blank"><img src="https://img.shields.io/npm/v/@typeheim/fire-legion.svg" alt="NPM Version" /></a>
