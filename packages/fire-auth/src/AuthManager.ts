@@ -6,7 +6,7 @@ import { ReactivePromise } from '@typeheim/fire-rx'
 export class AuthManager {
     protected authDriver: firebase.auth.Auth
 
-    setAuthDriver(driver: firebase.auth.Auth, usePersistence = true) {
+    setAuthDriver(driver, usePersistence = true) {
         this.authDriver = driver
         if (usePersistence) {
             this.enablePersistence()
@@ -177,6 +177,10 @@ export class AuthManager {
 class AuthProvidersList {
     get Google() {
         return new firebase.auth.GoogleAuthProvider()
+    }
+
+    get Microsoft() {
+        return new firebase.auth.OAuthProvider('microsoft.com')
     }
 }
 

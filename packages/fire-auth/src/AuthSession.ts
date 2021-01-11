@@ -15,7 +15,7 @@ export class AuthSession {
     public accessTokenStream: AsyncStream<string>
     public idTokenStream: StatefulStream<firebase.auth.IdTokenResult>
 
-    setAuthDriver(driver: firebase.auth.Auth) {
+    setAuthDriver(driver) {
         this.authDriver = driver
 
         this.userStream = new StatefulStream((context) => {
