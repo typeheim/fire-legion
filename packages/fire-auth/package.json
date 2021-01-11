@@ -13,9 +13,9 @@
     "email": "dima@kolodko.pro",
     "url": "https://github.com/prowwid"
   },
-  "homepage": "https://github.com/typeheim/domain-on-fire#readme",
+  "homepage": "https://github.com/typeheim/fire-legion/tree/master/packages/fire-atuh#readme",
   "bugs": {
-    "url": "https://github.com/typeheim/domain-on-fire/issues"
+    "url": "https://github.com/typeheim/fire-legion/issues"
   },
   "license": "MIT",
   "main": "index.js",
