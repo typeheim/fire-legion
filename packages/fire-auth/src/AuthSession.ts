@@ -98,3 +98,4 @@ export enum AuthStateType {
     isAnonymous,
     isUnauthorised
 }
+
