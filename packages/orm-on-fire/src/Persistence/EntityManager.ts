@@ -35,7 +35,7 @@ export class EntityManager<Entity> {
         this.metadata.fields.forEach(field => {
             if (data[field.name] === undefined) {
                 return
-            } else if (field?.isDate || (typeof data[field.name] === 'object' && data[field.name]?.constructor?.name === 'Timestamp')) {
+            } else if (field?.isDate || (data[field.name]?.toDate !== undefined && typeof data[field.name]?.toDate === 'function') || (typeof data[field.name] === 'object' && data[field.name]?.constructor?.name === 'Timestamp')) {
                 entity[field.name] = data[field.name].toDate()
             } else if (typeof data[field.name] === 'object' && field?.isMap && (typeof field?.constructor === 'object' || typeof field?.constructor === 'function')) {
                 if (Array.isArray(data[field.name])) {
