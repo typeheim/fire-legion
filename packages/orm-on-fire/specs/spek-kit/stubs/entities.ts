@@ -100,6 +100,34 @@ export class Car {
     engine: number
 }
 
+@Entity()
+export class Animal {
+    @ID()
+    id: string
+
+    @Field()
+    name: string
+
+    @Field()
+    type: string = AnimalTypes.Mammal
+
+    @Field()
+    age: number = 1
+
+    @MapField()
+    metadata = {
+        region: 'earth',
+    }
+
+    virtualField = 25
+}
+
+export enum AnimalTypes {
+    Mammal = 'mammal',
+    Bird = 'bird',
+    Fish = 'fish'
+}
+
 //
 // Books collections
 //

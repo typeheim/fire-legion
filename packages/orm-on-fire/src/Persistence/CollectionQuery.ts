@@ -22,17 +22,18 @@ import {
     map,
 } from 'rxjs/operators'
 import { EntityPromise } from '../Data/EntityPromise'
+import { IndexFilter } from './IndexFilter'
 import QuerySnapshot = types.QuerySnapshot
 import DocumentChange = types.DocumentChange
 import DocumentSnapshot = types.DocumentSnapshot
 import QueryDocumentSnapshot = types.QueryDocumentSnapshot
-import { IndexFilter } from './IndexFilter'
 
 export class CollectionQuery<Entity, FetchType = Entity[]> {
     protected queryState: QueryState = {
         conditions: [],
         indexes: [],
         limit: -1,
+        asIds: false,
         orderBy: [],
         exclude: [],
     }
@@ -73,6 +74,12 @@ export class CollectionQuery<Entity, FetchType = Entity[]> {
         indexFunction(filter)
 
         return this
+    }
+
+    asIds(): CollectionQuery<Entity, string[]> {
+        this.queryState.asIds = true
+
+        return this as any
     }
 
     filter(filterFunction: FilterFunction<Entity>) {
@@ -136,9 +143,16 @@ export class CollectionQuery<Entity, FetchType = Entity[]> {
             } else {
                 docs = querySnapshot
             }
-            docs.forEach((docSnapshot: DocumentSnapshot) => {
-                entities.push(this.entityManager.fromSnapshot(docSnapshot))
-            })
+            if (this.queryState?.asIds) {
+                docs.forEach((docSnapshot: DocumentSnapshot) => {
+                    entities.push(docSnapshot.id)
+                })
+            } else {
+                docs.forEach((docSnapshot: DocumentSnapshot) => {
+                    entities.push(this.entityManager.fromSnapshot(docSnapshot))
+                })
+            }
+
 
             if (this.queryState.map) {
                 entities = this.queryState.map(entities)
@@ -157,15 +171,19 @@ export class CollectionQuery<Entity, FetchType = Entity[]> {
         let source = dataStream.pipe(map((querySnapshot: QuerySnapshot) => {
             let entityChanges = []
             querySnapshot.docChanges().forEach((change: DocumentChange) => {
-                let entity = this.entityManager.fromSnapshot(change.doc)
-                if (entity) {
-                    entityChanges.push({
-                        type: change.type,
-                        entity,
-                    })
+                if (this.queryState?.asIds && change.doc.exists) {
+                    entityChanges.push(change.doc.id)
+                } else {
+                    let entity = this.entityManager.fromSnapshot(change.doc)
+                    if (entity) {
+                        entityChanges.push({
+                            type: change.type,
+                            entity,
+                        })
+                    }
                 }
             })
-            if (this.queryState.map) {
+            if (this.queryState?.map) {
                 entityChanges = this.queryState.map(entityChanges)
             }
 
@@ -183,9 +201,13 @@ export class CollectionQuery<Entity, FetchType = Entity[]> {
             let entities = []
 
             querySnapshot.forEach((docSnapshot: QueryDocumentSnapshot) => {
-                let entity = this.entityManager.fromSnapshot(docSnapshot)
-                if (entity) {
-                    entities.push(entity)
+                if (this.queryState?.asIds && docSnapshot.exists) {
+                    entities.push(docSnapshot.id)
+                } else {
+                    let entity = this.entityManager.fromSnapshot(docSnapshot)
+                    if (entity) {
+                        entities.push(entity)
+                    }
                 }
             })
             if (this.queryState.map) {

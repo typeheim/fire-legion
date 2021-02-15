@@ -1,5 +1,7 @@
 import * as FirebaseAdmin from 'firebase-admin'
 import {
+    Animal,
+    AnimalTypes,
     Car,
     Engine,
     SpecKit,
@@ -95,6 +97,26 @@ describe('Repo', () => {
 
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('car').doc(car.id).get()
         expect(snapshotOfNew.exists).toBeTruthy()
+
+        done()
+    })
+
+    it('can populate default values on save', async (done) => {
+        let car = new Animal()
+        await save(car)
+
+        let snapshotOfNew = await FirebaseAdmin.firestore().collection('animal').doc(car.id).get()
+        expect(snapshotOfNew.exists).toBeTruthy()
+
+        let record = snapshotOfNew.data()
+        // ORM must save default values
+        expect(record?.type).toEqual(AnimalTypes.Mammal)
+        expect(record?.age).toEqual(1)
+        expect(record?.metadata).toEqual({
+            region: 'earth',
+        })
+        // fields that ain't orm fields should not be saved
+        expect(record?.virtualField).toBeUndefined()
 
         done()
     })

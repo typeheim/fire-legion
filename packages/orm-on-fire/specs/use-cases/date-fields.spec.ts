@@ -69,6 +69,7 @@ describe('Collection', () => {
         expect(firstItem.updatedAt.getTime()).toBeGreaterThan(fixtureItem.updatedAt.getTime())
 
         let updatedItem = await Collection.of(DateItem).one(fixtureItem.id).get()
+
         await save(updatedItem)
 
         // custom and createdAt date should not be changed in fixture after save

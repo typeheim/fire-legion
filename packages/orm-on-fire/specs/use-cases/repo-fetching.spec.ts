@@ -89,6 +89,23 @@ describe('Repo', () => {
         done()
     })
 
+    it('can get all as ids', async (done) => {
+        let dogs = await Collection.of(Dog).all().asIds().get()
+
+        expect(dogs).not.toBeNull()
+        expect(dogs.length).toEqual(3)
+
+        let fixtureIds = [
+            'sparky',
+            'boomer',
+            'lex',
+        ]
+        console.log(dogs)
+        expect(fixtureIds.sort()).toEqual(dogs.sort())
+
+        done()
+    })
+
     it('can populate sub-collections', async (done) => {
         let boomer = await Collection.of(Dog).one('boomer').get()
 

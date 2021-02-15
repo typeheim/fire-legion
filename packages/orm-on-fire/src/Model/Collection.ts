@@ -1,8 +1,8 @@
 import { EntityPersister } from './EntityPersister'
 import {
+    AsyncStream,
     ReactivePromise,
     StatefulSubject,
-    AsyncStream,
 } from '@typeheim/fire-rx'
 import { ChangedEntities } from '../Data/ChangedEntities'
 import { EntityQuery } from '../Persistence/EntityQuery'

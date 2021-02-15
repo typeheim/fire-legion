@@ -40,6 +40,7 @@ export interface QueryState {
     indexes?: FieldCondition[]
     limit?: number
     orderBy?: OrderByCondition[]
+    asIds?: boolean
     startAt?: any
     startAfter?: any
     endAt?: any
