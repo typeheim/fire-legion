@@ -28,10 +28,6 @@ export class EntityManager<Entity> {
         const fields = this.metadata.fields
         entity['id'] = docSnapshot.id
 
-        this.attachOrmMetadataToEntity(entity, docSnapshot.ref)
-        this.attachSubCollectionsToEntity(entity, docSnapshot.ref)
-        this.attachRefsToEntity(entity, data)
-
         this.metadata.fields.forEach(field => {
             if (data[field.name] === undefined) {
                 return
@@ -60,6 +56,10 @@ export class EntityManager<Entity> {
                 return JSON.stringify(jsonData)
             }
         }
+
+        this.attachOrmMetadataToEntity(entity, docSnapshot.ref)
+        this.attachSubCollectionsToEntity(entity, docSnapshot.ref)
+        this.attachRefsToEntity(entity, data)
 
         if (typeof entity.init === 'function') {
             // @todo handle promises
