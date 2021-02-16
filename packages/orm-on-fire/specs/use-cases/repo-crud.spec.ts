@@ -112,6 +112,8 @@ describe('Repo', () => {
         // ORM must save default values
         expect(record?.type).toEqual(AnimalTypes.Mammal)
         expect(record?.age).toEqual(1)
+        expect(record?.isWild).toBeTruthy()
+        expect(record?.hasWings).toBeFalsy()
         expect(record?.metadata).toEqual({
             region: 'earth',
         })
@@ -131,12 +133,62 @@ describe('Repo', () => {
         // ORM must save default values
         expect(record?.type).toEqual(AnimalTypes.Mammal)
         expect(record?.age).toEqual(1)
+        expect(record?.isWild).toBeTruthy()
+        expect(record?.hasWings).toBeFalsy()
         expect(record?.metadata).toEqual({
             region: 'earth',
         })
         // fields that ain't orm fields should not be saved
         expect(record?.virtualField).toBeUndefined()
 
+        done()
+    })
+
+    it('can update default values', async (done) => {
+        let animal = await Collection.of(Animal).new()
+
+        animal.type = AnimalTypes.Bird
+        animal.age = 10
+
+        animal.isWild = false
+        animal.hasWings = true
+
+        animal.metadata = {
+            region: 'Europe',
+            country: 'Ukraine',
+        }
+
+        await Collection.of(Animal).save(animal)
+
+        let snapshotOfUpdated = await FirebaseAdmin.firestore().collection('animal').doc(animal.id).get()
+        expect(snapshotOfUpdated.exists).toBeTruthy()
+
+        let record = snapshotOfUpdated.data()
+        // ORM must save default values
+        expect(record?.type).toEqual(AnimalTypes.Bird)
+        expect(record?.age).toEqual(10)
+        expect(record?.isWild).toBeFalsy()
+        expect(record?.hasWings).toBeTruthy()
+        expect(record?.metadata).toEqual({
+            region: 'Europe',
+            country: 'Ukraine',
+        })
+        // fields that ain't orm fields should not be saved
+        expect(record?.virtualField).toBeUndefined()
+
+
+        animal.isWild = true
+        animal.hasWings = false
+
+
+        await Collection.of(Animal).save(animal)
+
+        let newSnapshotOfUpdated = await FirebaseAdmin.firestore().collection('animal').doc(animal.id).get()
+        expect(newSnapshotOfUpdated.exists).toBeTruthy()
+
+        let newRecord = newSnapshotOfUpdated.data()
+        expect(newRecord?.isWild).toBeTruthy()
+        expect(newRecord?.hasWings).toBeFalsy()
         done()
     })
 

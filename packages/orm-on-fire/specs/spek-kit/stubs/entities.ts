@@ -114,8 +114,14 @@ export class Animal {
     @Field()
     age: number = 1
 
+    @Field()
+    isWild: boolean = true
+
+    @Field()
+    hasWings: boolean = false
+
     @MapField()
-    metadata = {
+    metadata: any = {
         region: 'earth',
     }
 

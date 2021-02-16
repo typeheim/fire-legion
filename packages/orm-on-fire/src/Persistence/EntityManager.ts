@@ -176,7 +176,7 @@ export class EntityManager<Entity> {
             docRef: DocReference.fromNativeRef(docReference),
             mutation: this.createMutationTracker(entity),
             save: (): ReactivePromise<boolean> => {
-                return persistenceManager.update(this.extractDataFromEntity(entity))
+                return persistenceManager.update(this.extractDataFromEntity(entity), entity['__ormOnFire'].mutation)
             },
             remove: (): ReactivePromise<boolean> => {
                 return persistenceManager.remove()
@@ -189,6 +189,7 @@ export class EntityManager<Entity> {
         entity['__ormOnFire'] = {
             isNew: true,
             docRef: null,
+            mutation: this.createMutationTracker(entity),
             save: (): ReactivePromise<boolean> => {
                 return docInitializer.addTo(this.collectionReference)
             },
@@ -204,13 +205,23 @@ export class EntityManager<Entity> {
     }
 }
 
-
+// @todo - change mutation tracker to use snapshot as source of original data
 export class MutationTracker {
     protected copy = {}
     protected fields: PropertyMetadata[]
+    protected entity
 
     constructor(entity, fields: PropertyMetadata[]) {
         this.fields = fields
+        this.entity = entity
+
+        this.refreshEntity()
+    }
+
+    public refreshEntity() {
+        let entity = this.entity
+        let fields = this.fields
+        this.copy = {}
 
         fields.forEach(field => {
             if (entity[field.name] === undefined) {

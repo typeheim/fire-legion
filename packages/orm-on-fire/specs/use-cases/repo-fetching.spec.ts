@@ -100,7 +100,6 @@ describe('Repo', () => {
             'boomer',
             'lex',
         ]
-        console.log(dogs)
         expect(fixtureIds.sort()).toEqual(dogs.sort())
 
         done()
