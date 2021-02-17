@@ -123,6 +123,140 @@ describe('Repo', () => {
         done()
     })
 
+    it('can crate and update array fields using the same entity', async (done) => {
+        let animal = new Animal()
+        animal.tags = [
+            'bird',
+        ]
+        await save(animal)
+
+        let snapshotOfNew = await FirebaseAdmin.firestore().collection('animal').doc(animal.id).get()
+        expect(snapshotOfNew.exists).toBeTruthy()
+
+        let record = snapshotOfNew.data()
+        // ORM must save default values
+        expect(record?.type).toEqual(AnimalTypes.Mammal)
+        expect(record?.age).toEqual(1)
+        expect(record?.isWild).toBeTruthy()
+        expect(record?.hasWings).toBeFalsy()
+        expect(record?.metadata).toEqual({
+            region: 'earth',
+        })
+        expect(record?.tags).toEqual([
+            'bird',
+        ])
+        // fields that ain't orm fields should not be saved
+        expect(record?.virtualField).toBeUndefined()
+
+        animal.tags = [
+            'bird',
+            'owl',
+        ]
+        await save(animal)
+
+        let snapshotOfUpdated = await FirebaseAdmin.firestore().collection('animal').doc(animal.id).get()
+        expect(snapshotOfUpdated.exists).toBeTruthy()
+
+        let updatedRecord = snapshotOfUpdated.data()
+        // ORM must save default values
+        expect(updatedRecord?.type).toEqual(AnimalTypes.Mammal)
+        expect(updatedRecord?.age).toEqual(1)
+        expect(updatedRecord?.isWild).toBeTruthy()
+        expect(updatedRecord?.hasWings).toBeFalsy()
+        expect(updatedRecord?.metadata).toEqual({
+            region: 'earth',
+        })
+        expect(updatedRecord?.tags).toEqual([
+            'bird',
+            'owl',
+        ])
+        // fields that ain't orm fields should not be saved
+        expect(updatedRecord?.virtualField).toBeUndefined()
+
+        done()
+    })
+
+    it('can crate and update array fields using different entity objects', async (done) => {
+        let animal = new Animal()
+        animal.tags = [
+            'bird',
+        ]
+        await save(animal)
+
+        animal = await Collection.of(Animal).one(animal.id).get()
+
+        animal.tags = [
+            'bird',
+            'owl',
+        ]
+        await save(animal)
+
+        let snapshotOfUpdated = await FirebaseAdmin.firestore().collection('animal').doc(animal.id).get()
+        expect(snapshotOfUpdated.exists).toBeTruthy()
+
+        let updatedRecord = snapshotOfUpdated.data()
+        // ORM must save default values
+        expect(updatedRecord?.type).toEqual(AnimalTypes.Mammal)
+        expect(updatedRecord?.age).toEqual(1)
+        expect(updatedRecord?.isWild).toBeTruthy()
+        expect(updatedRecord?.hasWings).toBeFalsy()
+        expect(updatedRecord?.metadata).toEqual({
+            region: 'earth',
+        })
+        expect(updatedRecord?.tags).toEqual([
+            'bird',
+            'owl',
+        ])
+        // fields that ain't orm fields should not be saved
+        expect(updatedRecord?.virtualField).toBeUndefined()
+
+        done()
+    })
+
+    it('can crate and update record fields using different entity objects', async (done) => {
+        let animal = new Animal()
+        animal.nestedTags = {
+            type: [
+                'bird',
+            ],
+            names: [
+                'sparky',
+            ],
+        }
+        await save(animal)
+
+        animal = await Collection.of(Animal).one(animal.id).get()
+
+        animal.nestedTags.names.push('lo')
+        await save(animal)
+
+        let snapshotOfUpdated = await FirebaseAdmin.firestore().collection('animal').doc(animal.id).get()
+        expect(snapshotOfUpdated.exists).toBeTruthy()
+
+        let updatedRecord = snapshotOfUpdated.data()
+        // ORM must save default values
+        expect(updatedRecord?.type).toEqual(AnimalTypes.Mammal)
+        expect(updatedRecord?.age).toEqual(1)
+        expect(updatedRecord?.isWild).toBeTruthy()
+        expect(updatedRecord?.hasWings).toBeFalsy()
+        expect(updatedRecord?.metadata).toEqual({
+            region: 'earth',
+        })
+        expect(updatedRecord?.nestedTags).toEqual({
+            type: [
+                'bird',
+            ],
+            names: [
+                'sparky',
+                'lo',
+            ],
+        })
+        // fields that ain't orm fields should not be saved
+        expect(updatedRecord?.virtualField).toBeUndefined()
+
+        done()
+    })
+
     it('can populate default values on create', async (done) => {
         let animal = await Collection.of(Animal).new()
 

@@ -16,6 +16,8 @@ import { Model } from '../Contracts/Model'
 import DocumentSnapshot = types.DocumentSnapshot
 import DocumentReference = types.DocumentReference
 
+// import FieldValue = types.FieldValue - somehow fails TS
+
 export class EntityManager<Entity> {
     constructor(protected metadata: EntityMetadata, protected entityConstructor, protected collectionReference: CollectionReference) {}
 
@@ -31,8 +33,8 @@ export class EntityManager<Entity> {
         this.metadata.fields.forEach(field => {
             if (data[field.name] === undefined) {
                 return
-            } else if (field?.isDate || (data[field.name]?.toDate !== undefined && typeof data[field.name]?.toDate === 'function') || (typeof data[field.name] === 'object' && data[field.name]?.constructor?.name === 'Timestamp')) {
-                entity[field.name] = data[field.name].toDate()
+            } else if ((data[field.name]?.toDate !== undefined && typeof data[field.name]?.toDate === 'function') || (typeof data[field.name] === 'object' && data[field.name]?.constructor?.name === 'Timestamp')) {
+                entity[field.name] = data[field.name]?.toDate()
             } else if (typeof data[field.name] === 'object' && field?.isMap && (typeof field?.constructor === 'object' || typeof field?.constructor === 'function')) {
                 if (Array.isArray(data[field.name])) {
                     entity[field.name] = data[field.name].map(obj => Object.assign(new field.constructor(), obj))
@@ -136,7 +138,8 @@ export class EntityManager<Entity> {
                 let date = new Date()
                 entity[field.name] = date
                 dataToSave[field.name] = date
-            } if (changes && field.name in changes) {
+            }
+            if (changes && field.name in changes) {
                 dataToSave[field.name] = changes[field.name]
             } else if ((entity?.__ormOnFire?.isNew || entity.__ormOnFire === undefined) && entity[field.name] !== undefined) {
                 // this condition required only for new entities
@@ -246,26 +249,42 @@ export class MutationTracker {
     getChanges(entity) {
         let changes = {}
         this.fields.forEach(field => {
-            if (entity[field.name] === undefined && this.copy[field.name] !== undefined) {
-                changes[field.name] = undefined
-            } else if (entity[field.name] === undefined) {
-                return
-            } else if (Array.isArray(entity[field.name])) { // array should be checked explicitly
-                if (JSON.stringify(entity[field.name]) !== JSON.stringify(this.copy[field.name])) {
-                    changes[field.name] = entity[field.name]
+            // @todo - half of checks disabled because of instability. Need further tetsing
+            if (entity[field.name] === undefined) {
+                if (this.copy[field.name] !== undefined) {
+                    // changes[field.name] = FieldValue.delete() - somehow fails TS
+                    changes[field.name] = undefined
+                } else {
+                    return
                 }
-            } else if (typeof entity[field.name] === 'object' && entity[field.name] != null) {
+            } else if (Array.isArray(entity[field.name])) { // array should be checked explicitly
+                changes[field.name] = entity[field.name]
+                // if (JSON.stringify(entity[field.name]) !== JSON.stringify(this.copy[field.name])) {
+                //     changes[field.name] = entity[field.name]
+                // }
+            } else if (typeof entity[field.name] === 'object' && entity[field.name] !== null) {
                 // dates must be compared by time
-                if (entity[field.name] instanceof Date && entity[field.name]?.getTime() !== this.copy[field.name]?.getTime()) {
-                    changes[field.name] = entity[field.name]
-                } else if (JSON.stringify(entity[field.name]) !== JSON.stringify(this.copy[field.name])) {
+                // if (entity[field.name] instanceof Date && entity[field.name]?.getTime() !== this.copy[field.name]?.getTime()) {
+                //     changes[field.name] = entity[field.name]
+                // } else if (JSON.stringify(entity[field.name]) !== JSON.stringify(this.copy[field.name])) {
+                //     // objects need deep equality compare
+                //     changes[field.name] = { ...entity[field.name] }
+                // }
+                //dates must be compared by time
+                if (entity[field.name] instanceof Date) {
+                    if (this.copy[field.name] && entity[field.name]?.getTime() !== this.copy[field.name]?.getTime()) {
+                        changes[field.name] = entity[field.name]
+                    } else if (!this.copy[field.name]) {
+                        changes[field.name] = entity[field.name]
+                    }
+
+                } else {
                     // objects need deep equality compare
                     changes[field.name] = { ...entity[field.name] }
                 }
-            } else if (entity[field.name] != this.copy[field.name]) {
+            } else if (entity[field.name] !== this.copy[field.name]) {
                 changes[field.name] = entity[field.name]
             }
-
         })
 
         return changes

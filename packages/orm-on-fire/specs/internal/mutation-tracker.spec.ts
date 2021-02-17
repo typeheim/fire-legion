@@ -18,7 +18,34 @@ describe('MutationTracker', () => {
         let changes = tracker.getChanges(entity)
 
         // changes should include only changes simple field
-        expect(changes).toEqual({ name: 'new' })
+        expect(changes).toEqual({
+            /// temporary not tracking maps and arrays
+            'aliases': [
+                'a',
+                'b',
+                'c',
+            ],
+            'map': {
+                'flag': true,
+                'name': 'test',
+            },
+            'mapList': [
+                {
+                    'flag': true,
+                    'name': 'test',
+                },
+                {
+                    'flag': true,
+                    'name': 'test',
+                },
+                {
+                    'flag': true,
+                    'name': 'test',
+                },
+            ],
+            ///
+            name: 'new',
+        })
 
         done()
     })
@@ -34,6 +61,31 @@ describe('MutationTracker', () => {
 
         // changes should include only changes simple field
         expect(changes).toEqual({
+            /// temporary not tracking maps and arrays
+            'aliases': [
+                'a',
+                'b',
+                'c',
+            ],
+            'map': {
+                'flag': true,
+                'name': 'test',
+            },
+            'mapList': [
+                {
+                    'flag': true,
+                    'name': 'test',
+                },
+                {
+                    'flag': true,
+                    'name': 'test',
+                },
+                {
+                    'flag': true,
+                    'name': 'test',
+                },
+            ],
+            ///
             name: 'new',
             email: 'new@new.com',
         })
@@ -52,6 +104,12 @@ describe('MutationTracker', () => {
 
         // changes should include only changes simple field
         expect(changes).toEqual({
+            /// temporary not tracking maps and arrays
+            'map': {
+                'flag': true,
+                'name': 'test',
+            },
+            ///
             mapList: [],
             aliases: [
                 'a',
@@ -80,6 +138,31 @@ describe('MutationTracker', () => {
 
         // changes should include only changes simple field
         expect(changes).toEqual({
+            /// temporary not tracking maps and arrays
+            'aliases': [
+                'a',
+                'b',
+                'c',
+            ],
+            'map': {
+                'flag': true,
+                'name': 'test',
+            },
+            'mapList': [
+                {
+                    'flag': true,
+                    'name': 'test',
+                },
+                {
+                    'flag': true,
+                    'name': 'test',
+                },
+                {
+                    'flag': true,
+                    'name': 'test',
+                },
+            ],
+            ///
             name: 'new',
             email: 'new@new.com',
             createdAt: newCreatedDate,
@@ -98,6 +181,28 @@ describe('MutationTracker', () => {
 
         // changes should include whole map field
         expect(changes).toEqual({
+            /// temporary not tracking maps and arrays
+            'aliases': [
+                'a',
+                'b',
+                'c',
+            ],
+            'mapList': [
+                {
+                    'flag': true,
+                    'name': 'test',
+                },
+                {
+                    'flag': true,
+                    'name': 'test',
+                },
+                {
+                    'flag': true,
+                    'name': 'test',
+                },
+            ],
+            ///
+
             'map': {
                 'flag': false,
                 'name': 'test',
@@ -116,6 +221,18 @@ describe('MutationTracker', () => {
 
         // changes should include only changes of simple field
         expect(changes).toEqual({
+            /// temporary not tracking maps and arrays
+            'aliases': [
+                'a',
+                'b',
+                'c',
+            ],
+            'map': {
+                'flag': true,
+                'name': 'test',
+            },
+            ///
+
             'mapList': [
                 {
                     'flag': true,

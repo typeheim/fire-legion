@@ -120,6 +120,12 @@ export class Animal {
     @Field()
     hasWings: boolean = false
 
+    @Field()
+    tags: string[]
+
+    @Field()
+    nestedTags: Record<string, string[]>
+
     @MapField()
     metadata: any = {
         region: 'earth',
