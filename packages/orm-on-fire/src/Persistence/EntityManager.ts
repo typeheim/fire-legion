@@ -55,7 +55,7 @@ export class EntityManager<Entity> {
                         jsonData[field.name] = entity[field.name]
                     }
                 })
-                return JSON.stringify(jsonData)
+                return jsonData
             }
         }
 
