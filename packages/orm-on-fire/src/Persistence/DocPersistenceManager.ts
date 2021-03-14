@@ -9,6 +9,12 @@ export class DocPersistenceManager<Entity> {
 
     update(dataToSave: any, mutationTracker: MutationTracker): ReactivePromise<boolean> {
         let promise = new ReactivePromise<boolean>()
+
+        if (dataToSave && Object.keys(dataToSave).length === 0) {
+            promise.resolve(true)
+            return promise
+        }
+
         this.docReference.update(dataToSave).then(() => {
             mutationTracker.refreshEntity()
             promise.resolve(true)

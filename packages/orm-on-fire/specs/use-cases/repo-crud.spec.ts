@@ -32,6 +32,15 @@ describe('Repo', () => {
         done()
     })
 
+    it('can save without changes', async (done) => {
+        let camry = await Collection.of(Car).one('camry').get()
+        let result = await Collection.of(Car).save(camry)
+
+        expect(result).toBeTruthy()
+
+        done()
+    })
+
     it('can remove docs', async (done) => {
         let tesla = await Collection.of(Car).one('tesla').get()
 
