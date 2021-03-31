@@ -14,8 +14,14 @@ ORMOnFire is a powerful Firestore ORM.
 Install package
 
 ```shell
+# in backend
+yarn add firebase firebase-admin firebase-tools
+
+# in frontend
+yarn add firebase 
+
 yarn add @typeheim/orm-on-fire
-//or
+# or
 npm -i @typeheim/orm-on-fire
 ```
 
