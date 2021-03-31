@@ -35,6 +35,12 @@ export class EntityManager<Entity> {
                 return
             } else if ((data[field.name]?.toDate !== undefined && typeof data[field.name]?.toDate === 'function') || (typeof data[field.name] === 'object' && data[field.name]?.constructor?.name === 'Timestamp')) {
                 entity[field.name] = data[field.name]?.toDate()
+            } else if (field?.isDate && data[field.name] && data[field.name]?.length > 0) {
+                try {
+                    entity[field.name] = new Date(data[field.name])
+                } catch (error) {
+                    console.error(error)
+                }
             } else if (typeof data[field.name] === 'object' && field?.isMap && (typeof field?.constructor === 'object' || typeof field?.constructor === 'function')) {
                 if (Array.isArray(data[field.name])) {
                     entity[field.name] = data[field.name].map(obj => Object.assign(new field.constructor(), obj))

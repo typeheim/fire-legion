@@ -37,10 +37,10 @@
   "types": "index.d.ts",
   "dependencies": {
     "@typeheim/fire-rx": "^0.0.8",
-    "firebase": "^8.2.1",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
+    "firebase": "^8.2.1",
     "rxjs": "^6.0.0"
   }
 }
