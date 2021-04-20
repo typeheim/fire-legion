@@ -14,6 +14,7 @@ export class AuthSession {
     public authStateStream: AsyncStream<AuthState>
     public accessTokenStream: AsyncStream<string>
     public idTokenStream: StatefulStream<firebase.auth.IdTokenResult>
+    private tokenTimer: any
 
     setAuthDriver(driver) {
         this.authDriver = driver
@@ -45,11 +46,14 @@ export class AuthSession {
         this.idTokenStream = new StatefulStream((context) => {
             this.authDriver.onIdTokenChanged({
                 next: async (user: firebase.User) => {
-                    if (user) {
-                        context.next(await user?.getIdTokenResult())
-                    } else {
+                    if (!user) {
                         context.next(null)
                     }
+
+                    let token = await user?.getIdTokenResult()
+                    context.next(token)
+
+                    this.scheduleTokenRefresh(token, user)
                 },
                 error: error => context.fail(error),
                 complete: () => context.stop(),
@@ -59,12 +63,27 @@ export class AuthSession {
         this.accessTokenStream = new AsyncStream(this.idTokenStream.pipe(map(idToken => idToken ? idToken?.token : null)))
     }
 
+    protected scheduleTokenRefresh(token, user: firebase.User) {
+        // scheduling token refresh one minute before expiration
+        let expirationDate = new Date(token.expirationTime)
+        expirationDate.setMinutes (expirationDate.getMinutes() - 1)
+
+        let timeoutMs = expirationDate.getTime() - Date.now()
+        if (this.tokenTimer) {
+            clearTimeout(this.tokenTimer)
+        }
+        this.tokenTimer = setTimeout(async () => {
+            // refreshing token and triggering events
+            await user?.getIdTokenResult(true)
+        }, timeoutMs)
+    }
+
     getToken(forceRefresh = false): AsyncStream<string> {
-        return new AsyncStream(this.userStream.pipe(map(async (user) => await user.getIdToken(forceRefresh))))
+        return new AsyncStream(this.userStream.pipe(map(async (user) => await user?.getIdToken(forceRefresh))))
     }
 
     getTokenInfo(forceRefresh = false): AsyncStream<firebase.auth.IdTokenResult> {
-        return new AsyncStream(this.userStream.pipe(map(async (user) => await user.getIdTokenResult(forceRefresh))))
+        return new AsyncStream(this.userStream.pipe(map(async (user) => await user?.getIdTokenResult(forceRefresh))))
     }
 
     async signOut(): Promise<void> {
