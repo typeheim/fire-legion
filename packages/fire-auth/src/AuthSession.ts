@@ -48,6 +48,7 @@ export class AuthSession {
                 next: async (user: firebase.User) => {
                     if (!user) {
                         context.next(null)
+                        return
                     }
 
                     let token = await user?.getIdTokenResult()
@@ -64,6 +65,10 @@ export class AuthSession {
     }
 
     protected scheduleTokenRefresh(token, user: firebase.User) {
+        if (!user || !token) {
+            return
+        }
+
         // scheduling token refresh one minute before expiration
         let expirationDate = new Date(token.expirationTime)
         expirationDate.setMinutes (expirationDate.getMinutes() - 1)
