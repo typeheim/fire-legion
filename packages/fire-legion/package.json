@@ -1,6 +1,6 @@
 {
   "name": "@typeheim/fire-legion",
-  "version": "0.0.0-beta.52",
+  "version": "0.0.0-beta.53",
   "description": "Fire Legion",
   "keywords": [
     "fire-legion",
@@ -40,6 +40,6 @@
   "types": "index.d.ts",
   "dependencies": {
     "@typeheim/fire-auth": "^0.0.0-beta.52",
-    "@typeheim/orm-on-fire": "^0.0.0-beta.51"
+    "@typeheim/orm-on-fire": "^0.0.0-beta.53"
   }
 }
