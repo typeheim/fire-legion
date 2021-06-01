@@ -84,7 +84,7 @@ export class CollectionQuery<Entity, FetchType = Entity[]> {
 
     filter(filterFunction: FilterFunction<Entity>) {
         let filter: EntityFilter<Entity> = {}
-
+        filter['id'] = new FieldFilter(this.queryState, 'id')
         this.filterFields.forEach(field => {
             filter[field.name] = new FieldFilter(this.queryState, field.name)
         })

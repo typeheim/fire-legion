@@ -128,6 +128,17 @@ describe('Repo', () => {
         done()
     })
 
+    it('can filter by "id"', async (done) => {
+        let toys = await Collection.of(Toy).all().filter(toy => toy.id.equal('redCar')).get()
+
+        expect(toys).not.toBeNull()
+        expect(toys.length).toEqual(1)
+
+        expect(toys[0].id).toEqual('redCar')
+
+        done()
+    })
+
     it('can limit', async (done) => {
         let toys = await Collection.of(Toy).all().limit(1).get()
 
@@ -136,6 +147,7 @@ describe('Repo', () => {
 
         done()
     })
+
 
     it('can exclude ids', async (done) => {
         let toys = await Collection.of(Toy).all().exclude(['redCar', 'copter', 'bear2']).get()
