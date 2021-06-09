@@ -3,30 +3,24 @@ import { Factory } from './CollectionFactory'
 import { Collection } from './Collection'
 
 export class CollectionMap {
-    protected storage: CollectionsStorage = {}
-    protected groupStorage: CollectionsStorage = {}
+    protected storage = new Map<any, Collection<any>>()
+    protected groupStorage = new Map<any, Collection<any>>()
 
     constructor(protected factory: Factory) {}
 
     of<Entity>(entity: EntityType<Entity>): Collection<Entity> {
-        const entityClassName = entity.prototype.constructor.name
-        if (!this.storage.hasOwnProperty(entityClassName)) {
-            this.storage[entityClassName] = this.factory.createFor(entity)
+        if (!this.storage.has(entity)) {
+            this.storage.set(entity, this.factory.createFor(entity))
         }
 
-        return this.storage[entityClassName]
+        return this.storage.get(entity)
     }
 
     groupOf<Entity>(entity: EntityType<Entity>): Collection<Entity> {
-        const entityClassName = entity.prototype.constructor.name
-        if (!this.groupStorage.hasOwnProperty(entityClassName)) {
-            this.groupStorage[entityClassName] = this.factory.createGroupFor(entity)
+        if (!this.groupStorage.has(entity)) {
+            this.groupStorage.set(entity, this.factory.createGroupFor(entity))
         }
 
-        return this.groupStorage[entityClassName]
+        return this.groupStorage.get(entity)
     }
-}
-
-interface CollectionsStorage {
-    [key: string]: Collection<any>;
 }

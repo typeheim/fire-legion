@@ -111,7 +111,7 @@ function addFieldMetadata(target, metadata, propertyKey) {
     } else if (!metadata.name || metadata.name.length == 0) {
         metadata.name = propertyKey.toString()
     }
-    Metadata.entity(target).addField(metadata)
+    Metadata.entity(target.constructor).addField(metadata)
 }
 
 export function ID(): PropertyDecorator {
@@ -122,7 +122,7 @@ export function ID(): PropertyDecorator {
 
 export function DocRef(entity: any): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
-        Metadata.entity(target).addDocRef({
+        Metadata.entity(target.constructor).addDocRef({
             fieldName: propertyKey.toString(),
             entity: entity,
         })
@@ -138,7 +138,7 @@ export function DocRef(entity: any): PropertyDecorator {
 
 export function CollectionRef(entity: any): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
-        Metadata.entity(target).addCollectionRef({
+        Metadata.entity(target.constructor).addCollectionRef({
             fieldName: propertyKey.toString(),
             entity: entity,
         })
