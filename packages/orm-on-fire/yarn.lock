@@ -293,10 +293,10 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
-"@typeheim/fire-rx@^0.0.0-beta.6":
-  version "0.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.0-beta.6.tgz#f9c713a716a9d36dfde84db625702a6c3d5c33de"
-  integrity sha512-1a7tcrG/pcvyz2LNVQAIpLcpv+PoGy/gZDZCSOcBAq69dV+bu41/RRcNEzoEUtCA8kFibjCJygCJQWIxKLzR8w==
+"@typeheim/fire-rx@^0.0.0-beta.19":
+  version "0.0.0-beta.19"
+  resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.0-beta.19.tgz#1fc664bc4eb2f3300368c785fe252614d2cfe56d"
+  integrity sha512-BDZsPOlK3o2KZkmyQcq1I5VVmxMrPQ88ACJA5lqLnP+z9F5kpmxXo6E6/RE6U5JMZTNf4lmQ3UkiL6Woyhyy7Q==
   dependencies:
     rxjs "^6.5.5"
 
@@ -473,9 +473,9 @@ websocket-driver@>=0.5.1:
     websocket-extensions ">=0.1.1"
 
 websocket-extensions@>=0.1.1:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
-  integrity sha512-nqHUnMXmBzT0w570r2JpJxfiSD1IzoI+HGVdd3aZ0yNi3ngvQ4jv1dtHt5VGxfI2yj5yqImPhOK4vmIh2xMbGg==
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
+  integrity sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==
 
 whatwg-fetch@2.0.4:
   version "2.0.4"
