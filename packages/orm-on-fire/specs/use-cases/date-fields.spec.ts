@@ -11,7 +11,7 @@ import {
 describe('Collection', () => {
     const scope = SpecKit.prepareScope()
 
-    it('can fetch documents with date fields', async (done) => {
+    it('can fetch documents with date fields', async () => {
         let fixtureItem = scope.fixtures['first'] as DateItem
         let fixtureDate = scope.fixtures['fixtureDate'] as Date
         let firstItem = await Collection.of(DateItem).one(fixtureItem.id).get()
@@ -19,11 +19,9 @@ describe('Collection', () => {
         // custom and createdAt date should not be changed in fixture after save
         expect(firstItem.customDate).not.toBeNull()
         expect(firstItem.customDate.getTime()).toEqual(fixtureDate.getTime())
-
-        done()
     })
 
-    it('can save document with date fields', async (done) => {
+    it('can save document with date fields', async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let item = new DateItem()
@@ -49,11 +47,9 @@ describe('Collection', () => {
         // dates in db and entity must match after save
         expect(item.createdAt).toEqual(savedCreatedDate)
         expect(item.updatedAt).toEqual(savedUpdatedDate)
-
-        done()
     })
 
-    it('update dates with UpdatedDateField decorator', async (done) => {
+    it('update dates with UpdatedDateField decorator', async () => {
         let fixtureItem = scope.fixtures['first'] as DateItem
         let firstItem = await Collection.of(DateItem).one(fixtureItem.id).get()
 
@@ -78,12 +74,10 @@ describe('Collection', () => {
         // updatedAt date should be regenerated at each save
         expect(updatedItem.updatedAt.getTime()).toBeGreaterThan(fixtureItem.updatedAt.getTime())
         expect(updatedItem.updatedAt.getTime()).toBeGreaterThan(firstItem.updatedAt.getTime())
-
-        done()
     })
 
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
+    beforeAll(async () => {
         let fixtureDate = new Date()
 
         let firstItem = new DateItem()
@@ -99,18 +93,14 @@ describe('Collection', () => {
         scope.fixtures['fixtureDate'] = fixtureDate
         scope.fixtures['first'] = firstItem
         scope.fixtures['second'] = secondItem
+    })
 
-        done()
-    }))
-
-    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
+    afterAll(async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let items = await Firestore.collection('date-item').get()
         items.forEach(item => item.ref.delete())
-
-        done()
-    }))
+    })
 })
 
 

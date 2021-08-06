@@ -1,10 +1,13 @@
 import {
-    StatefulStream,
     AsyncStream,
+    StatefulStream,
 } from '@typeheim/fire-rx'
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import { map } from 'rxjs/operators'
+import {
+    map,
+    shareReplay,
+} from 'rxjs/operators'
 
 export class AuthSession {
     protected authDriver: firebase.auth.Auth
@@ -27,21 +30,30 @@ export class AuthSession {
             })
         })
 
-        this.authStateStream = new AsyncStream(this.userStream.pipe(map((user: firebase.User) => {
-            let state = null
-            if (user && !user?.isAnonymous) {
-                state = new AuthState(AuthStateType.isAuthorised)
-            } else if (user && user?.isAnonymous) {
-                state = new AuthState(AuthStateType.isAnonymous)
-            } else {
-                state = new AuthState(AuthStateType.isUnauthorised)
-            }
-            return state
-        })))
+        this.authStateStream = new AsyncStream(this.userStream.pipe(
+            map((user: firebase.User) => {
+                let state = null
+                if (user && !user?.isAnonymous) {
+                    state = new AuthState(AuthStateType.isAuthorised)
+                } else if (user && user?.isAnonymous) {
+                    state = new AuthState(AuthStateType.isAnonymous)
+                } else {
+                    state = new AuthState(AuthStateType.isUnauthorised)
+                }
+                return state
+            }),
+            shareReplay({ bufferSize: 1, refCount: true }),
+        ))
 
-        this.isLoggedInStream = new AsyncStream(this.authStateStream.pipe(map(state => state.isLoggedIn())))
+        this.isLoggedInStream = new AsyncStream(this.authStateStream.pipe(
+            map(state => state?.isLoggedIn()),
+            shareReplay({ bufferSize: 1, refCount: true }),
+        ))
 
-        this.isAnonymousStream = new AsyncStream(this.authStateStream.pipe(map(state => state.isAnonymous())))
+        this.isAnonymousStream = new AsyncStream(this.authStateStream.pipe(
+            map(state => !state || state.isAnonymous()),
+            shareReplay({ bufferSize: 1, refCount: true }),
+        ))
 
         this.idTokenStream = new StatefulStream((context) => {
             this.authDriver.onIdTokenChanged({
@@ -61,7 +73,10 @@ export class AuthSession {
             })
         })
 
-        this.accessTokenStream = new AsyncStream(this.idTokenStream.pipe(map(idToken => idToken ? idToken?.token : null)))
+        this.accessTokenStream = new AsyncStream(this.idTokenStream.pipe(
+            map(idToken => idToken ? idToken?.token : null),
+            shareReplay({ bufferSize: 1, refCount: true }),
+        ))
     }
 
     protected scheduleTokenRefresh(token, user: firebase.User) {
@@ -71,7 +86,7 @@ export class AuthSession {
 
         // scheduling token refresh one minute before expiration
         let expirationDate = new Date(token.expirationTime)
-        expirationDate.setMinutes (expirationDate.getMinutes() - 1)
+        expirationDate.setMinutes(expirationDate.getMinutes() - 1)
 
         let timeoutMs = expirationDate.getTime() - Date.now()
         if (this.tokenTimer) {
@@ -96,8 +111,8 @@ export class AuthSession {
     }
 
     destroy() {
-        this.userStream.stop()
-        this.idTokenStream.stop()
+        this.userStream.complete()
+        this.idTokenStream.complete()
     }
 }
 

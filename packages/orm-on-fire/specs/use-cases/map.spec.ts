@@ -12,7 +12,7 @@ import {
 describe('Collection', () => {
     const scope = SpecKit.prepareScope()
 
-    it('can save document with map field', async (done) => {
+    it('can save document with map field', async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let item = new MapItem()
@@ -32,11 +32,9 @@ describe('Collection', () => {
 
         expect(savedItemRef.id).toEqual(item.id)
         expect(savedItem.map).toEqual(item.map)
-
-        done()
     })
 
-    it('can save document partially updating map field', async (done) => {
+    it('can save document partially updating map field', async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let item = new MapItem()
@@ -57,11 +55,9 @@ describe('Collection', () => {
         expect(updatedItem.map).not.toBeNull()
         expect(updatedItem.map.name).toEqual('updated')
         expect(updatedItem.map.age).toEqual(4)
-
-        done()
     })
 
-    it('can save document with map list field', async (done) => {
+    it('can save document with map list field', async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let item = new MapItem()
@@ -78,7 +74,7 @@ describe('Collection', () => {
             {
                 name: 'test',
                 age: 5,
-            }
+            },
         ]
         await save(item)
 
@@ -88,11 +84,9 @@ describe('Collection', () => {
         expect(savedItemRef.id).toEqual(item.id)
         expect(savedItem.map).toEqual(item.map)
         expect(savedItem.mapList.length).toEqual(2)
-
-        done()
     })
 
-    it('has map type defined in class', async (done) => {
+    it('has map type defined in class', async () => {
         const fixtureItem = scope.fixtures['first']
         let item = await Collection.of(MapItem).one('first').get()
 
@@ -100,11 +94,9 @@ describe('Collection', () => {
         expect(item.map).toEqual(fixtureItem.map)
         expect(item.map).toBeInstanceOf(SubMap)
         expect(item.mapList[0]).toBeInstanceOf(SubMap)
-
-        done()
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
+    beforeAll(async () => {
         let firstItem = new MapItem()
         firstItem.id = 'first'
         firstItem.map = {
@@ -115,7 +107,7 @@ describe('Collection', () => {
             {
                 name: 'first',
                 age: 1,
-            }
+            },
         ]
         await save(firstItem)
         let secondItem = new MapItem()
@@ -128,18 +120,14 @@ describe('Collection', () => {
 
         scope.fixtures['first'] = firstItem
         scope.fixtures['second'] = secondItem
+    })
 
-        done()
-    }))
-
-    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
+    afterAll(async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let items = await Firestore.collection('map-item').get()
         items.forEach(item => item.ref.delete())
-
-        done()
-    }))
+    })
 })
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@typeheim/monorepo",
-  "version": "0.0.0-beta.54",
+  "version": "0.0.1",
   "description": "DDD framework to work with Firebase",
   "main": "index.js",
   "private": true,
@@ -10,7 +10,7 @@
   "scripts": {
     "run:build": "npx tsc",
     "run:bootstrap": "npx lerna bootstrap",
-    "run:spec": "jest",
+    "run:spec": "npx jest",
     "run:publish": "yarn clean:build && yarn install && yarn run:spec && yarn run:build && npx lerna publish --no-private && yarn clean:build && yarn install",
     "serve:orm": "npx ts-node packages\\orm-on-fire\\dev-server.ts",
     "clean:build": "node prepare-build.js"
@@ -43,53 +43,21 @@
   },
   "homepage": "https://github.com/typeheim/fire-legion#readme",
   "devDependencies": {
-    "@types/jest": "^25.2.1",
+    "@types/jest": "^26.0.24",
     "@types/node": "^13.13.0",
     "@types/reflect-metadata": "^0.1.0",
-    "firebase": "^8.3.1",
-    "firebase-admin": "^9.6.0",
-    "firebase-functions": "^3.13.2",
-    "firebase-tools": "^9.8.0",
-    "jest": "^25.3.0",
-    "lerna": "^3.20.2",
-    "ts-node": "^8.10.1",
-    "typescript": "^3.8.3"
-  },
-  "jest": {
-    "clearMocks": true,
-    "automock": false,
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "modulePathIgnorePatterns": [
-      "<rootDir>/specs/$1"
-    ],
-    "testRegex": ".spec.ts$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ],
-    "collectCoverage": true,
-    "rootDir": "./",
-    "moduleNameMapper": {
-      "@typeheim/fire-auth": "<rootDir>/packages/fire-auth",
-      "@typeheim/orm-on-fire": "<rootDir>/packages/orm-on-fire"
-    },
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "./tsconfig.json"
-      }
-    }
+    "firebase": "^8.9.0",
+    "firebase-admin": "^9.11.0",
+    "firebase-functions": "^3.14.1",
+    "firebase-tools": "^9.16.0",
+    "jest": "^27.0.6",
+    "lerna": "^4.0.0",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
   },
   "dependencies": {
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "ts-jest": "^25.4.0"
+    "ts-jest": "^27.0.4"
   }
 }

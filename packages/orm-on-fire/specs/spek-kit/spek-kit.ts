@@ -5,7 +5,7 @@ import {
 import * as FirebaseAdmin from 'firebase-admin'
 import { OrmOnFire } from '../../src/singletons'
 
-async function SetUpFirebase() {
+export function SetUpFirebase() {
     let keyOrPath = process?.env?.FL_ACCESS_KEY ?? process.cwd() + '/firestore.key.json'
 
     FirebaseAdmin.initializeApp({
@@ -25,8 +25,8 @@ export const SpecKit = {
 
     setUpFixtures: (executionScope: SpecScope, action: ScopeAction) => {
         return async (done) => {
-            await SetUpFirebase()
-            await action(executionScope, done)
+            SetUpFirebase()
+            return action(executionScope, done)
         }
     },
 

@@ -9,7 +9,7 @@ import { Metadata } from '../../src/singletons'
 import { MutationTracker } from '../../src/Persistence/EntityManager'
 
 describe('MutationTracker', () => {
-    it('track singe primitive field changes', async (done) => {
+    it('track singe primitive field changes', () => {
         let entity = createEntity()
         let tracker = createTracker(entity)
 
@@ -46,11 +46,9 @@ describe('MutationTracker', () => {
             ///
             name: 'new',
         })
-
-        done()
     })
 
-    it('track multiple primitive field changes', async (done) => {
+    it('track multiple primitive field changes', () => {
         let entity = createEntity()
         let tracker = createTracker(entity)
 
@@ -89,11 +87,9 @@ describe('MutationTracker', () => {
             name: 'new',
             email: 'new@new.com',
         })
-
-        done()
     })
 
-    it('track array field changes', async (done) => {
+    it('track array field changes', () => {
         let entity = createEntity()
         let tracker = createTracker(entity)
 
@@ -118,11 +114,9 @@ describe('MutationTracker', () => {
                 'new@new.com',
             ],
         })
-
-        done()
     })
 
-    it('track multiple primitive and date field changes', async (done) => {
+    it('track multiple primitive and date field changes', () => {
         let entity = createEntity()
         let tracker = createTracker(entity)
 
@@ -168,11 +162,9 @@ describe('MutationTracker', () => {
             createdAt: newCreatedDate,
             updatedAt: newUpdatedDate,
         })
-
-        done()
     })
 
-    it('track multiple map field changes', async (done) => {
+    it('track multiple map field changes', () => {
         let entity = createEntity()
         let tracker = createTracker(entity)
 
@@ -208,11 +200,9 @@ describe('MutationTracker', () => {
                 'name': 'test',
             },
         })
-
-        done()
     })
 
-    it('track multiple map field changes in arrays', async (done) => {
+    it('track multiple map field changes in arrays', () => {
         let entity = createEntity()
         let tracker = createTracker(entity)
 
@@ -248,8 +238,6 @@ describe('MutationTracker', () => {
                 },
             ],
         })
-
-        done()
     })
 
     function createEntity(): Sample {

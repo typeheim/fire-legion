@@ -13,18 +13,16 @@ describe('Repo', () => {
     const scope = SpecKit.prepareScope()
     const destroyEvent = new DestroyEvent()
 
-    it('can get one document async', async (done) => {
+    it('can get one document async', async () => {
         let boomer = await Collection.of(Dog).one('boomer').get()
         const boomerFixture = scope.fixtures.boomer
 
         expect(boomer).not.toBeNull()
         expect(boomer.name).toEqual(boomerFixture.name)
         expect(boomer.age).toEqual(boomerFixture.age)
-
-        done()
     })
 
-    it('can provide subscription of one document', async (done) => {
+    it('can provide subscription of one document', async () => {
         Collection.of(Dog).one('boomer').get().subscribe(boomer => {
             const boomerFixture = scope.fixtures.boomer
 
@@ -33,12 +31,10 @@ describe('Repo', () => {
             expect(boomer.age).toEqual(boomerFixture.age)
             expect(boomer.owner).not.toBeNull()
             expect(boomer.owner.constructor.name).toEqual('Reference')
-
-            done()
         })
     })
 
-    it('can get one doc with ref', async (done) => {
+    it('can get one doc with ref', async () => {
         let sparky = await Collection.of(Dog).one('sparky').get()
         const sparkyFixture = scope.fixtures.sparky
 
@@ -53,11 +49,9 @@ describe('Repo', () => {
 
         expect(sparkyOwner).not.toBeNull()
         expect(sparkyOwner.name).toEqual(benFixture.name)
-
-        done()
     })
 
-    it('can link entities', async (done) => {
+    it('can link entities', async () => {
         let boomer = await Collection.of(Dog).one('boomer').get()
         let ben = await Collection.of(Owner).one('ben').get()
 
@@ -68,12 +62,10 @@ describe('Repo', () => {
 
         expect(owner).not.toBeNull()
         expect(owner.name).toEqual(scope.fixtures.ben.name)
-
-        done()
     })
 
 
-    it('can get all async', async (done) => {
+    it('can get all async', async () => {
         let dogs = await Collection.of(Dog).all().get()
 
         expect(dogs).not.toBeNull()
@@ -85,11 +77,9 @@ describe('Repo', () => {
             expect(dog.name).toEqual(fixture.name)
             expect(dog.age).toEqual(fixture.age)
         })
-
-        done()
     })
 
-    it('can get all as ids', async (done) => {
+    it('can get all as ids', async () => {
         let dogs = await Collection.of(Dog).all().asIds().get()
 
         expect(dogs).not.toBeNull()
@@ -101,11 +91,9 @@ describe('Repo', () => {
             'lex',
         ]
         expect(fixtureIds.sort()).toEqual(dogs.sort())
-
-        done()
     })
 
-    it('can populate sub-collections', async (done) => {
+    it('can populate sub-collections', async () => {
         let boomer = await Collection.of(Dog).one('boomer').get()
 
         expect(boomer.toys).not.toBeNull()
@@ -119,11 +107,9 @@ describe('Repo', () => {
         })
 
         expect(toysCount).toEqual(2)
-
-        done()
     })
 
-    it('can filter sub-collections', async (done) => {
+    it('can filter sub-collections', async () => {
         let boomer = await Collection.of(Dog).one('boomer').get()
 
         let filteredToys = await boomer.toys.filter(toy => toy.type.equal('bone')).get()
@@ -131,11 +117,9 @@ describe('Repo', () => {
 
         expect(filteredToys.length).toEqual(1)
         expect(filteredToys[0].type).toEqual('bone')
-
-        done()
     })
 
-    it('can fetch data from sub-collection', async (done) => {
+    it('can fetch data from sub-collection', async () => {
         let toys = await Collection.of(Dog).one('boomer').collection(Toy).all().get()
 
         expect(toys).not.toBeNull()
@@ -144,11 +128,9 @@ describe('Repo', () => {
 
         expect(toys[0].id).toEqual('ball')
         expect(toys[1].id).toEqual('bone')
-
-        done()
     })
 
-    it('can fetch group', async (done) => {
+    it('can fetch group', async () => {
         let toys = await Collection.groupOf(Toy).all().get()
 
         expect(toys).not.toBeNull()
@@ -157,22 +139,18 @@ describe('Repo', () => {
 
         expect(toys[0].id).toEqual('ball')
         expect(toys[1].id).toEqual('bone')
-
-        done()
     })
 
-    it('can filter group request', async (done) => {
+    it('can filter group request', async () => {
         let toys = await Collection.groupOf(Toy).all().filter(toy => toy.type.equal('bone')).get()
 
         expect(toys).not.toBeNull()
 
         expect(toys.length).toEqual(1)
         expect(toys[0].id).toEqual('bone')
-
-        done()
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
+    beforeAll(async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let ben = {
@@ -212,11 +190,9 @@ describe('Repo', () => {
         let toysCollection = Firestore.collection('dog').doc('boomer').collection('toys')
         await toysCollection.doc('bone').set({ type: 'bone' })
         await toysCollection.doc('ball').set({ type: 'ball' })
+    })
 
-        done()
-    }))
-
-    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
+    afterAll(async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let dogs = await Firestore.collection('dog').get()
@@ -228,9 +204,7 @@ describe('Repo', () => {
         owners.forEach(ownerRef => {
             ownerRef.ref.delete()
         })
-
-        done()
-    }))
+    })
 })
 
 

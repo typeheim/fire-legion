@@ -9,7 +9,7 @@ import { Collection } from '../../src/Model'
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()
 
-    it('can filter by "startsWith" using single term', async (done) => {
+    it('can filter by "startsWith" using single term', async () => {
         let books = await Collection.of(Book).all().useIndex(toy => toy.name.startsWith('Game')).get()
 
         expect(books).not.toBeNull()
@@ -17,43 +17,36 @@ describe('Repo', () => {
 
         expect(books.filter(book => bookMatchFixture(book, scope.fixtures['got']))).not.toBeNull()
         expect(books.filter(book => bookMatchFixture(book, scope.fixtures['gc']))).not.toBeNull()
-
-        done()
     })
 
-    it('can filter by "startsWith" using multiple terms', async (done) => {
+    it('can filter by "startsWith" using multiple terms', async () => {
         let books = await Collection.of(Book).all().useIndex(toy => toy.name.startsWith('gAme of')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(1)
 
         expect(books.filter(book => bookMatchFixture(book, scope.fixtures['got']))).not.toBeNull()
-
-        done()
     })
 
-    it('can filter by "endsWith" using single term', async (done) => {
+    it('can filter by "endsWith" using single term', async () => {
         let books = await Collection.of(Book).all().useIndex(toy => toy.name.endsWith('Thrones')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(1)
 
         expect(books.filter(book => bookMatchFixture(book, scope.fixtures['got']))).not.toBeNull()
-        done()
     })
 
-    it('can filter by "endsWith" using multiple term', async (done) => {
+    it('can filter by "endsWith" using multiple term', async () => {
         let books = await Collection.of(Book).all().useIndex(toy => toy.name.endsWith('of thrones')).get()
 
         expect(books).not.toBeNull()
         expect(books.length).toEqual(1)
 
         expect(books.filter(book => bookMatchFixture(book, scope.fixtures['got']))).not.toBeNull()
-
-        done()
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
+    beforeAll(async () => {
         const Firestore = FirebaseAdmin.firestore()
         const generator = new TextIndexGenerator()
 
@@ -96,19 +89,15 @@ describe('Repo', () => {
                 Firestore.collection(indexCollection).doc(docSnapshot.id).set(newMetadata).catch(error => console.log(error))
             })
         })
+    })
 
-        done()
-    }))
-
-    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
+    afterAll(async () => {
         scope['textIndexDestructor']()
         const Firestore = FirebaseAdmin.firestore()
 
         let books = await Firestore.collection('book').get()
         books.forEach(book => book.ref.delete())
-
-        done()
-    }))
+    })
 
 })
 

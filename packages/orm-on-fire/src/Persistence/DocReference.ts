@@ -28,9 +28,9 @@ export class DocReference {
                 this.nativeRef.get().then((snapshot: DocumentSnapshot) => {
                     subject.next(snapshot)
                     subject.complete()
-                }).catch(error => subject.fail(error))
+                }).catch(error => subject.error(error))
             }
-        }).catch(error => subject.fail(error))
+        }).catch(error => subject.error(error))
 
         return subject
     }
@@ -86,7 +86,7 @@ export class DocReference {
                     complete: () => unsubscribeSnapshot(),
                 })
             }
-        }).catch(error => subject.fail(error))
+        }).catch(error => subject.error(error))
 
         return subject
     }

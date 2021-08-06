@@ -15,17 +15,15 @@ import {
 describe('Collection', () => {
     const scope = SpecKit.prepareScope()
 
-    it('can link multiple items', async (done) => {
+    it('can link multiple items', async () => {
         let item = new Item()
 
         // default refs should return null
         expect(await item.owner.get()).toBeNull()
         expect(await item.user.get()).toBeNull()
-
-        done()
     })
 
-    it('can link multiple items', async (done) => {
+    it('can link multiple items', async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let item = await Collection.of(Item).one('item').get()
@@ -49,11 +47,9 @@ describe('Collection', () => {
 
         expect(ownerRef.id).toEqual('owner')
         expect(userRef.id).toEqual('user')
-
-        done()
     })
 
-    it('can link multiple items to new entity', async (done) => {
+    it('can link multiple items to new entity', async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let item = new Item()
@@ -74,11 +70,9 @@ describe('Collection', () => {
 
         expect(ownerRef.id).toEqual('owner')
         expect(userRef.id).toEqual('user')
-
-        done()
     })
 
-    it('setup new entities with null collections throwing errors on any call', async (done) => {
+    it('setup new entities with null collections throwing errors on any call', async () => {
         let item = new Item()
 
         expect(item.oldOwners).toBeInstanceOf(NullCollection)
@@ -136,12 +130,10 @@ describe('Collection', () => {
         }
 
         expect(exceptionFromChanges).toBeInstanceOf(EntityNotSavedException)
-
-        done()
     })
 
 
-    it('can refresh null collections after save', async (done) => {
+    it('can refresh null collections after save', async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let item = new Item()
@@ -163,11 +155,9 @@ describe('Collection', () => {
         expect(savedOldOwner).not.toBeNull()
         expect(savedOldOwner.id).not.toBeUndefined()
         expect(savedOldOwner.id).toEqual(oldItemOwner.id)
-
-        done()
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
+    beforeAll(async () => {
         let item = new Item()
         item.id = 'item'
         await save(item)
@@ -179,11 +169,9 @@ describe('Collection', () => {
         let user = new ItemUser()
         user.id = 'user'
         await save(user)
+    })
 
-        done()
-    }))
-
-    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
+    afterAll(async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let items = await Firestore.collection('item').get()
@@ -194,9 +182,7 @@ describe('Collection', () => {
 
         let itemUsers = await Firestore.collection('item-user').get()
         itemUsers.forEach(itemUser => itemUser.ref.delete())
-
-        done()
-    }))
+    })
 })
 
 

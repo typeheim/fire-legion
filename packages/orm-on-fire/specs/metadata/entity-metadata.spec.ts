@@ -1,4 +1,7 @@
-import { Entity, Field } from '../../src/Decorators/Entity'
+import {
+    Entity,
+    Field,
+} from '../../src/Decorators/Entity'
 import { Metadata } from '../../src/singletons'
 
 describe('Entity metadata processing system', () => {
@@ -12,7 +15,6 @@ describe('Entity metadata processing system', () => {
         expect(metadata.fields.length).toEqual(2)
         expect(metadata.fields[0].name).toEqual('firstName')
         expect(metadata.fields[1].name).toEqual('lastName')
-        
     })
 
     it('save collection name as class name in kebab case', () => {
@@ -48,7 +50,7 @@ class UserProfile {
 }
 
 @Entity({
-    collection: 'custom'
+    collection: 'custom',
 })
 class NotParsedName {
 

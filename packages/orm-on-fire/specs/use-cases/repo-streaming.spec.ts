@@ -10,23 +10,23 @@ describe('Repo', () => {
     const scope = SpecKit.prepareScope()
     const destroyEvent = new DestroyEvent()
 
-    it('can stream data', async (done) => {
-        await Collection.of(User).all().stream().emitUntil(destroyEvent).subscribe(users => {
+    it('can stream data', (done) => {
+        Collection.of(User).all().stream().emitUntil(destroyEvent).subscribe(users => {
             expect(users.length).toEqual(2)
 
             done()
         })
     })
 
-    it('can stream changes', async (done) => {
-        await Collection.of(User).all().changes().emitUntil(destroyEvent).subscribe(users => {
+    it('can stream changes', (done) => {
+        Collection.of(User).all().changes().emitUntil(destroyEvent).subscribe(users => {
             expect(users.length).toEqual(2)
 
             done()
         })
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
+    beforeAll(async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let ben = {
@@ -40,9 +40,7 @@ describe('Repo', () => {
         }
         await Firestore.collection('user').doc('alex').set(alex)
         scope.fixtures['alex'] = alex
-
-        done()
-    }))
+    })
 
     afterAll(() => {
         destroyEvent.emit()

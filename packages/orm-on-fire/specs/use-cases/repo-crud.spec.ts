@@ -15,7 +15,7 @@ import {
 describe('Repo', () => {
     const scope = SpecKit.prepareScope()
 
-    it('can save updates', async (done) => {
+    it('can save updates', async () => {
         let boomer = await Collection.of(Car).one('camry').get()
 
         boomer.name = 'Camryy'
@@ -28,20 +28,16 @@ describe('Repo', () => {
         expect(camryData.name).toEqual('Camryy')
         // ensure repo updates specified fields and do not change existing
         expect(camryData.mileage).toEqual(scope.fixtures.camry.mileage)
-
-        done()
     })
 
-    it('can save without changes', async (done) => {
+    it('can save without changes', async () => {
         let camry = await Collection.of(Car).one('camry').get()
         let result = await Collection.of(Car).save(camry)
 
         expect(result).toBeTruthy()
-
-        done()
     })
 
-    it('can remove docs', async (done) => {
+    it('can remove docs', async () => {
         let tesla = await Collection.of(Car).one('tesla').get()
 
         let result = await Collection.of(Car).remove(tesla)
@@ -49,11 +45,9 @@ describe('Repo', () => {
 
         let snapshot = await FirebaseAdmin.firestore().collection('car').doc('tesla').get()
         expect(snapshot.exists).toBeFalsy()
-
-        done()
     })
 
-    it('can remove docs by operator', async (done) => {
+    it('can remove docs by operator', async () => {
         let tesla = await Collection.of(Car).new()
 
         let result = remove(tesla)
@@ -61,32 +55,26 @@ describe('Repo', () => {
 
         let snapshot = await FirebaseAdmin.firestore().collection('car').doc('tesla').get()
         expect(snapshot.exists).toBeFalsy()
-
-        done()
     })
 
-    it('can create new doc', async (done) => {
+    it('can create new doc', async () => {
         const repo = Collection.of(Car)
 
         let car = await repo.new()
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('car').doc(car.id).get()
         expect(snapshotOfNew.exists).toBeTruthy()
-
-        done()
     })
 
-    it('can create new doc with default values', async (done) => {
+    it('can create new doc with default values', async () => {
         const repo = Collection.of(Engine)
 
         let engine = await repo.new()
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('engine').doc(engine.id).get()
         expect(snapshotOfNew.exists).toBeTruthy()
         expect(snapshotOfNew.data().fuelType).toEqual('gas')
-
-        done()
     })
 
-    it('can save plain entity', async (done) => {
+    it('can save plain entity', async () => {
         const repo = Collection.of(Car)
         let car = new Car()
         expect(car.engine).not.toBeNull()
@@ -95,22 +83,18 @@ describe('Repo', () => {
 
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('car').doc(car.id).get()
         expect(snapshotOfNew.exists).toBeTruthy()
-
-        done()
     })
 
 
-    it('can save plain entity with operator', async (done) => {
+    it('can save plain entity with operator', async () => {
         let car = new Car()
         await save(car)
 
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('car').doc(car.id).get()
         expect(snapshotOfNew.exists).toBeTruthy()
-
-        done()
     })
 
-    it('can populate default values on save', async (done) => {
+    it('can populate default values on save', async () => {
         let animal = new Animal()
         await save(animal)
 
@@ -128,11 +112,9 @@ describe('Repo', () => {
         })
         // fields that ain't orm fields should not be saved
         expect(record?.virtualField).toBeUndefined()
-
-        done()
     })
 
-    it('can crate and update array fields using the same entity', async (done) => {
+    it('can crate and update array fields using the same entity', async () => {
         let animal = new Animal()
         animal.tags = [
             'bird',
@@ -181,11 +163,9 @@ describe('Repo', () => {
         ])
         // fields that ain't orm fields should not be saved
         expect(updatedRecord?.virtualField).toBeUndefined()
-
-        done()
     })
 
-    it('can crate and update array fields using different entity objects', async (done) => {
+    it('can crate and update array fields using different entity objects', async () => {
         let animal = new Animal()
         animal.tags = [
             'bird',
@@ -218,11 +198,9 @@ describe('Repo', () => {
         ])
         // fields that ain't orm fields should not be saved
         expect(updatedRecord?.virtualField).toBeUndefined()
-
-        done()
     })
 
-    it('can crate and update record fields using different entity objects', async (done) => {
+    it('can crate and update record fields using different entity objects', async () => {
         let animal = new Animal()
         animal.nestedTags = {
             type: [
@@ -262,11 +240,9 @@ describe('Repo', () => {
         })
         // fields that ain't orm fields should not be saved
         expect(updatedRecord?.virtualField).toBeUndefined()
-
-        done()
     })
 
-    it('can populate default values on create', async (done) => {
+    it('can populate default values on create', async () => {
         let animal = await Collection.of(Animal).new()
 
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('animal').doc(animal.id).get()
@@ -283,11 +259,9 @@ describe('Repo', () => {
         })
         // fields that ain't orm fields should not be saved
         expect(record?.virtualField).toBeUndefined()
-
-        done()
     })
 
-    it('can update default values', async (done) => {
+    it('can update default values', async () => {
         let animal = await Collection.of(Animal).new()
 
         animal.type = AnimalTypes.Bird
@@ -332,10 +306,9 @@ describe('Repo', () => {
         let newRecord = newSnapshotOfUpdated.data()
         expect(newRecord?.isWild).toBeTruthy()
         expect(newRecord?.hasWings).toBeFalsy()
-        done()
     })
 
-    it('can save new record with id and update it', async (done) => {
+    it('can save new record with id and update it', async () => {
         const repo = Collection.of(Car)
         let tucson = await repo.new('tucson')
         let snapshotOfNew = await FirebaseAdmin.firestore().collection('car').doc(tucson.id).get()
@@ -352,11 +325,9 @@ describe('Repo', () => {
         let tucsonData = snapshot.data()
         expect(tucsonData.name).toEqual('Tucson')
         expect(tucsonData.mileage).toEqual(500)
-
-        done()
     })
 
-    beforeAll(SpecKit.setUpFixtures(scope, async (scope, done) => {
+    beforeAll(async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let camry = {
@@ -372,21 +343,21 @@ describe('Repo', () => {
         }
         await Firestore.collection('car').doc('tesla').set(tesla)
         scope.fixtures['car'] = tesla
-
-        done()
-    }))
+    })
 
 
-    afterAll(SpecKit.runScopeAction(scope, async (scope, done) => {
+    afterAll(async () => {
         const Firestore = FirebaseAdmin.firestore()
 
         let cars = await Firestore.collection('car').get()
+        let tasks = []
+
         cars.forEach(carRef => {
-            carRef.ref.delete()
+            tasks.push(carRef.ref.delete())
         })
 
-        done()
-    }))
+        await Promise.all(tasks)
+    })
 })
 
 

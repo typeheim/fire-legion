@@ -19,7 +19,7 @@ export enum CollectionRefType {
 }
 
 export class CollectionReference {
-    constructor(protected connection: FirestoreConnection, protected collectionPath: string, protected type: CollectionRefType = CollectionRefType.Basic ) {}
+    constructor(protected connection: FirestoreConnection, protected collectionPath: string, protected type: CollectionRefType = CollectionRefType.Basic) {}
 
     get(queryState?: QueryState): ReactivePromise<QuerySnapshot> {
         let promise = new ReactivePromise<QuerySnapshot>()
@@ -54,15 +54,15 @@ export class CollectionReference {
                         let ids = snapshot.docs.map(snapshot => snapshot.id)
                         this.buildQuery(queryState).where('__name__', 'in', ids).onSnapshot(
                             snapshot => subject.next(snapshot),
-                            error => subject.fail(error),
-                            () => subject.stop(),
+                            error => subject.error(error),
+                            () => subject.complete(),
                         )
-                    }).catch(error =>subject.fail(error))
+                    }).catch(error => subject.error(error))
                 } else {
                     this.buildQuery(queryState).onSnapshot(
                         snapshot => subject.next(snapshot),
-                        error => subject.fail(error),
-                        () => subject.stop(),
+                        error => subject.error(error),
+                        () => subject.complete(),
                     )
                 }
             }
@@ -72,7 +72,7 @@ export class CollectionReference {
     }
 
     protected fetchIndex(queryState: QueryState) {
-        let collection =  this.buildNativeIndexCollection()
+        let collection = this.buildNativeIndexCollection()
         let query: any = collection
         queryState.indexes.forEach(index => {
             query = collection.where(index.fieldName, index.operator, index.compareValue)
@@ -139,7 +139,7 @@ export class CollectionReference {
 
     buildNativeCollection() {
         return this.type === CollectionRefType.Basic ?
-            this.connection.driver.collection(this.collectionPath):
+            this.connection.driver.collection(this.collectionPath) :
             this.connection.driver.collectionGroup(this.collectionPath)
     }
 
