@@ -2305,30 +2305,10 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.2.tgz#423c77877d0569db20e1fc80885ac4118314010e"
   integrity sha512-eZxlbI8GZscaGS7kkc/trHTT5xgrjH3/1n2JDwusC9iahPKWMRvRjJSAN5mCXviuTGQ/lHnhvv8Q1YTpnfz9gA==
 
-"@typeheim/fire-auth@^0.0.0-beta.52":
-  version "0.0.0-beta.52"
-  resolved "https://registry.yarnpkg.com/@typeheim/fire-auth/-/fire-auth-0.0.0-beta.52.tgz#70948d5e6b1d0fea0fdcb05243986228aa9cbc16"
-  integrity sha512-OYUxu9Uh33SeL0fUdOkIZpg4zBL9v1qp8tp60j97iIML2kv5I+7bITcx7j/WqxGdYdJdz2vKro3SeUa8WZePlg==
-  dependencies:
-    "@typeheim/fire-rx" "^0.0.8"
-
-"@typeheim/fire-rx@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.0.8.tgz#0f5159b54f3f4944fd5a51970b974027261126be"
-  integrity sha512-z8gCt0m/6BYQDhkvEP69uF8nODD01Rt/UuPVkLwQNJnMD3Y9MgPgBrl02yt+7T22Q/DQNc3BZrMYGtijShEMQg==
-
 "@typeheim/fire-rx@^0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@typeheim/fire-rx/-/fire-rx-0.1.0.tgz#8fe08cce995b0fb2d50889168ec74bd3802e4eb9"
   integrity sha512-z3ICX9aAM2QCNRhEc3wK6xtPAme9wa2zMnv5RPBoy8E1EkQpYS2upPcSY/LQF5R+AByaKUew6S76GcwgnKtHcw==
-
-"@typeheim/orm-on-fire@^0.0.0-beta.54":
-  version "0.0.0-beta.54"
-  resolved "https://registry.yarnpkg.com/@typeheim/orm-on-fire/-/orm-on-fire-0.0.0-beta.54.tgz#0e116073210fa1031bd775f94af780c69a1e0b86"
-  integrity sha512-OZXjou+yrfmzxVNF+Uw1EyGVeDSqfnrFOiU7VhPzQV9NTV2SFYOq7J+w+cgtOld8mse+uCvWhQY/J/VvkIHGTw==
-  dependencies:
-    "@typeheim/fire-rx" "^0.0.8"
-    reflect-metadata "^0.1.13"
 
 "@types/archiver@^5.1.0":
   version "5.1.0"
@@ -3576,9 +3556,9 @@ color-name@^1.0.0, color-name@~1.1.4:
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
 
 color-string@^1.5.2:
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/color-string/-/color-string-1.5.3.tgz#c9bbc5f01b58b5492f3d6857459cb6590ce204cc"
-  integrity sha512-dC2C5qeWoYkxki5UAXapdjqO672AM4vZuPGRQfO8b5HKuKGBbKWpITyDYN7TOFKvRW7kOgAn3746clDBMDJyQw==
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/color-string/-/color-string-1.6.0.tgz#c3915f61fe267672cb7e1e064c9d692219f6c312"
+  integrity sha512-c/hGS+kRWJutUBEngKKmk4iH3sD59MBkoxVapS/0wgpCz2u7XsNloxknyvBhzwEs1IbV36D9PwqLPJ2DTu3vMA==
   dependencies:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
