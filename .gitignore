@@ -21,10 +21,12 @@ dev-server.js
 firestore.key.json
 *.firestore.key.json
 
+
 *.js
 *.js.map
 *.d.ts
 !prepare-build.js
+!jest.config.js
 
 # Runtime data
 pids

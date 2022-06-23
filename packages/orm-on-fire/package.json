@@ -35,12 +35,15 @@
   "license": "MIT",
   "main": "index.js",
   "types": "index.d.ts",
+  "peerDependencies": {
+    "rxjs": "^7.5.0"
+  },
   "dependencies": {
-    "@typeheim/fire-rx": "^0.1.0",
+    "@typeheim/fire-rx": "^0.2.0",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "firebase": "^8.2.1",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.5.0"
   }
 }

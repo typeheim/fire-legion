@@ -20,10 +20,13 @@
   "license": "MIT",
   "main": "index.js",
   "types": "index.d.ts",
+  "peerDependencies": {
+    "rxjs": "^7.5.0"
+  },
   "dependencies": {
-    "@typeheim/fire-rx": "^0.1.0"
+    "@typeheim/fire-rx": "^0.2.0"
   },
   "devDependencies": {
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.5.0"
   }
 }

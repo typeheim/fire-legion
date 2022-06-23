@@ -1,6 +1,6 @@
 {
   "name": "@typeheim/monorepo",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "DDD framework to work with Firebase",
   "main": "index.js",
   "private": true,
