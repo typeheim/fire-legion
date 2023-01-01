@@ -3,9 +3,9 @@ import { ChangedEntities } from '../Data/ChangedEntities'
 import { CollectionReference } from './CollectionReference'
 import {
     EntityFilter,
-    EntityIndex,
+
     FilterFunction,
-    IndexFunction,
+
     PropertyMetadata,
 } from '../../index'
 
@@ -22,16 +22,18 @@ import {
     map,
 } from 'rxjs/operators'
 import { EntityPromise } from '../Data/EntityPromise'
-import { IndexFilter } from './IndexFilter'
-import QuerySnapshot = types.QuerySnapshot
-import DocumentChange = types.DocumentChange
-import DocumentSnapshot = types.DocumentSnapshot
-import QueryDocumentSnapshot = types.QueryDocumentSnapshot
 
+import {
+    doc,
+    setDoc,
+    DocumentSnapshot,
+    DocumentChange,
+    QueryDocumentSnapshot,
+    QuerySnapshot
+} from "firebase/firestore";
 export class CollectionQuery<Entity, FetchType = Entity[]> {
     protected queryState: QueryState = {
         conditions: [],
-        indexes: [],
         limit: -1,
         asIds: false,
         orderBy: [],
@@ -60,18 +62,6 @@ export class CollectionQuery<Entity, FetchType = Entity[]> {
 
     debounceUpdates(dueTime: number) {
         this.queryState.debounceUpdatesTime = dueTime
-
-        return this
-    }
-
-    useIndex(indexFunction: IndexFunction<Entity>) {
-        let filter: EntityIndex<Entity> = {}
-
-        this.filterFields.forEach(field => {
-            filter[field.name] = new IndexFilter(this.queryState, field.name)
-        })
-
-        indexFunction(filter)
 
         return this
     }

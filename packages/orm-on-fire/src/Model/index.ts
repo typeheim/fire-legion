@@ -1,3 +1,3 @@
 export * from './Collection'
 export * from './Reference'
-export * from './EntityPersister'
+export * from './EntityStore'

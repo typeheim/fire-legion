@@ -11,18 +11,18 @@ import { EntityStream } from '../Data/EntityStream'
 
 export class Reference<Entity> {
     protected _entityBuilder: EntityManager<Entity>
-    protected docRef: DocReference
 
-    constructor(protected entityConstructor, protected owner: Model) {}
+    constructor(protected entityConstructor, protected owner: Model, protected docRef?: DocReference) {
+    }
 
-    link(reference: Entity | Model): ReactivePromise<void> {
+    link(reference: Entity | Model): ReactivePromise<boolean> {
         // @ts-ignore
         this.docRef = reference?.__ormOnFire?.docRef
 
-        let result: ReactivePromise<void>
+        let result: ReactivePromise<boolean>
 
         if (this.owner?.__ormOnFire === undefined || this.owner?.__ormOnFire?.isNew) {
-            result = new ReactivePromise<void>()
+            result = new ReactivePromise<boolean>()
             result.resolve()
         } else {
             result = save(this.owner)
@@ -46,10 +46,6 @@ export class Reference<Entity> {
             this._entityBuilder = new EntityManager<Entity>(metadata, this.entityConstructor, new CollectionReference(this.entityConstructor, collectionPath))
         }
         return this._entityBuilder
-    }
-
-    ___attachDockRef(docRef: DocReference) {
-        this.docRef = docRef
     }
 
     get ___docReference() {

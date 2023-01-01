@@ -1,22 +1,61 @@
 import { ReactivePromise } from '@typeheim/fire-rx'
-// Firestore types
-import * as types from '@firebase/firestore-types'
-import { MutationTracker } from './EntityManager'
-import DocumentReference = types.DocumentReference
+
+import { CollectionReference } from './CollectionReference'
+
+import {
+    DocumentReference,
+    doc,
+    setDoc,
+    updateDoc,
+    deleteDoc,
+    DocumentSnapshot,
+    DocumentChange,
+    QueryDocumentSnapshot,
+    QuerySnapshot
+} from "firebase/firestore";
 
 export class DocPersistenceManager<Entity> {
-    constructor(protected docReference: DocumentReference) {}
+    constructor(protected docReference: DocumentReference, protected collectionRef: CollectionReference) {}
 
-    update(dataToSave: any, mutationTracker: MutationTracker): ReactivePromise<boolean> {
-        let promise = new ReactivePromise<boolean>()
+    add(data: any, id?: string): ReactivePromise<DocumentReference> {
+        const documentReference = id ? this.collectionRef.doc(id) : this.collectionRef.doc()
+        const promise = new ReactivePromise<DocumentReference>()
+
+        documentReference.set(data).then(() => {
+            promise.resolve(documentReference.nativeRef)
+        }).catch(error => {
+            promise.reject(error)
+        })
+
+        return promise
+    }
+
+    update(dataToSave: any): ReactivePromise<boolean> {
+        const promise = new ReactivePromise<boolean>()
 
         if (dataToSave && Object.keys(dataToSave).length === 0) {
             promise.resolve(true)
             return promise
         }
 
-        this.docReference.update(dataToSave).then(() => {
-            mutationTracker.refreshEntity()
+        updateDoc(this.docReference, dataToSave).then(() => {
+            promise.resolve(true)
+        }).catch(error => {
+            promise.reject(error)
+        })
+
+        return promise
+    }
+
+    merge(dataToSave: any): ReactivePromise<boolean> {
+        const promise = new ReactivePromise<boolean>()
+
+        if (dataToSave && Object.keys(dataToSave).length === 0) {
+            promise.resolve(true)
+            return promise
+        }
+
+        setDoc(this.docReference, dataToSave, { merge: true }).then(() => {
             promise.resolve(true)
         }).catch(error => {
             promise.reject(error)
@@ -27,7 +66,7 @@ export class DocPersistenceManager<Entity> {
 
     remove(): ReactivePromise<boolean> {
         let promise = new ReactivePromise<boolean>()
-        this.docReference.delete().then(() => {
+        deleteDoc(this.docReference).then(() => {
             promise.resolve(true)
         }).catch(error => {
             promise.reject(error)

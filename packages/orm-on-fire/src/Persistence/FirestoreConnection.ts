@@ -4,9 +4,7 @@ import {
     CollectionRefType,
 } from './CollectionReference'
 import { DocReference } from './DocReference'
-
-import * as FirestoreTypes from '@firebase/firestore-types'
-import Firestore = FirestoreTypes.FirebaseFirestore
+import { Firestore } from "firebase/firestore";
 
 export class FirestoreConnection {
     /**

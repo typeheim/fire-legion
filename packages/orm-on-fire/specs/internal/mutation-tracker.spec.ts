@@ -6,7 +6,7 @@ import {
     UpdatedDateField,
 } from '../../index'
 import { Metadata } from '../../src/singletons'
-import { MutationTracker } from '../../src/Persistence/EntityManager'
+import { MutationTracker } from '../../src/Persistence/MutationTracker'
 
 describe('MutationTracker', () => {
     it('track singe primitive field changes', () => {

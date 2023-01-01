@@ -27,6 +27,7 @@
     "@typeheim/fire-rx": "^0.2.0"
   },
   "devDependencies": {
+    "firebase": "^9.8.2",
     "rxjs": "^7.5.0"
   }
 }

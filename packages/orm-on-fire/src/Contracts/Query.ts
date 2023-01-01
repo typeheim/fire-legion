@@ -1,6 +1,13 @@
-// Firestore types
-import * as types from '@firebase/firestore-types'
-import WhereFilterOp = types.WhereFilterOp
+
+import {
+    doc,
+    setDoc,
+    DocumentSnapshot,
+    DocumentChange,
+    QueryDocumentSnapshot,
+    QuerySnapshot,
+        WhereFilterOp
+} from "firebase/firestore";
 
 export interface FireFilter<Entity> {
     equal(value: any): FireFilter<Entity>
@@ -37,7 +44,6 @@ export enum SortOrder {
 
 export interface QueryState {
     conditions?: FieldCondition[]
-    indexes?: FieldCondition[]
     limit?: number
     orderBy?: OrderByCondition[]
     asIds?: boolean

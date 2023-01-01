@@ -1,16 +1,13 @@
-// Firestore types
-import * as types from '@firebase/firestore-types'
 import { EntityManager } from './EntityManager'
 import { DocReference } from './DocReference'
 import { EntityStream } from '../Data/EntityStream'
 import { EntityPromise } from '../Data/EntityPromise'
 import { map } from 'rxjs/operators'
 import {
-    EntityType,
     Collection,
+    EntityType,
 } from '@typeheim/orm-on-fire'
 import { CollectionFactory } from '../singletons'
-import DocumentSnapshot = types.DocumentSnapshot
 
 export class EntityQuery<Entity> {
     constructor(protected docReference: DocReference, protected entityBuilder: EntityManager<Entity>) {}
@@ -20,10 +17,8 @@ export class EntityQuery<Entity> {
 
         if (this.docReference) {
             this.docReference.get().subscribe({
-                next: (docSnapshot: DocumentSnapshot) => {
-                    promise.resolve(this.entityBuilder.fromSnapshot(docSnapshot))
-                },
-                error: error => promise.reject(error),
+                next: (docSnapshot) => promise.resolve(this.entityBuilder.fromSnapshot(docSnapshot)),
+                error: (error) => promise.reject(error),
             })
         } else {
             promise.resolve(null)
@@ -38,7 +33,7 @@ export class EntityQuery<Entity> {
 
     stream(): EntityStream<Entity> {
         let snapshotStream = this.docReference.snapshot()
-        let source = snapshotStream.pipe(map((docSnapshot: DocumentSnapshot) => {
+        let source = snapshotStream.pipe(map((docSnapshot) => {
             return this.entityBuilder.fromSnapshot(docSnapshot)
         }))
 

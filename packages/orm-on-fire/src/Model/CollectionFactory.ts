@@ -1,5 +1,5 @@
 import { Collection } from './Collection'
-import { EntityPersister } from './EntityPersister'
+import { EntityStore } from './EntityStore'
 import { FirestoreConnection } from '../Persistence/FirestoreConnection'
 import { EntityType } from '../Contracts/EntityType'
 import { QueryFactory } from '../Persistence/QueryFactory'
@@ -8,7 +8,15 @@ import { CollectionReference } from '../Persistence/CollectionReference'
 import * as types from '@firebase/firestore-types'
 import { MetadataStorage } from '../Metadata/MetadataStorage'
 import { NullCollection } from './NullCollection'
-import DocumentReference = types.DocumentReference
+import {
+    doc,
+    setDoc,
+    DocumentSnapshot,
+    DocumentReference,
+    DocumentChange,
+    QueryDocumentSnapshot,
+    QuerySnapshot
+} from "firebase/firestore";
 
 export class Factory {
     constructor(protected connection: FirestoreConnection, protected metadata: MetadataStorage) {}
@@ -48,7 +56,7 @@ export class Factory {
         let entityManager = new EntityManager<Entity>(metadata, entity, collectionRef)
         let queryFactory = new QueryFactory(collectionRef, entityManager, metadata)
 
-        return new Collection(queryFactory, new EntityPersister<Entity>(entityManager))
+        return new Collection(queryFactory, new EntityStore<Entity>(entityManager))
     }
 }
 

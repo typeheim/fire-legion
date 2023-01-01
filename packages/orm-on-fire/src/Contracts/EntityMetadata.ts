@@ -3,9 +3,11 @@ export interface EntityMetadata {
     repository?: any
     fields?: PropertyMetadata[]
     collectionRefs?: CollectionRefMetadata[]
-    docRefs?: {
-        [key: string]: DocRefMetadata
-    }
+    docRefs?: EntityDocRefsMetadata
+}
+
+export interface EntityDocRefsMetadata {
+    [key: string]: DocRefMetadata
 }
 
 export interface PropertyMetadata {

@@ -43,21 +43,21 @@
   },
   "homepage": "https://github.com/typeheim/fire-legion#readme",
   "devDependencies": {
-    "@types/jest": "^26.0.24",
-    "@types/node": "^13.13.0",
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.10",
     "@types/reflect-metadata": "^0.1.0",
-    "firebase": "^8.9.0",
-    "firebase-admin": "^9.11.0",
-    "firebase-functions": "^3.14.1",
-    "firebase-tools": "^9.16.0",
-    "jest": "^27.0.6",
+    "firebase": "^9.8.2",
+    "firebase-admin": "^10.2.0",
+    "firebase-functions": "^3.21.2",
+    "firebase-tools": "^11.0.1",
+    "jest": "^27.4.5",
     "lerna": "^4.0.0",
-    "ts-node": "^10.1.0",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^27.1.2",
+    "ts-node": "^10.4.0",
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "reflect-metadata": "^0.1.13",
-    "rimraf": "^3.0.2",
-    "ts-jest": "^27.0.4"
+    "reflect-metadata": "^0.1.13"
   }
 }

@@ -1,25 +1,36 @@
-// Firestore types
-import * as types from '@firebase/firestore-types'
 
 import {
+    EntityDocRefsMetadata,
     EntityMetadata,
     PropertyMetadata,
 } from '../Contracts/EntityMetadata'
 import { Reference } from '../Model/Reference'
-import { DocInitializer } from './DocInitializer'
+
 import { DocPersistenceManager } from './DocPersistenceManager'
-import { ReactivePromise } from '@typeheim/fire-rx'
 import { CollectionReference } from './CollectionReference'
 import { DocReference } from './DocReference'
 import { CollectionFactory } from '../singletons'
-import { Model } from '../Contracts/Model'
-import DocumentSnapshot = types.DocumentSnapshot
-import DocumentReference = types.DocumentReference
+import { MutationTracker } from './MutationTracker'
+import {
+    doc,
+    setDoc,
+    DocumentSnapshot,
+    DocumentReference,
+    DocumentChange,
+    QueryDocumentSnapshot,
+    QuerySnapshot
+} from "firebase/firestore";
 
 // import FieldValue = types.FieldValue - somehow fails TS
 
 export class EntityManager<Entity> {
+    private static ormMetadataStore = new WeakMap<any, OrmMetadata<any>>()
+
     constructor(protected metadata: EntityMetadata, protected entityConstructor, protected collectionReference: CollectionReference) {}
+
+    getOrmMetadata(entity): OrmMetadata<Entity> {
+        return EntityManager.ormMetadataStore.get(entity)
+    }
 
     fromSnapshot(docSnapshot: DocumentSnapshot): Entity {
         if (!docSnapshot.exists) {
@@ -56,6 +67,10 @@ export class EntityManager<Entity> {
             //@todo need to add support for passing additional properties
             entity['toJSON'] = () => {
                 let jsonData = {}
+                if (entity['id'] !== undefined) {
+                    jsonData['id'] = entity['id']
+                }
+
                 fields.forEach(field => {
                     if (entity[field.name] !== undefined) {
                         jsonData[field.name] = entity[field.name]
@@ -65,41 +80,24 @@ export class EntityManager<Entity> {
             }
         }
 
-        this.attachOrmMetadataToEntity(entity, docSnapshot.ref)
+        this.registerLoadedEntityMetadata(entity, docSnapshot.ref)
         this.attachSubCollectionsToEntity(entity, docSnapshot.ref)
         this.attachRefsToEntity(entity, data)
 
         if (typeof entity.init === 'function') {
             // @todo handle promises
-            entity.init()
+            const result = entity.init()
+            // if (result instanceof Promise) {
+            //     await result
+            // }
         }
 
         return entity
     }
 
-    protected createTextIndex(text: string): string[] {
-        const arrName = []
-        let curName = ''
-        text.split('').forEach(letter => {
-            curName += letter.toLowerCase()
-            arrName.push(curName)
-        })
-        return arrName
-    }
-
-    protected createReverseTextIndex(text: string): string[] {
-        const arrName = []
-        let curName = ''
-        text.split('').reverse().forEach(letter => {
-            curName += letter.toLowerCase()
-            arrName.push(curName)
-        })
-        return arrName
-    }
-
     createEntity() {
         let entity = new this.entityConstructor()
-        this.attachMetadataToNewEntity(entity)
+        this.registerNewEntityMetadata(entity)
 
         return entity
     }
@@ -119,94 +117,54 @@ export class EntityManager<Entity> {
         let docRefs = this.metadata.docRefs
 
         for (let fieldName in docRefs) {
-            entity[fieldName] = new Reference(docRefs[fieldName].entity, entity)
             if (data[fieldName] !== undefined) {
-                entity[fieldName].___attachDockRef(DocReference.fromNativeRef(data[fieldName]))
+                entity[fieldName] = new Reference(docRefs[fieldName].entity, entity, DocReference.fromNativeRef(data[fieldName]))
+            } else {
+                entity[fieldName] = new Reference(docRefs[fieldName].entity, entity)
             }
         }
     }
 
-    public extractDataFromEntity(entity: Model) {
-        const fields = this.metadata.fields
-        let dataToSave = {}
-        let changes = null
-        if (!(entity?.__ormOnFire?.isNew || entity.__ormOnFire === undefined)) {
-            // not new entities require mutation check
-            changes = entity?.__ormOnFire?.mutation?.getChanges(entity)
-        }
+    public getEntityFields(): PropertyMetadata[] {
+        return this.metadata.fields
+    }
 
-        fields.forEach(field => {
-            if (field?.isDate && field?.updateOnSave) {
-                let date = new Date()
-                entity[field.name] = date
-                dataToSave[field.name] = date
-            } else if (field?.isDate && field?.generateOnCreate && (entity?.__ormOnFire?.isNew || entity.__ormOnFire === undefined)) {
-                let date = new Date()
-                entity[field.name] = date
-                dataToSave[field.name] = date
-            }
-            if (changes && field.name in changes) {
-                dataToSave[field.name] = changes[field.name]
-            } else if ((entity?.__ormOnFire?.isNew || entity.__ormOnFire === undefined) && entity[field.name] !== undefined) {
-                // this condition required only for new entities
-                if (field?.isMap && Array.isArray(entity[field.name])) {
-                    dataToSave[field.name] = entity[field.name].map(obj => {
-                        return { ...obj }
-                    })
-                } else if (field?.isMap) {
-                    dataToSave[field.name] = { ...entity[field.name] }
-                } else {
-                    dataToSave[field.name] = entity[field.name]
-                }
-
-            }
-        })
-        const docRefs = this.metadata.docRefs
-
-        for (let fieldName in docRefs) {
-            let docRef = entity[fieldName]?.___docReference
-            if (docRef) {
-                dataToSave[fieldName] = docRef.nativeRef
-            }
-        }
-
-        return dataToSave
+    public getEntityDocRefs(): EntityDocRefsMetadata {
+        return this.metadata.docRefs
     }
 
     public refreshNewEntity(entity: Entity, docReference: DocumentReference) {
-        this.attachOrmMetadataToEntity(entity, docReference)
+        this.registerLoadedEntityMetadata(entity, docReference)
         this.attachSubCollectionsToEntity(entity, docReference)
     }
 
-    public attachOrmMetadataToEntity(entity: Entity, docReference: DocumentReference) {
-        let persistenceManager = new DocPersistenceManager(docReference)
-        entity['__ormOnFire'] = {
+    public registerLoadedEntityMetadata(entity: Entity, nativeDocRef: DocumentReference) {
+        const ormDocRef = DocReference.fromNativeRef(nativeDocRef)
+        const mutationTracker = this.createMutationTracker(entity)
+        const persister = new DocPersistenceManager<Entity>(nativeDocRef, this.collectionReference)
+        const metadata: OrmMetadata<Entity> = {
             isNew: false,
-            docRef: DocReference.fromNativeRef(docReference),
-            mutation: this.createMutationTracker(entity),
-            save: (): ReactivePromise<boolean> => {
-                return persistenceManager.update(this.extractDataFromEntity(entity), entity['__ormOnFire'].mutation)
-            },
-            remove: (): ReactivePromise<boolean> => {
-                return persistenceManager.remove()
-            },
+            ormDocRef,
+            nativeDocRef,
+            mutationTracker,
+            persister,
         }
+
+        EntityManager.ormMetadataStore.set(entity, metadata)
     }
 
-    public attachMetadataToNewEntity(entity: Entity) {
-        let docInitializer = new DocInitializer(entity, this)
-        entity['__ormOnFire'] = {
-            isNew: true,
-            docRef: null,
-            mutation: this.createMutationTracker(entity),
-            save: (): ReactivePromise<boolean> => {
-                return docInitializer.addTo(this.collectionReference)
-            },
-            remove: () => {
-                // @todo throw exceptions
-                return false
-            },
+    public registerNewEntityMetadata(entity: Entity) {
+        const mutationTracker = this.createMutationTracker(entity)
+        const persister = new DocPersistenceManager<Entity>(null, this.collectionReference)
+        const metadata: OrmMetadata<Entity> = {
+            isNew: false,
+            ormDocRef: null,
+            nativeDocRef: null,
+            mutationTracker,
+            persister,
         }
+
+        EntityManager.ormMetadataStore.set(entity, metadata)
     }
 
     protected createMutationTracker(entity: Entity) {
@@ -214,105 +172,14 @@ export class EntityManager<Entity> {
     }
 }
 
-// @todo - change mutation tracker to use snapshot as source of original data
-export class MutationTracker {
-    protected copy = {}
-    protected fields: PropertyMetadata[]
-    protected entity
+interface OrmMetadata<Entity> {
+    isNew: boolean
 
-    constructor(entity, fields: PropertyMetadata[]) {
-        this.fields = fields
-        this.entity = entity
+    mutationTracker?: MutationTracker
 
-        this.refreshEntity()
-    }
+    persister?: DocPersistenceManager<Entity>
 
-    public refreshEntity() {
-        let entity = this.entity
-        let fields = this.fields
-        this.copy = {}
+    ormDocRef?: DocReference
 
-        fields.forEach(field => {
-            if (entity[field.name] === undefined) {
-                return
-            }
-
-            if (Array.isArray(entity[field.name])) {
-                // this.copy[field.name] = entity[field.name]?.slice()
-                this.copy[field.name] = this.deepCopy(entity[field.name])
-            } else if (field.isMap) {
-                this.copy[field.name] = { ...entity[field.name] }
-            } else if (typeof entity[field.name] === 'object' && entity[field.name] instanceof Date) {
-                this.copy[field.name] = new Date(entity[field.name].getTime())
-            } else if (typeof entity[field.name] === 'object') {
-                this.copy[field.name] = { ...entity[field.name] }
-            } else {
-                this.copy[field.name] = entity[field.name]
-            }
-        })
-    }
-
-    getChanges(entity) {
-        let changes = {}
-        this.fields.forEach(field => {
-            // @todo - half of checks disabled because of instability. Need further tetsing
-            if (entity[field.name] === undefined) {
-                if (this.copy[field.name] !== undefined) {
-                    // changes[field.name] = FieldValue.delete() - somehow fails TS
-                    changes[field.name] = undefined
-                } else {
-                    return
-                }
-            } else if (Array.isArray(entity[field.name])) { // array should be checked explicitly
-                changes[field.name] = entity[field.name]
-                // if (JSON.stringify(entity[field.name]) !== JSON.stringify(this.copy[field.name])) {
-                //     changes[field.name] = entity[field.name]
-                // }
-            } else if (typeof entity[field.name] === 'object' && entity[field.name] !== null) {
-                // dates must be compared by time
-                // if (entity[field.name] instanceof Date && entity[field.name]?.getTime() !== this.copy[field.name]?.getTime()) {
-                //     changes[field.name] = entity[field.name]
-                // } else if (JSON.stringify(entity[field.name]) !== JSON.stringify(this.copy[field.name])) {
-                //     // objects need deep equality compare
-                //     changes[field.name] = { ...entity[field.name] }
-                // }
-                //dates must be compared by time
-                if (entity[field.name] instanceof Date) {
-                    if (this.copy[field.name] && entity[field.name]?.getTime() !== this.copy[field.name]?.getTime()) {
-                        changes[field.name] = entity[field.name]
-                    } else if (!this.copy[field.name]) {
-                        changes[field.name] = entity[field.name]
-                    }
-
-                } else {
-                    // objects need deep equality compare
-                    changes[field.name] = { ...entity[field.name] }
-                }
-            } else if (entity[field.name] !== this.copy[field.name]) {
-                changes[field.name] = entity[field.name]
-            }
-        })
-
-        return changes
-    }
-
-    protected deepCopy(inObject) {
-        let outObject, value, key
-
-        if (typeof inObject !== 'object' || inObject === null) {
-            return inObject // Return the value if inObject is not an object
-        }
-
-        // Create an array or object to hold the values
-        outObject = Array.isArray(inObject) ? [] : {}
-
-        for (key in inObject) {
-            value = inObject[key]
-
-            // Recursively (deep) copy for nested objects, including arrays
-            outObject[key] = this.deepCopy(value)
-        }
-
-        return outObject
-    }
+    nativeDocRef?
 }

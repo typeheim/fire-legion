@@ -1,4 +1,4 @@
-import { EntityPersister } from './EntityPersister'
+import { EntityStore } from './EntityStore'
 import {
     AsyncStream,
     ReactivePromise,
@@ -17,7 +17,7 @@ import { EntityStream } from '../Data/EntityStream'
 import { map } from 'rxjs/operators'
 
 export class Collection<Entity> {
-    constructor(protected queryFactory: QueryFactory<Entity>, protected persister: EntityPersister<Entity>) {}
+    constructor(protected queryFactory: QueryFactory<Entity>, protected entityStore: EntityStore<Entity>) {}
 
     static of<Entity>(entity: EntityType<Entity>): Collection<Entity> {
         return InternalCollectionsMap.of(entity)
@@ -36,15 +36,15 @@ export class Collection<Entity> {
     }
 
     new(id?: string): ReactivePromise<Entity> {
-        return this.persister.new(id)
+        return this.entityStore.new(id)
     }
 
-    save(entity: Entity): ReactivePromise<void> {
-        return this.persister.save(entity)
+    save(entity: Entity): ReactivePromise<boolean> {
+        return this.entityStore.save(entity)
     }
 
-    remove(entity: Entity): ReactivePromise<void> {
-        return this.persister.remove(entity)
+    remove(entity: Entity): ReactivePromise<boolean> {
+        return this.entityStore.remove(entity)
     }
 
     filter(filterFunction: FilterFunction<Entity>): CollectionQuery<Entity> {
@@ -68,7 +68,7 @@ export class Collection<Entity> {
 
         this.all().get().subscribe((entities: Entity[]) => {
             entities.forEach(entity => {
-                this.persister.remove(entity)
+                this.entityStore.remove(entity)
             })
             subject.next(true)
             subject.complete()

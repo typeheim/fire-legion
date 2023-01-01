@@ -6,9 +6,33 @@ import {
 import { OrmOnFire } from '../singletons'
 // Firestore types
 import * as types from '@firebase/firestore-types'
-import DocumentReference = types.DocumentReference
-import DocumentSnapshot = types.DocumentSnapshot
+import {
+    query,
+    where,
+    limit,
+    orderBy,
 
+    startAfter,
+    endBefore,
+
+    startAt,
+    endAt,
+
+    Query,
+    getDocs,
+    onSnapshot,
+    collection,
+    collectionGroup,
+    QuerySnapshot,
+
+    doc,
+    getDoc,
+    setDoc,
+    deleteDoc,
+
+    DocumentReference,
+    DocumentSnapshot
+} from 'firebase/firestore'
 export class DocReference {
     protected _nativeRef: DocumentReference
 
@@ -25,7 +49,7 @@ export class DocReference {
         let subject = new StatefulSubject<DocumentSnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.nativeRef.get().then((snapshot: DocumentSnapshot) => {
+                getDoc(this.nativeRef).then((snapshot: DocumentSnapshot) => {
                     subject.next(snapshot)
                     subject.complete()
                 }).catch(error => subject.error(error))
@@ -39,7 +63,7 @@ export class DocReference {
         let promise = new ReactivePromise<boolean>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.nativeRef.set(data)
+                setDoc(this.nativeRef, data)
                     .then(() => promise.resolve(true))
                     .catch(() => promise.resolve(false))
             }
@@ -52,7 +76,7 @@ export class DocReference {
         let promise = new ReactivePromise<boolean>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.nativeRef.update(data)
+                setDoc(this.nativeRef, data, {merge: true})
                     .then(() => promise.resolve(true))
                     .catch(() => promise.resolve(false))
             }
@@ -65,7 +89,7 @@ export class DocReference {
         let promise = new ReactivePromise<boolean>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                this.nativeRef.delete()
+                deleteDoc(this.nativeRef)
                     .then(() => promise.resolve(true))
                     .catch(() => promise.resolve(false))
             }
@@ -78,7 +102,7 @@ export class DocReference {
         let subject = new StatefulSubject<DocumentSnapshot>()
         this.connection.isInitialized.then((isInitialized: boolean) => {
             if (isInitialized) {
-                let unsubscribeSnapshot = this.nativeRef.onSnapshot((snapshot: DocumentSnapshot) => {
+                let unsubscribeSnapshot = onSnapshot(this.nativeRef,(snapshot: DocumentSnapshot) => {
                     subject.next(snapshot)
                 })
 
@@ -93,10 +117,7 @@ export class DocReference {
 
     get nativeRef() {
         if (!this._nativeRef) {
-            let baseRef = this.collectionPath ? this.connection.driver.collection(this.collectionPath) : this.connection.driver
-            // @ts-ignore
-
-            this._nativeRef = this.docPath ? baseRef.doc(this.docPath) : baseRef.doc()
+            this._nativeRef = doc(this.connection.driver, this.collectionPath, this.docPath)
         }
         return this._nativeRef
     }
